@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeBonChantier — Trouvez un artisan. Simple et sécurisé.</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:#F8F6F2;--white:#FFFFFF;--ink:#18160F;--ink2:#4B4840;--ink3:#9B9790;
+  --accent:#E63B00;--accent2:#FF5722;--border:#E4E0D8;--green:#166534;--green-bg:#DCFCE7;
+  --blue:#1D4ED8;--blue-bg:#EFF6FF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);}
+.nav{background:var(--white);border-bottom:1.5px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900;cursor:pointer;}
+.logo span{color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-link{font-size:13px;font-weight:500;color:var(--ink2);padding:8px 14px;border-radius:8px;cursor:pointer;border:none;background:none;}
+.nav-btn{font-size:13px;font-weight:600;color:var(--white);background:var(--accent);padding:9px 18px;border-radius:8px;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;}
+.user-avatar{width:34px;height:34px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--white);cursor:pointer;}
+.logout-btn{font-size:12px;color:var(--ink3);background:none;border:none;cursor:pointer;}
+.page{display:none;}.page.active{display:block;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:24px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:32px;max-width:460px;width:100%;position:relative;max-height:90vh;overflow-y:auto;animation:fadeUp 0.3s ease;}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--bg);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;}
+.modal h2{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;margin-bottom:6px;}
+.modal>p{font-size:13px;color:var(--ink3);margin-bottom:20px;line-height:1.6;}
+.modal-tabs{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.modal-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;background:var(--bg);color:var(--ink3);border:none;transition:all 0.15s;}
+.modal-tab.active{background:var(--accent);color:var(--white);}
+.role-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
+.role-btn{padding:14px 8px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);text-align:center;cursor:pointer;transition:all 0.15s;}
+.role-btn .role-icon{font-size:24px;display:block;margin-bottom:6px;}
+.role-btn .role-label{font-size:11px;font-weight:700;color:var(--ink2);}
+.role-btn.selected{border-color:var(--accent);background:#FFF0EB;}
+.role-btn.selected .role-label{color:var(--accent);}
+.f-label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.f-input,.f-textarea,.f-select{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--bg);outline:none;transition:border-color 0.2s,box-shadow 0.2s;margin-bottom:4px;}
+.f-input:focus,.f-textarea:focus,.f-select:focus{border-color:var(--accent);background:var(--white);box-shadow:0 0 0 3px rgba(230,59,0,0.08);}
+.f-input::placeholder,.f-textarea::placeholder{color:var(--ink3);}
+.f-input.valid{border-color:#16a34a;background:var(--white);}
+.f-input.valid:focus{box-shadow:0 0 0 3px rgba(22,163,74,0.1);}
+.f-input.error{border-color:#dc2626;background:#fff8f8;}
+.f-input.error:focus{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,0.1);}
+.f-error-msg{display:none;font-size:11px;color:#dc2626;font-weight:600;margin-top:2px;margin-bottom:8px;padding-left:4px;}
+.f-error-msg.show{display:block;}
+.f-success-msg{display:none;font-size:11px;color:#16a34a;font-weight:600;margin-top:2px;margin-bottom:8px;padding-left:4px;}
+.f-success-msg.show{display:block;}
+.f-phone-wrap{position:relative;margin-bottom:4px;}
+.f-phone-wrap .f-phone-prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--ink2);font-weight:600;pointer-events:none;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.f-phone-wrap .f-input{padding-left:72px;}
+.f-textarea{height:100px;resize:vertical;}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rgpd-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;}
+.rgpd-check input{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;margin-top:2px;cursor:pointer;}
+.rgpd-check label{font-size:12px;color:var(--ink2);line-height:1.6;cursor:pointer;}
+.rgpd-check a{color:var(--accent);text-decoration:underline;cursor:pointer;}
+.google-btn{width:100%;height:46px;display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:12px;color:var(--ink3);}
+.submit-btn{width:100%;height:50px;background:var(--accent);color:var(--white);border:none;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:background 0.15s;}
+.submit-btn:hover{background:#c43200;}
+.submit-btn:disabled{background:var(--ink3);cursor:not-allowed;}
+.auth-switch{text-align:center;font-size:12px;color:var(--ink3);margin-top:14px;}
+.auth-switch a{color:var(--accent);cursor:pointer;text-decoration:underline;}
+.hero{background:var(--white);border-bottom:1.5px solid var(--border);padding:48px 24px 36px;}
+.hero-inner{max-width:680px;margin:0 auto;text-align:center;}
+.hero h1{font-family:'Unbounded',sans-serif;font-size:clamp(26px,5vw,48px);font-weight:900;line-height:1.1;letter-spacing:-1.5px;margin-bottom:16px;animation:fadeUp 0.5s ease both;}
+.hero h1 span{color:var(--accent);}
+.hero p{font-size:16px;color:var(--ink2);margin-bottom:32px;line-height:1.6;animation:fadeUp 0.5s ease 0.1s both;}
+.search-big{display:flex;border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--white);box-shadow:4px 4px 0 var(--ink);margin-bottom:16px;animation:fadeUp 0.5s ease 0.2s both;}
+.search-big input{flex:1;height:56px;border:none;padding:0 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;background:transparent;}
+.search-big input::placeholder{color:var(--ink3);}
+.search-big .sep{width:1.5px;background:var(--border);margin:12px 0;}
+.search-big .search-go{height:56px;padding:0 24px;background:var(--accent);color:var(--white);border:none;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.search-cats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.5s ease 0.3s both;}
+.cat-pill{font-size:13px;font-weight:500;color:var(--ink2);background:var(--bg);border:1.5px solid var(--border);padding:6px 14px;border-radius:100px;cursor:pointer;transition:all 0.15s;}
+.cat-pill:hover,.cat-pill.active{border-color:var(--accent);color:var(--accent);background:#FFF0EB;}
+.stats-bar{background:var(--ink);padding:14px 24px;display:flex;justify-content:center;gap:48px;flex-wrap:wrap;}
+.stat-n{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;color:var(--accent2);text-align:center;}
+.stat-l{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-align:center;}
+.listings-section{max-width:860px;margin:0 auto;padding:32px 24px;}
+.section-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.section-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;}
+.see-all{font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;border:none;background:none;}
+.jobs-grid{display:flex;flex-direction:column;gap:10px;}
+.job-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;transition:all 0.15s;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;}
+.job-card:hover{border-color:var(--accent);box-shadow:3px 3px 0 rgba(230,59,0,0.1);transform:translateY(-1px);}
+.job-card-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;line-height:1.3;}
+.job-card-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+.meta{font-size:12px;color:var(--ink3);}
+.job-card-desc{font-size:13px;color:var(--ink2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.job-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.tag{font-size:11px;font-weight:600;color:var(--ink2);background:var(--bg);border:1px solid var(--border);padding:3px 8px;border-radius:5px;}
+.job-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.job-price{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;color:var(--accent);}
+.job-price-sub{font-size:10px;color:var(--ink3);}
+.escrow-badge{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:4px 8px;border-radius:6px;}
+.job-time{font-size:11px;color:var(--ink3);}
+.statut-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;}
+.statut-ouvert{background:var(--green-bg);color:var(--green);}
+.statut-en-cours{background:var(--blue-bg);color:var(--blue);}
+.statut-termine{background:var(--bg);color:var(--ink3);}
+.post-page{max-width:580px;margin:0 auto;padding:40px 24px;}
+.post-page h1{font-family:'Unbounded',sans-serif;font-size:clamp(22px,4vw,36px);font-weight:900;letter-spacing:-1px;margin-bottom:8px;line-height:1.1;}
+.post-page>p{font-size:14px;color:var(--ink3);margin-bottom:32px;}
+.form-step{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px;}
+.form-step-num{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-bottom:6px;}
+.form-step h3{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.cat-btn{padding:12px 8px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);text-align:center;cursor:pointer;transition:all 0.15s;font-size:11px;font-weight:600;color:var(--ink2);}
+.cat-btn .cat-emoji{font-size:22px;display:block;margin-bottom:4px;}
+.cat-btn.selected{border-color:var(--accent);background:#FFF0EB;color:var(--accent);}
+.photo-upload{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:12px;}
+.photo-upload:hover{border-color:var(--accent);background:#FFF0EB;}
+.photo-upload input{display:none;}
+.photo-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.photo-thumb{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--border);}
+.form-note{text-align:center;font-size:11px;color:var(--ink3);margin-top:12px;line-height:1.7;}
+.success-box{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:48px 32px;text-align:center;display:none;}
+.success-box.show{display:block;}
+.success-icon{font-size:56px;margin-bottom:16px;}
+.success-box h2{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+.success-box p{font-size:14px;color:var(--ink2);line-height:1.6;}
+.dashboard{max-width:860px;margin:0 auto;padding:32px 24px;}
+.dashboard-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+.dashboard-header h1{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;letter-spacing:-0.5px;}
+.dashboard-tabs{display:flex;gap:4px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:4px;margin-bottom:24px;}
+.dash-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border-radius:8px;border:none;background:none;color:var(--ink3);transition:all 0.15s;}
+.dash-tab.active{background:var(--accent);color:var(--white);}
+.dash-panel{display:none;}.dash-panel.active{display:block;}
+.annonce-item{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px;}
+.annonce-detail-page{max-width:760px;margin:0 auto;padding:32px 24px;}
+.photos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:24px;}
+.photos-grid img{width:100%;height:100px;object-fit:cover;border-radius:8px;}
+.repondre-box{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;}
+.repondre-box h3{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;}
+.reponse-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;}
+.reponse-artisan{font-size:14px;font-weight:700;}
+.reponse-date{font-size:11px;color:var(--ink3);}
+.reponse-msg{font-size:13px;color:var(--ink2);line-height:1.6;margin-top:8px;}
+.choisir-btn{background:var(--accent);color:var(--white);border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:12px;}
+.hiw{background:var(--white);border-top:1.5px solid var(--border);border-bottom:1.5px solid var(--border);padding:48px 24px;}
+.hiw-inner{max-width:760px;margin:0 auto;}
+.hiw h2{font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,32px);font-weight:900;letter-spacing:-1px;margin-bottom:36px;text-align:center;}
+.hiw-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.hiw-step{text-align:center;padding:28px 20px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg);}
+.hiw-num{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-bottom:12px;}
+.hiw-icon{font-size:32px;margin-bottom:12px;}
+.hiw-step h3{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;margin-bottom:8px;}
+.hiw-step p{font-size:12px;color:var(--ink2);line-height:1.6;}
+.cta-band{background:var(--accent);padding:40px 24px;text-align:center;}
+.cta-band h2{font-family:'Unbounded',sans-serif;font-size:clamp(20px,3.5vw,36px);font-weight:900;color:var(--white);letter-spacing:-1px;margin-bottom:20px;}
+.cta-band-btn{background:var(--white);color:var(--accent);border:none;padding:16px 36px;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:14px;font-weight:900;cursor:pointer;}
+.rgpd-page{max-width:760px;margin:0 auto;padding:40px 24px;}
+.rgpd-page h1{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:900;margin-bottom:8px;}
+.rgpd-page .date{font-size:13px;color:var(--ink3);margin-bottom:32px;}
+.rgpd-page h2{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;margin:28px 0 12px;}
+.rgpd-page p,.rgpd-page li{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:8px;}
+.rgpd-page ul{padding-left:20px;margin-bottom:16px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:var(--white);padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;transition:transform 0.3s ease;z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{background:var(--green);}
+.toast.error{background:#DC2626;}
+footer{background:var(--white);border-top:1.5px solid var(--border);padding:24px;text-align:center;}
+.footer-logo{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:900;margin-bottom:8px;}
+.footer-logo span{color:var(--accent);}
+footer p{font-size:12px;color:var(--ink3);}
+footer a{color:var(--accent);cursor:pointer;}
+.empty-state{text-align:center;padding:48px;color:var(--ink3);}
+.empty-state .empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-state h3{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--ink);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:640px){.hiw-steps{grid-template-columns:1fr;}.job-card{grid-template-columns:1fr;}.f-row{grid-template-columns:1fr;}.cat-grid{grid-template-columns:repeat(2,1fr);}.stats-bar{gap:24px;}.nav .nav-link{display:none;}.role-selector{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div id="mission-modal" style="display:none;position:fixed;inset:0;background:rgba(24,22,15,.45);z-index:1200;align-items:center;justify-content:center;padding:24px">
+  <div style="width:min(680px,100%);background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:24px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.12)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px">
+      <div>
+        <div style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900">Créer une mission</div>
+        <div style="font-size:13px;color:var(--ink3);margin-top:4px">Paiement simple ou paiement par étapes. Le paiement Stripe sera branché sur cette structure.</div>
+      </div>
+      <button onclick="closeMissionSetup()" style="background:none;border:none;font-size:24px;cursor:pointer;line-height:1;color:var(--ink3)">✕</button>
+    </div>
+    <input type="hidden" id="mission-annonce-id">
+    <input type="hidden" id="mission-artisan-id">
+    <div style="display:grid;gap:14px">
+      <div>
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Type de mission</label>
+        <select id="mission-type" class="f-input" onchange="updateMissionSetupUI()">
+          <option value="simple">Mission simple — paiement en une fois</option>
+          <option value="staged">Mission avec étapes — paiement progressif</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Montant total (€)</label>
+        <input id="mission-total" type="number" min="1" step="0.01" class="f-input" placeholder="Ex: 1800">
+      </div>
+      <div id="mission-stage-config" style="display:none">
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Nombre d'étapes</label>
+        <select id="mission-stage-count" class="f-input" onchange="renderMissionPreview()">
+          <option value="2">2 étapes</option>
+          <option value="3" selected>3 étapes</option>
+          <option value="4">4 étapes</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Note interne</label>
+        <textarea id="mission-note" class="f-textarea" placeholder="Ex: Début rapide, accès chantier le lundi matin..."></textarea>
+      </div>
+      <div id="mission-preview-box" style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:16px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">Aperçu du plan de mission</div>
+        <div id="mission-preview-list" style="display:grid;gap:8px"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+      <button class="submit-btn" onclick="createMission()" style="max-width:260px">Créer la mission</button>
+      <button onclick="closeMissionSetup()" style="background:#fff;border:1.5px solid var(--border);padding:14px 18px;border-radius:14px;font-size:14px;cursor:pointer;font-weight:700">Annuler</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2>Bienvenue !</h2>
+    <p>Créez un compte ou connectez-vous.</p>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tab-register" onclick="switchAuthTab('register')">Créer un compte</button>
+      <button class="modal-tab" id="tab-login" onclick="switchAuthTab('login')">Se connecter</button>
+    </div>
+    <div id="register-form">
+      <div style="margin-bottom:16px">
+        <div class="f-label">Je suis...</div>
+        <div class="role-selector">
+          <div class="role-btn selected" id="role-client" onclick="selectRole('client')"><span class="role-icon">🏠</span><span class="role-label">Client</span></div>
+          <div class="role-btn" id="role-artisan" onclick="selectRole('artisan')"><span class="role-icon">🔨</span><span class="role-label">Artisan</span></div>
+          <div class="role-btn" id="role-both" onclick="selectRole('both')"><span class="role-icon">⚡</span><span class="role-label">Les deux</span></div>
+        </div>
+      </div>
+      <button class="google-btn" onclick="loginWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuer avec Google
+      </button>
+      <div class="divider"><span>ou</span></div>
+      <label class="f-label">Email</label>
+      <input class="f-input" id="reg-email" type="email" placeholder="vous@email.com" onblur="validateEmailField(this,'reg-email-error')">
+      <div class="f-error-msg" id="reg-email-error">Adresse email invalide</div>
+      <label class="f-label">Mot de passe</label>
+      <input class="f-input" id="reg-password" type="password" placeholder="Minimum 6 caractères">
+      <label class="f-label">Nom complet</label>
+      <input class="f-input" id="reg-nom" type="text" placeholder="Jean Dupont">
+      <label class="f-label">Téléphone</label>
+      <div class="f-phone-wrap">
+        <span class="f-phone-prefix">🇫🇷 +33</span>
+        <input class="f-input" id="reg-tel" type="tel" placeholder="06 12 34 56 78" oninput="formatPhoneInput(this)" onblur="validatePhoneField(this,'reg-tel-error')">
+      </div>
+      <div class="f-error-msg" id="reg-tel-error">Numéro de téléphone français invalide (ex: 06 12 34 56 78)</div>
+      <div id="artisan-fields" style="display:none">
+        <label class="f-label">Spécialité</label>
+        <select class="f-select" id="reg-specialite">
+          <option value="" disabled selected>Choisir...</option>
+          <option>🎨 Peintre</option><option>🔧 Plombier</option><option>⚡ Électricien</option>
+          <option>🪵 Menuisier</option><option>🧱 Maçon</option><option>🏠 Couvreur</option><option>Autre</option>
+        </select>
+        <label class="f-label">Zone d'intervention</label>
+        <input class="f-input" id="reg-zone" type="text" placeholder="Ex: Paris et banlieue">
+      </div>
+      <div class="rgpd-check">
+        <input type="checkbox" id="rgpd-check">
+        <label for="rgpd-check">J'accepte la <a onclick="showPage('rgpd');closeModal()">politique de confidentialité</a> et les <a onclick="showPage('rgpd');closeModal()">CGU</a>. Je consens au traitement de mes données conformément au RGPD.</label>
+      </div>
+      <button class="submit-btn" id="btn-register" onclick="register()">Créer mon compte →</button>
+      <div class="auth-switch">Déjà un compte ? <a onclick="switchAuthTab('login')">Se connecter</a></div>
+    </div>
+    <div id="login-form" style="display:none">
+      <button class="google-btn" onclick="loginWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuer avec Google
+      </button>
+      <div class="divider"><span>ou</span></div>
+      <label class="f-label">Email</label>
+      <input class="f-input" id="login-email" type="email" placeholder="vous@email.com">
+      <label class="f-label">Mot de passe</label>
+      <input class="f-input" id="login-password" type="password" placeholder="Votre mot de passe">
+      <button class="submit-btn" id="btn-login" onclick="login()">Se connecter →</button>
+      <div class="auth-switch">Pas encore de compte ? <a onclick="switchAuthTab('register')">Créer un compte</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo" onclick="showPage('home')">LeBon<span>Chantier</span></div>
+  <div class="nav-right" id="nav-right">
+    <button class="nav-link" onclick="showPage('browse')">Annonces</button>
+    <button class="nav-link" onclick="openModal()">Connexion</button>
+    <button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div class="hero-inner">
+      <h1>Trouvez un artisan.<br><span>Sans galère.</span></h1>
+      <p>Publiez votre chantier en 60 secondes. Les artisans viennent à vous. Paiement sécurisé jusqu'à la fin des travaux.</p>
+      <div class="search-big">
+        <input type="text" id="home-search-categorie" placeholder="Quel type de travaux ?">
+        <div class="sep"></div>
+        <input type="text" id="home-search-ville" placeholder="Ville..." style="max-width:180px">
+        <button class="search-go" onclick="applySearchFromHome()">Chercher →</button>
+      </div>
+      <div class="search-cats">
+        <div class="cat-pill active">Tous</div>
+        <div class="cat-pill">🎨 Peinture</div><div class="cat-pill">🔧 Plomberie</div>
+        <div class="cat-pill">⚡ Électricité</div><div class="cat-pill">🪵 Menuiserie</div>
+        <div class="cat-pill">🧱 Maçonnerie</div><div class="cat-pill">🏠 Toiture</div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div><div class="stat-n" id="stat-annonces">0</div><div class="stat-l">Annonces publiées</div></div>
+    <div><div class="stat-n">0€</div><div class="stat-l">Pour poster</div></div>
+    <div><div class="stat-n">100%</div><div class="stat-l">Paiement sécurisé</div></div>
+    <div><div class="stat-n" id="stat-artisans">0</div><div class="stat-l">Artisans inscrits</div></div>
+  </div>
+  <div class="listings-section">
+    <div class="section-top">
+      <div class="section-title">Dernières annonces</div>
+      <button class="see-all" onclick="showPage('browse')">Voir tout →</button>
+    </div>
+    <div class="jobs-grid" id="home-listings"><div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div></div>
+  </div>
+  <div class="hiw">
+    <div class="hiw-inner">
+      <h2>Comment ça marche ?</h2>
+      <div class="hiw-steps">
+        <div class="hiw-step"><div class="hiw-num">ÉTAPE 01</div><div class="hiw-icon">✏️</div><h3>Publiez votre chantier</h3><p>60 secondes. Avec photos. Gratuit.</p></div>
+        <div class="hiw-step"><div class="hiw-num">ÉTAPE 02</div><div class="hiw-icon">🤝</div><h3>Les artisans postulent</h3><p>Choisissez librement parmi les propositions.</p></div>
+        <div class="hiw-step"><div class="hiw-num">ÉTAPE 03</div><div class="hiw-icon">✅</div><h3>Payez en toute sécurité</h3><p>L'argent est bloqué jusqu'à votre validation.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="cta-band">
+    <h2>Prêt à lancer votre chantier ?</h2>
+    <button class="cta-band-btn" onclick="requireAuth('post')">Publier gratuitement →</button>
+  </div>
+  <footer>
+    <div class="footer-logo">LeBon<span>Chantier</span></div>
+    <p>© 2025 LeBonChantier.fr · <a onclick="showPage('rgpd')">Politique de confidentialité</a> · <a onclick="showPage('rgpd')">CGU</a></p>
+  </footer>
+</div>
+
+<!-- BROWSE -->
+<div id="browse" class="page">
+  <div class="hero" style="padding:28px 24px">
+    <div class="hero-inner">
+      <div class="search-big" style="margin-bottom:12px">
+        <input type="text" id="browse-search-categorie" placeholder="Type de travaux...">
+        <div class="sep"></div>
+        <input type="text" id="browse-search-ville" placeholder="Ville..." style="max-width:160px">
+        <button class="search-go" onclick="applySearchFromBrowse()">Chercher →</button>
+      </div>
+      <div class="search-cats">
+        <div class="cat-pill active">Tous</div>
+        <div class="cat-pill">🎨 Peinture</div><div class="cat-pill">🔧 Plomberie</div>
+        <div class="cat-pill">⚡ Électricité</div><div class="cat-pill">🪵 Menuiserie</div>
+        <div class="cat-pill">🧱 Maçonnerie</div><div class="cat-pill">🏠 Toiture</div>
+      </div>
+    </div>
+  </div>
+  <div class="listings-section" style="padding-top:24px">
+    <div class="section-top"><div class="section-title" id="browse-count">Chargement...</div></div>
+    <div class="jobs-grid" id="browse-listings"><div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div></div>
+  </div>
+  <footer><div class="footer-logo">LeBon<span>Chantier</span></div><p>© 2025 LeBonChantier.fr</p></footer>
+</div>
+
+<!-- ANNONCE DETAIL -->
+<div id="annonce-detail" class="page">
+  <div class="annonce-detail-page">
+    <button onclick="showPage('browse')" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:6px;">← Retour</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- POST -->
+<div id="post" class="page">
+  <div class="post-page">
+    <h1>Publiez votre chantier.</h1>
+    <p>Quelques minutes. Gratuit. Avec photos.</p>
+    <div id="post-form">
+      <div class="form-step">
+        <div class="form-step-num">ÉTAPE 01</div>
+        <h3>Quel type de travaux ?</h3>
+        <div class="cat-grid">
+          <div class="cat-btn" onclick="selectCat(this,'Peinture')"><span class="cat-emoji">🎨</span>Peinture</div>
+          <div class="cat-btn" onclick="selectCat(this,'Plomberie')"><span class="cat-emoji">🔧</span>Plomberie</div>
+          <div class="cat-btn" onclick="selectCat(this,'Électricité')"><span class="cat-emoji">⚡</span>Électricité</div>
+          <div class="cat-btn" onclick="selectCat(this,'Menuiserie')"><span class="cat-emoji">🪵</span>Menuiserie</div>
+          <div class="cat-btn" onclick="selectCat(this,'Maçonnerie')"><span class="cat-emoji">🧱</span>Maçonnerie</div>
+          <div class="cat-btn" onclick="selectCat(this,'Toiture')"><span class="cat-emoji">🏠</span>Toiture</div>
+          <div class="cat-btn" onclick="selectCat(this,'Salle de bain')"><span class="cat-emoji">🛁</span>Salle de bain</div>
+          <div class="cat-btn" onclick="selectCat(this,'Cuisine')"><span class="cat-emoji">🍳</span>Cuisine</div>
+          <div class="cat-btn" onclick="selectCat(this,'Autre')"><span class="cat-emoji">✨</span>Autre</div>
+        </div>
+      </div>
+      <div class="form-step">
+        <div class="form-step-num">ÉTAPE 02</div>
+        <h3>Décrivez votre projet</h3>
+        <textarea class="f-textarea" id="f-description" placeholder="Ex: Peinture 3 pièces, murs en bon état..."></textarea>
+        <label class="f-label">Photos du chantier</label>
+        <div class="photo-upload" onclick="document.getElementById('photo-input').click()">
+          <input type="file" id="photo-input" multiple accept="image/*" onchange="previewPhotos(this)">
+          <div style="font-size:28px;margin-bottom:8px">📷</div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink2)">Cliquez pour ajouter des photos</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px">JPG, PNG — max 5 photos</div>
+        </div>
+        <div class="photo-preview" id="photo-preview"></div>
+      </div>
+      <div class="form-step">
+        <div class="form-step-num">ÉTAPE 03</div>
+        <h3>Budget et localisation</h3>
+        <div class="f-row">
+          <div><label class="f-label">Budget maximum</label><input class="f-input" id="f-budget" type="text" placeholder="Ex: 1 500 €"></div>
+          <div><label class="f-label">Ville</label><input class="f-input" id="f-ville" type="text" placeholder="Ex: Paris 75015"></div>
+        </div>
+        <label class="f-label">Quand démarrer ?</label>
+        <select class="f-select" id="f-delai">
+          <option>Dès que possible</option><option>Dans 2 semaines</option><option>Dans 1 mois</option><option>Date flexible</option>
+        </select>
+      </div>
+      <div class="form-step">
+        <div class="form-step-num">ÉTAPE 04</div>
+        <h3>Vos coordonnées</h3>
+        <label class="f-label">Téléphone</label>
+        <div class="f-phone-wrap">
+          <span class="f-phone-prefix">🇫🇷 +33</span>
+          <input class="f-input" id="f-telephone" type="tel" placeholder="06 12 34 56 78" oninput="formatPhoneInput(this)" onblur="validatePhoneField(this,'f-tel-error')">
+        </div>
+        <div class="f-error-msg" id="f-tel-error">Numéro de téléphone français invalide (ex: 06 12 34 56 78)</div>
+        <label class="f-label">Email</label>
+        <input class="f-input" id="f-email" type="email" placeholder="vous@email.com" onblur="validateEmailField(this,'f-email-error')">
+        <div class="f-error-msg" id="f-email-error">Adresse email invalide</div>
+        <div class="rgpd-check">
+          <input type="checkbox" id="post-rgpd">
+          <label for="post-rgpd">J'accepte la <a onclick="showPage('rgpd')">politique de confidentialité</a> et consens au traitement de mes données conformément au RGPD.</label>
+        </div>
+      </div>
+      <button class="submit-btn" id="submit-annonce" onclick="submitAnnonce()">Publier mon annonce gratuitement →</button>
+      <div class="form-note">Gratuit · 🔒 Coordonnées visibles uniquement par l'artisan choisi</div>
+    </div>
+    <div class="success-box" id="success-annonce">
+      <div class="success-icon">🎉</div>
+      <h2>Annonce publiée !</h2>
+      <p>Votre chantier est en ligne. Les artisans vont vous contacter prochainement.</p>
+      <br>
+      <button class="submit-btn" onclick="showPage('dashboard')" style="margin-top:8px">Mon tableau de bord →</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page">
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h1>Mon espace</h1>
+      <button class="nav-btn" onclick="showPage('post')">+ Nouvelle annonce</button>
+    </div>
+    <div class="dashboard-tabs" id="dashboard-tabs">
+      <button class="dash-tab active" data-tab="mes-annonces" onclick="switchDashTab('mes-annonces')">📋 Mes annonces</button>
+      <button class="dash-tab" data-tab="artisan" id="artisan-tab-btn" onclick="switchDashTab('artisan')" style="display:none">🔨 Espace artisan</button>
+      <button class="dash-tab" data-tab="profil" onclick="switchDashTab('profil')">👤 Mon profil</button>
+      <button class="dash-tab" data-tab="admin" id="admin-tab-btn" onclick="switchDashTab('admin')" style="display:none">🛡️ Admin</button>
+    </div>
+    <div class="dash-panel active" id="panel-mes-annonces">
+      <div id="mes-annonces-list"><div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div></div>
+    </div>
+    <div class="dash-panel" id="panel-artisan">
+      <div id="artisan-content">
+        <div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace artisan...</p></div>
+      </div>
+    </div>
+    <div class="dash-panel" id="panel-profil">
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:28px" id="profile-content">
+        <div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div>
+      </div>
+    </div>
+    <div class="dash-panel" id="panel-admin">
+      <div id="admin-content">
+        <div class="empty-state"><div class="empty-icon">🛡️</div><p>Chargement de l'espace admin...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RGPD -->
+<div id="rgpd" class="page">
+  <div class="rgpd-page">
+    <h1>Politique de confidentialité</h1>
+    <div class="date">Dernière mise à jour : 25 mars 2026</div>
+    <h2>1. Responsable du traitement</h2>
+    <p>LeBonChantier (lebonchantier.fr) — Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e1d161f100a171b0c121b1c11103e19131f1712501d1113">[email&#160;protected]</a></p>
+    <h2>2. Données collectées</h2>
+    <ul><li>Nom et prénom</li><li>Email</li><li>Téléphone</li><li>Localisation (ville)</li><li>Informations professionnelles (artisans)</li><li>Photos de chantier</li></ul>
+    <h2>3. Finalités</h2>
+    <ul><li>Mise en relation clients/artisans</li><li>Gestion des comptes</li><li>Notifications email</li><li>Amélioration des services</li></ul>
+    <h2>4. Base légale</h2><p>Consentement explicite lors de l'inscription.</p>
+    <h2>5. Conservation</h2><p>3 ans à compter de votre dernière activité.</p>
+    <h2>6. Vos droits (RGPD)</h2>
+    <ul><li>Accès, rectification, effacement, portabilité, opposition</li></ul>
+    <p>Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c3f343d322835392e30393e33321c3b313d3530723f3331">[email&#160;protected]</a></p>
+    <h2>7. Cookies</h2><p>Uniquement cookies techniques. Aucun cookie publicitaire.</p>
+    <br>
+    <button class="submit-btn" onclick="history.back()" style="max-width:200px">← Retour</button>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const SUPABASE_URL='https://dclkwnpswocvrgmmvkby.supabase.co';
+const SUPABASE_KEY='sb_publishable_URHzjrUJLarzOBZznhLceA_iuOFpPX0';
+const{createClient}=supabase;
+const db=createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null,currentProfile=null,selectedCatValue='',selectedRole='client',photoFiles=[],currentMissionAnnonceId=null;
+let browseFilters={categorie:'',ville:''};
+const ADMIN_EMAILS=['sarkissiannar707@gmail.com'];
+
+
+async function init(){
+  const{data:{session}}=await db.auth.getSession();
+  if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();}
+  db.auth.onAuthStateChange(async(event,session)=>{
+    if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');}
+    else{currentUser=null;currentProfile=null;updateNav(false);updateDashboardUI();}
+  });
+  setupCategoryFilters();
+  loadAnnonces('home');loadStats();
+}
+
+async function loadProfile(){
+  if(!currentUser) return;
+  const [{data:profile},{data:verification},{data:artisan}] = await Promise.all([
+    db.from('profiles').select('*').eq('id',currentUser.id).single(),
+    db.from('artisan_verifications').select('*').eq('user_id',currentUser.id).maybeSingle(),
+    db.from('artisans').select('*').eq('user_id',currentUser.id).maybeSingle()
+  ]);
+  currentProfile={
+    ...(profile||{}),
+    verification_status: verification?.verification_status || 'non_verifie',
+    verification_record: verification || null,
+    artisan_record: artisan || null
+  };
+}
+
+function isAdmin(){
+  const email=(currentUser?.email||'').toLowerCase();
+  return currentProfile?.role==='admin' || ADMIN_EMAILS.map(e=>e.toLowerCase()).includes(email);
+}
+
+function isArtisanRole(){
+  return currentProfile?.role==='artisan' || currentProfile?.role==='both';
+}
+
+function updateDashboardUI(){
+  const adminBtn=document.getElementById('admin-tab-btn');
+  if(adminBtn) adminBtn.style.display=isAdmin() ? 'inline-block' : 'none';
+  const artisanBtn=document.getElementById('artisan-tab-btn');
+  if(artisanBtn) artisanBtn.style.display=isArtisanRole() ? 'inline-block' : 'none';
+}
+
+function updateNav(loggedIn){
+  const nav=document.getElementById('nav-right');
+  if(loggedIn){
+    const initial=currentUser.email?currentUser.email[0].toUpperCase():'U';
+    nav.innerHTML=`<button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="showPage('dashboard')">Mon espace</button><div class="user-avatar" onclick="showPage('dashboard')">${initial}</div><button class="logout-btn" onclick="logout()">Déconnexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
+  }else{
+    nav.innerHTML=`<button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="openModal()">Connexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
+  }
+}
+
+function requireAuth(page){
+  if(!currentUser){openModal();showToast('⚠️ Connectez-vous pour publier une annonce','error');return;}
+  showPage(page);
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='home')loadAnnonces('home');
+  if(name==='browse'){
+    const bc=document.getElementById('browse-search-categorie'); if(bc) bc.value=browseFilters.categorie||'';
+    const bv=document.getElementById('browse-search-ville'); if(bv) bv.value=browseFilters.ville||'';
+    loadAnnonces('browse');
+  }
+  if(name==='dashboard')loadDashboard();
+}
+
+function openModal(){document.getElementById('auth-modal').classList.add('show');}
+function closeModal(){document.getElementById('auth-modal').classList.remove('show');}
+
+function switchAuthTab(tab){
+  document.getElementById('tab-register').classList.toggle('active',tab==='register');
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('register-form').style.display=tab==='register'?'block':'none';
+  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
+}
+
+function selectRole(role){
+  selectedRole=role;
+  ['client','artisan','both'].forEach(r=>document.getElementById('role-'+r).classList.toggle('selected',r===role));
+  document.getElementById('artisan-fields').style.display=(role==='artisan'||role==='both')?'block':'none';
+}
+
+async function loginWithGoogle(){
+  const{error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});
+  if(error)showToast('❌ Erreur Google','error');
+}
+
+async function register(){
+  const email=document.getElementById('reg-email').value;
+  const password=document.getElementById('reg-password').value;
+  const nom=document.getElementById('reg-nom').value;
+  const tel=document.getElementById('reg-tel').value;
+  const rgpd=document.getElementById('rgpd-check').checked;
+  if(!email||!password||!nom||!tel){showToast('⚠️ Remplissez tous les champs','error');return;}
+  if(!isValidEmail(email)){
+    setFieldState(document.getElementById('reg-email'),'reg-email-error',false);
+    showToast('⚠️ Adresse email invalide','error');return;
+  }
+  if(!isFrenchPhone(tel)){
+    setFieldState(document.getElementById('reg-tel'),'reg-tel-error',false);
+    showToast('⚠️ Numéro de téléphone français invalide','error');return;
+  }
+  if(!rgpd){showToast('⚠️ Acceptez la politique de confidentialité','error');return;}
+  if(password.length<6){showToast('⚠️ Mot de passe trop court','error');return;}
+  const btn=document.getElementById('btn-register');
+  btn.disabled=true;btn.textContent='Création...';
+  const{data,error}=await db.auth.signUp({email,password});
+  if(error){showToast('❌ '+error.message,'error');btn.disabled=false;btn.textContent='Créer mon compte →';return;}
+  if(data.user){
+    await db.from('profiles').insert([{id:data.user.id,role:selectedRole,nom,telephone:tel}]);
+    if(selectedRole==='artisan'||selectedRole==='both'){
+      const specialite=document.getElementById('reg-specialite').value;
+      const zone=document.getElementById('reg-zone').value;
+      await db.from('artisans').insert([{nom,specialite,zone,telephone:tel,email,user_id:data.user.id}]);
+    }
+  }
+  showToast('✅ Compte créé ! Vérifiez votre email.','success');
+  closeModal();btn.disabled=false;btn.textContent='Créer mon compte →';
+}
+
+async function login(){
+  const email=document.getElementById('login-email').value;
+  const password=document.getElementById('login-password').value;
+  if(!email||!password){showToast('⚠️ Remplissez les champs','error');return;}
+  const btn=document.getElementById('btn-login');
+  btn.disabled=true;btn.textContent='Connexion...';
+  const{error}=await db.auth.signInWithPassword({email,password});
+  if(error){showToast('❌ Email ou mot de passe incorrect','error');btn.disabled=false;btn.textContent='Se connecter →';}
+}
+
+async function logout(){await db.auth.signOut();showPage('home');showToast('👋 Déconnecté','');}
+
+async function sendEmail(to,subject,html){
+  try{await db.functions.invoke('send-email',{body:{to,subject,html}});}
+  catch(e){console.log('Email:',e);}
+}
+
+async function loadAnnonces(page='home'){
+  try{
+    let query=db.from('annonces').select('*').order('created_at',{ascending:false});
+    if(page==='browse'){
+      const categorie=(browseFilters.categorie||'').trim();
+      const ville=(browseFilters.ville||'').trim();
+      if(categorie) query=query.ilike('categorie', `%${categorie}%`);
+      if(ville) query=query.ilike('ville', `%${ville}%`);
+      query=query.limit(50);
+    }else{
+      query=query.limit(4);
+    }
+    const{data}=await query;
+    const container=document.getElementById(page==='home'?'home-listings':'browse-listings');
+    if(!data||data.length===0){
+      container.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><h3>Aucune annonce trouvée</h3><p>Essayez une autre ville ou une autre catégorie.</p></div>`;
+      if(page==='browse')document.getElementById('browse-count').textContent='0 annonce';
+      return;
+    }
+    if(page==='browse')document.getElementById('browse-count').textContent=data.length+' chantier'+(data.length>1?'s':'')+' trouvé'+(data.length>1?'s':'');
+    document.getElementById('stat-annonces').textContent=data.length+'+';
+    container.innerHTML=data.map(a=>{
+      const photoHtml=a.photos&&a.photos.length>0?`<img src="${a.photos[0]}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">`:'';
+      return `<div class="job-card" onclick="showAnnonceDetail('${a.id}')">
+        <div>
+          <div class="job-card-title">${escapeHTML(a.categorie||'Travaux')} — ${escapeHTML(a.ville||'')}</div>
+          <div class="job-card-meta"><span class="meta">📍 ${escapeHTML(a.ville||'Non précisé')}</span><span class="meta">📅 ${escapeHTML(a.delai||'Flexible')}</span></div>
+          <div class="job-card-desc">${escapeHTML(a.description||'')}</div>
+          <div class="job-tags"><span class="tag">${a.categorie||'Autre'}</span><span class="statut-badge statut-${a.statut||'ouvert'}" style="margin-left:4px">${a.statut==='ouvert'?'🟢 Ouvert':a.statut==='en-cours'?'🔵 En cours':'✅ Terminé'}</span></div>
+        </div>
+        <div class="job-right">
+          ${photoHtml}
+          <div><div class="job-price">${escapeHTML(formatBudget(a.budget))}</div><div class="job-price-sub">Budget max</div></div>
+          <div class="escrow-badge">🔒 Sécurisé</div>
+          <div class="job-time">${timeAgo(a.created_at)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){console.log(e);}
+}
+
+
+async function showAnnonceDetail(id){
+  showPage('annonce-detail');
+  const{data:a}=await db.from('annonces').select('*').eq('id',id).single();
+  const{data:reponses}=await db.from('reponses').select('*, artisans(nom,specialite)').eq('annonce_id',id).order('created_at',{ascending:false});
+  const artisanIds=(reponses||[]).map(r=>r.artisan_id).filter(Boolean);
+  let verificationMap={};
+  if(artisanIds.length){
+    const {data:verifs}=await db.from('artisan_verifications').select('user_id,verification_status').in('user_id',artisanIds);
+    verificationMap=Object.fromEntries((verifs||[]).map(v=>[v.user_id,v.verification_status]));
+  }
+  let mission=null, missionStages=[];
+  try{
+    const {data:m} = await db.from('missions').select('*').eq('annonce_id',id).maybeSingle();
+    mission = m || null;
+    if(mission){
+      const {data:stages} = await db.from('mission_stages').select('*').eq('mission_id',mission.id).order('stage_order',{ascending:true});
+      missionStages = stages || [];
+    }
+  }catch(_e){ mission=null; missionStages=[]; }
+
+  const isOwner=currentUser&&a.user_id===currentUser.id;
+  const isSelectedArtisan=currentUser&&a.selected_artisan_id===currentUser.id;
+  const isArtisan=currentProfile&&(currentProfile.role==='artisan'||currentProfile.role==='both');
+  const photosHtml=a.photos&&a.photos.length>0?`<div class="photos-grid">${a.photos.map(p=>`<img src="${p}" alt="photo">`).join('')}</div>`:'';
+  const verificationStatus=currentProfile?.verification_status||'non_verifie';
+  const canApply=isArtisan&&verificationStatus!=='suspendu';
+  const verificationHint=isArtisan&&verificationStatus!=='verifie'
+    ? `<div style="font-size:12px;color:var(--ink3);margin-bottom:10px">ℹ️ Votre profil artisan n'est pas encore vérifié. Vous pouvez postuler, mais l'admin devra valider vos documents.</div>`
+    : '';
+  const repondreHtml=canApply&&!isOwner&&a.statut==='ouvert'?`
+    <div class="repondre-box">
+      <h3>💬 Envoyer ma candidature</h3>
+      ${verificationHint}
+      <textarea class="f-textarea" id="reponse-msg" placeholder="Présentez-vous et décrivez votre approche..."></textarea>
+      <button class="submit-btn" onclick="envoyerReponse('${id}','${a.email||''}','${a.categorie||''}','${a.ville||''}')">Envoyer ma candidature →</button>
+    </div>`:'';
+  const reponsesHtml=isOwner&&reponses&&reponses.length>0?`
+    <div style="margin-top:24px">
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px">💬 ${reponses.length} candidature${reponses.length>1?'s':''}</h3>
+      ${reponses.map(r=>{
+        const responseStatus=r.status||'pending';
+        const isVerified=verificationMap[r.artisan_id]==='verifie';
+        const statusBadge=responseStatus==='accepted'
+          ? '<span class="small-badge badge-accepted">Acceptée</span>'
+          : responseStatus==='rejected'
+            ? '<span class="small-badge badge-rejected">Refusée</span>'
+            : '<span class="small-badge badge-pending">En attente</span>';
+        const verificationBadge=isVerified
+          ? '<span class="small-badge badge-verified" style="margin-left:8px">Artisan vérifié</span>'
+          : '<span class="small-badge badge-review" style="margin-left:8px">Non vérifié</span>';
+        return `
+        <div class="reponse-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div class="reponse-artisan">🔨 ${escapeHTML(r.artisans?.nom||'Artisan')} — ${escapeHTML(r.artisans?.specialite||'')}</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${statusBadge}${verificationBadge}<div class="reponse-date">${timeAgo(r.created_at)}</div></div>
+          </div>
+          <div class="reponse-msg">${escapeHTML(r.message||'')}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            ${a.statut==='ouvert'&&responseStatus!=='accepted'?`<button class="choisir-btn" onclick="choisirArtisan('${id}','${r.artisan_id}','${r.id}')">✅ Accepter</button>`:''}
+            ${responseStatus!=='rejected'&&a.statut==='ouvert'?`<button class="submit-btn" onclick="ownerSetResponseStatus('${r.id}','rejected')" style="max-width:180px;background:#fff;color:var(--ink);border:1.5px solid var(--border)">❌ Refuser</button>`:''}
+            ${responseStatus==='rejected'&&a.statut==='ouvert'?`<button class="submit-btn" onclick="ownerSetResponseStatus('${r.id}','pending')" style="max-width:180px;background:#fff;color:var(--ink);border:1.5px solid var(--border)">↩️ Remettre en attente</button>`:''}
+          </div>
+        </div>`}).join('')}
+    </div>`:(isOwner?`<div class="repondre-box"><p style="font-size:14px;color:var(--ink3);text-align:center">Aucune candidature pour l'instant. Les artisans vont bientôt postuler !</p></div>`:'');
+  let reviews=[];
+  try{
+    const {data:reviewData}=await db.from('reviews').select('*').eq('annonce_id',id).order('created_at',{ascending:false});
+    reviews=reviewData||[];
+  }catch(_e){ reviews=[]; }
+  const existingOwnerReview=reviews.find(r=>r.client_id===currentUser?.id);
+  const selectedArtisanReviewList=reviews.filter(r=>!a.selected_artisan_id || r.artisan_id===a.selected_artisan_id);
+  const reviewSummaryHtml=selectedArtisanReviewList.length?`
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-top:18px">
+      <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">⭐ Avis laissé${selectedArtisanReviewList.length>1?'s':''}</div>
+      ${selectedArtisanReviewList.map(r=>`<div style="padding:12px 0;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div style="font-weight:700">${'★'.repeat(Math.max(1,Math.min(5,r.rating||0)))}${'☆'.repeat(5-Math.max(1,Math.min(5,r.rating||0)))}</div><div style="font-size:12px;color:var(--ink3)">${timeAgo(r.created_at)}</div></div><div style="font-size:13px;color:var(--ink2);line-height:1.6;margin-top:6px">${escapeHTML(r.comment||'')}</div></div>`).join('')}
+    </div>`:'';
+  const ownerReviewHtml=isOwner&&a.statut==='termine'&&a.selected_artisan_id?`
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-top:18px">
+      <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">⭐ Avis sur l'artisan sélectionné</div>
+      ${existingOwnerReview?`<div style="font-size:14px;color:var(--ink2)">Vous avez déjà laissé un avis pour ce chantier.</div>`:`
+        <div style="display:grid;gap:10px">
+          <select id="review-rating" class="f-input"><option value="5">5 étoiles</option><option value="4">4 étoiles</option><option value="3">3 étoiles</option><option value="2">2 étoiles</option><option value="1">1 étoile</option></select>
+          <textarea id="review-comment" class="f-textarea" placeholder="Votre retour sur l'artisan..."></textarea>
+          <button class="submit-btn" onclick="submitReview('${id}','${a.selected_artisan_id}')">Publier l'avis</button>
+        </div>`}
+    </div>`:'';
+  const missionHtml = renderMissionBox(a, mission, missionStages, {isOwner, isSelectedArtisan});
+  document.getElementById('detail-content').dataset.currentAnnonceId=id;
+  document.getElementById('detail-content').innerHTML=`
+    <span class="statut-badge statut-${a.statut||'ouvert'}" style="display:inline-block;margin-bottom:16px">${a.statut==='ouvert'?'🟢 Ouvert':a.statut==='en-cours'?'🔵 En cours':'✅ Terminé'}</span>
+    <h1 style="font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,32px);font-weight:900;letter-spacing:-0.5px;margin-bottom:16px">${a.categorie||'Travaux'} — ${a.ville||''}</h1>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+      <span class="meta">📍 ${a.ville||'Non précisé'}</span>
+      <span class="meta">📅 ${a.delai||'Flexible'}</span>
+      <span class="meta">💶 ${formatBudget(a.budget)}</span>
+      <span class="meta">🕐 ${timeAgo(a.created_at)}</span>
+    </div>
+    ${photosHtml}
+    <div style="font-size:15px;color:var(--ink2);line-height:1.8;margin-bottom:24px">${a.description||''}</div>
+    ${isOwner?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px">
+      <button onclick="showPage('dashboard');setTimeout(()=>openAnnonceEditor('${a.id}'),150)" style="background:#fff;border:1.5px solid var(--border);padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700">✏️ Modifier</button>
+      ${a.statut!=='termine'?`<button onclick="terminerAnnonce('${a.id}')" style="background:#fff7e8;border:1.5px solid #ffe1a6;padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;color:#9a6700">✅ Terminer</button>`:''}
+      <button onclick="deleteAnnonce('${a.id}')" style="background:#fff0eb;border:1.5px solid #ffd4c7;padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;color:var(--accent)">🗑️ Supprimer</button>
+    </div>`:''}
+    ${repondreHtml}
+    ${reponsesHtml}
+    ${missionHtml}
+    ${ownerReviewHtml}
+    ${reviewSummaryHtml}
+  `;
+}
+
+function getMissionSplit(count){
+  if(String(count)==='2') return [40,60];
+  if(String(count)==='4') return [20,30,30,20];
+  return [30,30,40];
+}
+
+function getMissionPlan(type,total,count){
+  const amount=Math.max(0, Number(total||0));
+  if(type==='simple'){
+    return [{title:'Mission complète', percent:100, amount:roundMoney(amount)}];
+  }
+  const split=getMissionSplit(count);
+  const labels = count==='2'
+    ? ['Démarrage','Finalisation']
+    : count==='4'
+      ? ['Démarrage','Avancement 1','Avancement 2','Finalisation']
+      : ['Démarrage','Milieu de chantier','Finalisation'];
+  let remaining=amount;
+  return split.map((pct,idx)=>{
+    const stageAmount = idx===split.length-1 ? roundMoney(remaining) : roundMoney(amount * pct / 100);
+    remaining = roundMoney(remaining - stageAmount);
+    return {title:labels[idx], percent:pct, amount:stageAmount};
+  });
+}
+
+function roundMoney(v){
+  return Math.round((Number(v)||0)*100)/100;
+}
+
+function formatMoney(v){
+  const n=Number(v||0);
+  return `${n.toFixed(2).replace('.',',')} €`;
+}
+
+function updateMissionSetupUI(){
+  const type=document.getElementById('mission-type')?.value||'simple';
+  const cfg=document.getElementById('mission-stage-config');
+  if(cfg) cfg.style.display=type==='staged'?'block':'none';
+  renderMissionPreview();
+}
+
+function renderMissionPreview(){
+  const type=document.getElementById('mission-type')?.value||'simple';
+  const total=document.getElementById('mission-total')?.value||0;
+  const count=document.getElementById('mission-stage-count')?.value||3;
+  const list=document.getElementById('mission-preview-list');
+  if(!list) return;
+  const plan=getMissionPlan(type,total,count);
+  list.innerHTML=plan.length?plan.map((s,idx)=>`
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;background:#fff;border:1px solid var(--border);padding:10px 12px;border-radius:10px">
+      <div><div style="font-weight:700">${idx+1}. ${escapeHTML(s.title)}</div><div style="font-size:12px;color:var(--ink3)">${s.percent}% du total</div></div>
+      <div style="font-weight:800">${formatMoney(s.amount)}</div>
+    </div>`).join(''):`<div style="font-size:13px;color:var(--ink3)">Saisissez un montant total.</div>`;
+}
+
+function openMissionSetup(annonceId,artisanId){
+  currentMissionAnnonceId=annonceId;
+  document.getElementById('mission-annonce-id').value=annonceId;
+  document.getElementById('mission-artisan-id').value=artisanId||'';
+  document.getElementById('mission-type').value='simple';
+  document.getElementById('mission-total').value='';
+  document.getElementById('mission-note').value='';
+  document.getElementById('mission-stage-count').value='3';
+  document.getElementById('mission-modal').style.display='flex';
+  updateMissionSetupUI();
+}
+
+function closeMissionSetup(){
+  document.getElementById('mission-modal').style.display='none';
+}
+
+async function createMission(){
+  const annonceId=document.getElementById('mission-annonce-id').value;
+  const artisanId=document.getElementById('mission-artisan-id').value;
+  const type=document.getElementById('mission-type').value;
+  const total=Number(document.getElementById('mission-total').value||0);
+  const note=(document.getElementById('mission-note').value||'').trim();
+  const count=document.getElementById('mission-stage-count').value||'3';
+  if(!annonceId || !artisanId || total<=0){
+    showToast('⚠️ Renseignez le montant et l’artisan sélectionné','error');
+    return;
+  }
+  try{
+    const missionPayload={
+      annonce_id:annonceId,
+      client_id:currentUser.id,
+      artisan_id:artisanId,
+      mission_type:type,
+      total_amount:roundMoney(total),
+      status:'awaiting_payment',
+      note:note||null
+    };
+    const {data:mission,error:missionError}=await db.from('missions').insert([missionPayload]).select().single();
+    if(missionError) throw missionError;
+    const plan=getMissionPlan(type,total,count);
+    const stages=plan.map((s,idx)=>({
+      mission_id:mission.id,
+      title:s.title,
+      amount:s.amount,
+      stage_order:idx+1,
+      status:'awaiting_payment'
+    }));
+    const {error:stageError}=await db.from('mission_stages').insert(stages);
+    if(stageError) throw stageError;
+    await db.from('annonces').update({statut:'en-cours'}).eq('id',annonceId);
+    closeMissionSetup();
+    showToast('✅ Mission créée. Étape suivante: brancher Stripe pour le paiement réel.','success');
+    showAnnonceDetail(annonceId);
+  }catch(e){
+    console.error(e);
+    showToast('❌ Impossible de créer la mission','error');
+  }
+}
+
+function missionStatusLabel(status){
+  const map={
+    awaiting_payment:'À payer',
+    paid_locked:'Payée · en attente de validation',
+    released:'Libérée',
+    dispute:'Litige',
+    completed:'Terminée',
+    in_progress:'En cours'
+  };
+  return map[status]||status;
+}
+
+function renderMissionBox(annonce, mission, stages, ctx={}){
+  const {isOwner=false,isSelectedArtisan=false}=ctx;
+  if(!annonce.selected_artisan_id && !mission) return '';
+  if(!mission){
+    return isOwner ? `
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-top:18px">
+        <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px">📦 Mission & paiements</div>
+        <div style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:14px">Crée une mission simple ou à étapes. Cela prépare le flow paiement P2P de la plateforme.</div>
+        <button class="submit-btn" onclick="openMissionSetup('${annonce.id}','${annonce.selected_artisan_id}')" style="max-width:260px">Créer la mission</button>
+      </div>` : '';
+  }
+  const stageRows=(stages||[]).map((s,idx)=>{
+    const status=s.status||'awaiting_payment';
+    return `<div style="padding:12px 0;border-top:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+        <div>
+          <div style="font-weight:800">${idx+1}. ${escapeHTML(s.title||('Étape '+(idx+1)))}</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px">${missionStatusLabel(status)}</div>
+        </div>
+        <div style="font-weight:800">${formatMoney(s.amount||0)}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        ${isOwner && status==='awaiting_payment' ? `<button onclick="markMissionStagePaid('${s.id}','${annonce.id}')" style="background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700">💳 Marquer payée</button>`:''}
+        ${isOwner && status==='paid_locked' ? `<button onclick="validateMissionStage('${s.id}','${annonce.id}','${mission.id}')" style="background:#e9fff3;color:#117a43;border:1.5px solid #b7efce;padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700">✅ Valider l'étape</button>`:''}
+        ${(isOwner||isSelectedArtisan) && (status==='awaiting_payment'||status==='paid_locked') ? `<button onclick="flagMissionStageIssue('${s.id}','${annonce.id}','${mission.id}')" style="background:#fff0eb;color:var(--accent);border:1.5px solid #ffd4c7;padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700">⚠️ Signaler un problème</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  return `
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-top:18px">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px">📦 Mission ${mission.mission_type==='simple'?'simple':'à étapes'}</div>
+          <div style="font-size:13px;color:var(--ink3)">Statut: ${missionStatusLabel(mission.status||'awaiting_payment')}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:var(--ink3)">Montant total</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900">${formatMoney(mission.total_amount||0)}</div>
+        </div>
+      </div>
+      ${mission.note?`<div style="font-size:13px;color:var(--ink2);margin-bottom:10px">${escapeHTML(mission.note)}</div>`:''}
+      <div style="font-size:13px;color:var(--ink3);margin-bottom:6px">Le branchement Stripe viendra sur ces étapes. Pour l'instant, tu peux déjà gérer la logique complète du chantier.</div>
+      <div>${stageRows || '<div class="empty-state"><p>Aucune étape</p></div>'}</div>
+    </div>`;
+}
+
+async function markMissionStagePaid(stageId, annonceId){
+  try{
+    const {error}=await db.from('mission_stages').update({status:'paid_locked',paid_at:new Date().toISOString()}).eq('id',stageId);
+    if(error) throw error;
+    const {data:stage}=await db.from('mission_stages').select('mission_id').eq('id',stageId).single();
+    if(stage?.mission_id) await db.from('missions').update({status:'in_progress'}).eq('id',stage.mission_id);
+    showToast('💳 Étape marquée payée. Prochaine étape: validation client.','success');
+    showAnnonceDetail(annonceId);
+  }catch(e){
+    console.error(e);
+    showToast('❌ Paiement de l’étape impossible','error');
+  }
+}
+
+async function validateMissionStage(stageId, annonceId, missionId){
+  try{
+    const {error}=await db.from('mission_stages').update({status:'released',validated_at:new Date().toISOString(),released_at:new Date().toISOString()}).eq('id',stageId);
+    if(error) throw error;
+    const {data:stages}=await db.from('mission_stages').select('status').eq('mission_id',missionId);
+    const allReleased=(stages||[]).every(s=>s.status==='released');
+    if(allReleased){
+      await db.from('missions').update({status:'completed',completed_at:new Date().toISOString()}).eq('id',missionId);
+      await db.from('annonces').update({statut:'termine'}).eq('id',annonceId);
+      showToast('✅ Mission terminée. Tous les paiements peuvent être libérés.','success');
+    }else{
+      await db.from('missions').update({status:'in_progress'}).eq('id',missionId);
+      showToast('✅ Étape validée','success');
+    }
+    showAnnonceDetail(annonceId);
+  }catch(e){
+    console.error(e);
+    showToast('❌ Validation impossible','error');
+  }
+}
+
+async function flagMissionStageIssue(stageId, annonceId, missionId){
+  try{
+    const {error}=await db.from('mission_stages').update({status:'dispute'}).eq('id',stageId);
+    if(error) throw error;
+    await db.from('missions').update({status:'dispute'}).eq('id',missionId);
+    showToast('⚠️ Étape placée en litige. L’admin doit trancher.','error');
+    showAnnonceDetail(annonceId);
+  }catch(e){
+    console.error(e);
+    showToast('❌ Impossible de signaler le problème','error');
+  }
+}
+
+async function envoyerReponse(annonceId,clientEmail,categorie,ville){
+  if(!currentUser){openModal();return;}
+  const msg=document.getElementById('reponse-msg').value;
+  if(!msg){showToast('⚠️ Écrivez un message','error');return;}
+  const{error}=await db.from('reponses').insert([{annonce_id:annonceId,artisan_id:currentUser.id,message:msg,status:'pending'}]);
+  if(error){showToast('❌ Erreur','error');return;}
+  if(clientEmail){
+    const artisanNom=currentProfile?.nom||'Un artisan';
+    await sendEmail(
+      clientEmail,
+      '🔨 Un artisan a répondu à votre annonce — LeBonChantier',
+      `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+        <h2 style="color:#E63B00;font-family:sans-serif">Bonne nouvelle !</h2>
+        <p><strong>${artisanNom}</strong> a envoyé une candidature pour votre chantier <strong>${categorie} à ${ville}</strong>.</p>
+        <div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0">${msg}</div>
+        <a href="https://lebonchantier.fr" style="display:inline-block;background:#E63B00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">Voir la candidature →</a>
+        <p style="color:#999;font-size:12px;margin-top:24px">LeBonChantier.fr — Trouvez un artisan. Sans galère.</p>
+      </div>`
+    );
+  }
+  showToast('✅ Candidature envoyée ! Le client a été notifié par email.','success');
+  showAnnonceDetail(annonceId);
+}
+
+async function choisirArtisan(annonceId,artisanId,responseId=null){
+  try{
+    const {error:annonceError}=await db.from('annonces').update({statut:'en-cours',selected_artisan_id:artisanId}).eq('id',annonceId);
+    if(annonceError) throw annonceError;
+    await db.from('reponses').update({status:'rejected'}).eq('annonce_id',annonceId);
+    if(responseId){
+      await db.from('reponses').update({status:'accepted'}).eq('id',responseId);
+    }else{
+      await db.from('reponses').update({status:'accepted'}).eq('annonce_id',annonceId).eq('artisan_id',artisanId);
+    }
+    showToast('✅ Artisan accepté !','success');
+    showAnnonceDetail(annonceId);
+    loadMesAnnonces();
+  }catch(e){
+    console.error(e);
+    showToast('❌ Impossible de sélectionner cet artisan','error');
+  }
+}
+
+async function ownerSetResponseStatus(responseId,status){
+  try{
+    const {error}=await db.from('reponses').update({status}).eq('id',responseId);
+    if(error) throw error;
+    showToast(status==='rejected'?'❌ Candidature refusée':'↩️ Candidature remise en attente','success');
+    const currentDetailId=(document.querySelector('[data-current-annonce-id]')||{}).dataset?.currentAnnonceId;
+    if(currentDetailId) showAnnonceDetail(currentDetailId);
+  }catch(e){
+    console.error(e);
+    showToast('❌ Action impossible','error');
+  }
+}
+
+async function loadDashboard(){
+  if(!currentUser){openModal();return;}
+  await loadProfile();
+  updateDashboardUI();
+  loadMesAnnonces();
+  loadProfileContent();
+  if(isArtisanRole()) loadArtisanDashboard();
+  if(isAdmin()) loadAdminDashboard();
+}
+
+async function loadMesAnnonces(){
+  const{data}=await db.from('annonces').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  const container=document.getElementById('mes-annonces-list');
+  if(!data||data.length===0){
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><h3>Aucune annonce publiée</h3><p>Publiez votre premier chantier !</p><br><button class="submit-btn" onclick="showPage('post')" style="max-width:240px;margin-top:16px">+ Publier une annonce</button></div>`;
+    return;
+  }
+  container.innerHTML=data.map(a=>`
+    <div class="annonce-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:12px">
+        <div style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700">${a.categorie} — ${a.ville}</div>
+        <span class="statut-badge statut-${a.statut||'ouvert'}">${a.statut==='ouvert'?'🟢 Ouvert':a.statut==='en-cours'?'🔵 En cours':'✅ Terminé'}</span>
+      </div>
+      <div style="font-size:13px;color:var(--ink2);margin-bottom:8px">${(a.description||'').substring(0,100)}...</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+        <span class="meta">💶 ${formatBudget(a.budget)}</span>
+        <span class="meta">🕐 ${timeAgo(a.created_at)}</span>
+        <button onclick="showAnnonceDetail('${a.id}')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Voir les candidatures →</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="openAnnonceEditor('${a.id}')" style="background:#fff;border:1.5px solid var(--border);padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700">✏️ Modifier</button>
+        ${a.statut!=='termine'?`<button onclick="terminerAnnonce('${a.id}')" style="background:#fff7e8;border:1.5px solid #ffe1a6;padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700;color:#9a6700">✅ Terminer</button>`:''}
+        <button onclick="deleteAnnonce('${a.id}')" style="background:#fff0eb;border:1.5px solid #ffd4c7;padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700;color:var(--accent)">🗑️ Supprimer</button>
+      </div>
+      <div id="edit-annonce-${a.id}" style="display:none;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-top:14px">
+        <div style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:800;margin-bottom:12px">Modifier l'annonce</div>
+        <div style="display:grid;gap:12px">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Catégorie</label>
+            <input id="edit-cat-${a.id}" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.categorie||'')}">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Description</label>
+            <textarea id="edit-desc-${a.id}" style="width:100%;min-height:120px;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px">${escapeHtml(a.description||'')}</textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Budget</label>
+              <input id="edit-budget-${a.id}" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.budget||'')}">
+            </div>
+            <div>
+              <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Ville</label>
+              <input id="edit-ville-${a.id}" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.ville||'')}">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Délai</label>
+              <input id="edit-delai-${a.id}" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.delai||'')}">
+            </div>
+            <div>
+              <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Téléphone</label>
+              <input id="edit-tel-${a.id}" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.telephone||'')}">
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Email</label>
+            <input id="edit-email-${a.id}" type="email" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.email||'')}">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <button onclick="saveAnnonceEdit('${a.id}')" style="background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700">💾 Enregistrer</button>
+          <button onclick="closeAnnonceEditor('${a.id}')" style="background:#fff;border:1.5px solid var(--border);padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700">Annuler</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+
+function escapeHtml(value=''){
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+function escapeAttr(value=''){
+  return escapeHtml(String(value)).replace(/"/g,'&quot;');
+}
+
+function openAnnonceEditor(id){
+  const box=document.getElementById('edit-annonce-'+id);
+  if(box) box.style.display='block';
+}
+
+function closeAnnonceEditor(id){
+  const box=document.getElementById('edit-annonce-'+id);
+  if(box) box.style.display='none';
+}
+
+async function saveAnnonceEdit(id){
+  if(!currentUser) return;
+  const payload={
+    categorie:(document.getElementById('edit-cat-'+id)?.value||'').trim()||'Autre',
+    description:(document.getElementById('edit-desc-'+id)?.value||'').trim(),
+    budget:(document.getElementById('edit-budget-'+id)?.value||'').trim(),
+    ville:(document.getElementById('edit-ville-'+id)?.value||'').trim(),
+    delai:(document.getElementById('edit-delai-'+id)?.value||'').trim(),
+    telephone:(document.getElementById('edit-tel-'+id)?.value||'').trim(),
+    email:(document.getElementById('edit-email-'+id)?.value||'').trim()
+  };
+  if(!payload.description || !payload.ville || !payload.telephone){
+    showToast('⚠️ Description, ville et téléphone sont obligatoires','error');
+    return;
+  }
+  const {error}=await db.from('annonces').update(payload).eq('id',id).eq('user_id',currentUser.id);
+  if(error){
+    console.error(error);
+    showToast('❌ Impossible de modifier l\'annonce','error');
+    return;
+  }
+  showToast('✅ Annonce modifiée','success');
+  await loadMesAnnonces();
+  if(currentDetailId===id) await showAnnonceDetail(id);
+}
+
+async function terminerAnnonce(id){
+  if(!currentUser) return;
+  const ok=window.confirm('Marquer cette annonce comme terminée ?');
+  if(!ok) return;
+  const {error}=await db.from('annonces').update({statut:'termine'}).eq('id',id).eq('user_id',currentUser.id);
+  if(error){
+    console.error(error);
+    showToast('❌ Impossible de terminer l\'annonce','error');
+    return;
+  }
+  showToast('✅ Annonce terminée','success');
+  await loadMesAnnonces();
+  if(currentDetailId===id) await showAnnonceDetail(id);
+}
+
+async function deleteAnnonce(id){
+  if(!currentUser) return;
+  const ok=window.confirm('Supprimer cette annonce ? Cette action est définitive.');
+  if(!ok) return;
+  const {error:errRep}=await db.from('reponses').delete().eq('annonce_id',id);
+  if(errRep) console.error(errRep);
+  const {error}=await db.from('annonces').delete().eq('id',id).eq('user_id',currentUser.id);
+  if(error){
+    console.error(error);
+    showToast('❌ Impossible de supprimer l\'annonce','error');
+    return;
+  }
+  showToast('✅ Annonce supprimée','success');
+  if(currentDetailId===id){
+    currentDetailId=null;
+    showPage('dashboard');
+  }
+  await loadMesAnnonces();
+  await loadAnnonces('home');
+  await loadAnnonces('browse');
+}
+
+function loadProfileContent(){
+  const roleValue=currentProfile?.role||'client';
+  const roleLabel=roleValue==='client'?'🏠 Client':roleValue==='artisan'?'🔨 Artisan':roleValue==='admin'?'🛡️ Admin':'⚡ Client & Artisan';
+  document.getElementById('profile-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px">
+      <div>
+        <div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px">${currentProfile?.nom||currentUser.email}</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">${currentUser.email}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><div style="display:inline-block;background:#FFF0EB;color:var(--accent);font-size:12px;font-weight:700;padding:6px 12px;border-radius:100px">${roleLabel}</div>${(roleValue==='artisan'||roleValue==='both')?verificationBadgeHtml(currentProfile?.verification_status||'non_verifie'):''}</div>
+      </div>
+      <button class="submit-btn" onclick="openProfileEditor()" style="max-width:220px">Modifier mon profil</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div style="background:var(--bg);border-radius:10px;padding:16px">
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;text-transform:uppercase;font-weight:700">Téléphone</div>
+        <div style="font-size:14px;font-weight:600">${currentProfile?.telephone||'Non renseigné'}</div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px">
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;text-transform:uppercase;font-weight:700">Membre depuis</div>
+        <div style="font-size:14px;font-weight:600">${timeAgo(currentUser.created_at)}</div>
+      </div>
+    </div>
+
+    <div id="profile-edit-box" style="display:none;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px">
+      <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:14px">Modifier mon profil</div>
+      <div style="display:grid;gap:12px">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Nom</label>
+          <input id="edit-profile-nom" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${(currentProfile?.nom||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Téléphone</label>
+          <input id="edit-profile-telephone" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${(currentProfile?.telephone||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Rôle</label>
+          <select id="edit-profile-role" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px">
+            <option value="client" ${roleValue==='client'?'selected':''}>Client</option>
+            <option value="artisan" ${roleValue==='artisan'?'selected':''}>Artisan</option>
+            <option value="both" ${roleValue==='both'?'selected':''}>Client & Artisan</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Spécialité artisan</label>
+          <input id="edit-profile-specialite" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${((currentProfile?.artisan_record?.specialite)||(currentProfile?.specialite)||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" placeholder="Ex: Plombier">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Zone d'intervention</label>
+          <input id="edit-profile-zone" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${((currentProfile?.artisan_record?.zone)||(currentProfile?.zone)||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" placeholder="Ex: Toulouse et alentours">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="submit-btn" id="save-profile-btn" onclick="saveProfile()" style="max-width:220px">Enregistrer</button>
+        <button class="submit-btn" onclick="closeProfileEditor()" style="background:var(--white);color:var(--ink);border:1.5px solid var(--border);max-width:220px">Annuler</button>
+      </div>
+    </div>
+
+    ${(roleValue==='artisan'||roleValue==='both')?renderVerificationSection():''}
+
+    <button class="submit-btn" onclick="logout()" style="background:var(--ink3)">Se déconnecter</button>
+  `;
+}
+
+function openProfileEditor(){
+  const box=document.getElementById('profile-edit-box');
+  if(box) box.style.display='block';
+}
+
+function closeProfileEditor(){
+  const box=document.getElementById('profile-edit-box');
+  if(box) box.style.display='none';
+}
+
+async function saveProfile(){
+  if(!currentUser) return;
+  const nom=(document.getElementById('edit-profile-nom')?.value||'').trim();
+  const telephone=(document.getElementById('edit-profile-telephone')?.value||'').trim();
+  const role=(document.getElementById('edit-profile-role')?.value||'client').trim();
+  const specialite=(document.getElementById('edit-profile-specialite')?.value||'').trim();
+  const zone=(document.getElementById('edit-profile-zone')?.value||'').trim();
+  const btn=document.getElementById('save-profile-btn');
+  if(btn){btn.disabled=true;btn.textContent='Enregistrement...';}
+  try{
+    const payload={nom,telephone,role};
+    const {error}=await db.from('profiles').update(payload).eq('id',currentUser.id);
+    if(error) throw error;
+
+    if(role==='artisan' || role==='both'){
+      const artisanPayload={user_id:currentUser.id,nom:nom||currentUser.email,telephone,email:currentUser.email,specialite,zone};
+      const {error:artisanError}=await db.from('artisans').upsert(artisanPayload,{onConflict:'user_id'});
+      if(artisanError) console.warn('artisan upsert warning',artisanError);
+    }
+
+    await loadProfile();
+    updateDashboardUI();
+    loadProfileContent();
+    if(isArtisanRole()) loadArtisanDashboard();
+    showToast('✅ Profil mis à jour !','success');
+  }catch(err){
+    console.error(err);
+    showToast('❌ Impossible de mettre à jour le profil','error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Enregistrer';}
+  }
+}
+
+function verificationBadgeHtml(status='non_verifie'){
+  if(status==='verifie') return '<span class="small-badge badge-verified">Artisan vérifié</span>';
+  if(status==='refuse') return '<span class="small-badge badge-refused">Refusé</span>';
+  if(status==='complement_requis') return '<span class="small-badge badge-more">Complément requis</span>';
+  if(status==='en_revision' || status==='documents_envoyes') return '<span class="small-badge badge-review">En révision</span>';
+  return '<span class="small-badge badge-pending">Non vérifié</span>';
+}
+
+function renderVerificationSection(){
+  const v=currentProfile?.verification_record||{};
+  const status=currentProfile?.verification_status||'non_verifie';
+  return `
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+        <div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px">Vérification artisan</div>
+          <div style="font-size:13px;color:var(--ink3)">Ajoute tes documents pour être validé par l'admin.</div>
+        </div>
+        ${verificationBadgeHtml(status)}
+      </div>
+
+      <div class="doc-grid">
+        <div class="doc-box">
+          <label>Entreprise / société</label>
+          <input id="verif-company-name" type="text" value="${escapeHTML(v.company_name||'')}" placeholder="Nom de l'entreprise" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px">
+        </div>
+        <div class="doc-box">
+          <label>SIREN</label>
+          <input id="verif-siren" type="text" value="${escapeHTML(v.siren||'')}" placeholder="9 chiffres" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px">
+        </div>
+        <div class="doc-box">
+          <label>Pièce d'identité</label>
+          <input id="verif-identity-file" type="file" accept=".pdf,image/*" style="width:100%">
+          ${v.identity_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+        </div>
+        <div class="doc-box">
+          <label>Kbis / RNE</label>
+          <input id="verif-business-file" type="file" accept=".pdf,image/*" style="width:100%">
+          ${v.business_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+        </div>
+        <div class="doc-box">
+          <label>Qualification / diplôme</label>
+          <input id="verif-qualification-file" type="file" accept=".pdf,image/*" style="width:100%">
+          ${v.qualification_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+        </div>
+        <div class="doc-box">
+          <label>Assurance / carte pro</label>
+          <input id="verif-insurance-file" type="file" accept=".pdf,image/*" style="width:100%">
+          ${v.insurance_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+        </div>
+      </div>
+
+      ${v.admin_note?`<div style="margin-top:12px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:12px;font-size:13px;color:#9A3412"><strong>Note admin :</strong> ${escapeHTML(v.admin_note)}</div>`:''}
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="submit-btn" onclick="submitArtisanVerification()" style="max-width:250px">Envoyer mes documents</button>
+      </div>
+    </div>
+  `;
+}
+
+async function submitArtisanVerification(){
+  if(!currentUser) return;
+  try{
+    const company_name=(document.getElementById('verif-company-name')?.value||'').trim();
+    const siren=(document.getElementById('verif-siren')?.value||'').trim();
+    if(!company_name || !siren){
+      showToast('⚠️ Nom entreprise et SIREN requis','error');
+      return;
+    }
+    const identityFile=document.getElementById('verif-identity-file')?.files?.[0];
+    const businessFile=document.getElementById('verif-business-file')?.files?.[0];
+    const qualificationFile=document.getElementById('verif-qualification-file')?.files?.[0];
+    const insuranceFile=document.getElementById('verif-insurance-file')?.files?.[0];
+
+    const payload={
+      user_id:currentUser.id,
+      company_name,
+      siren,
+      verification_status:'en_revision',
+      updated_at:new Date().toISOString()
+    };
+
+    if(identityFile) payload.identity_doc_url=await fileToBase64(identityFile);
+    if(businessFile) payload.business_doc_url=await fileToBase64(businessFile);
+    if(qualificationFile) payload.qualification_doc_url=await fileToBase64(qualificationFile);
+    if(insuranceFile) payload.insurance_doc_url=await fileToBase64(insuranceFile);
+
+    const existing=currentProfile?.verification_record||{};
+    ['identity_doc_url','business_doc_url','qualification_doc_url','insurance_doc_url'].forEach(k=>{
+      if(!payload[k] && existing[k]) payload[k]=existing[k];
+    });
+
+    const {error}=await db.from('artisan_verifications').upsert(payload,{onConflict:'user_id'});
+    if(error) throw error;
+
+    await loadProfile();
+    loadProfileContent();
+    if(isAdmin()) loadAdminDashboard();
+    showToast('✅ Documents envoyés pour vérification','success');
+  }catch(e){
+    console.error(e);
+    showToast('❌ Vérification impossible. Vérifie la table artisan_verifications.','error');
+  }
+}
+
+
+async function loadArtisanDashboard(){
+  const box=document.getElementById('artisan-content');
+  if(!box) return;
+  box.innerHTML=`<div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace artisan...</p></div>`;
+  try{
+    const [{data:available},{data:myResponses},{data:missions},{data:myReviews}] = await Promise.all([
+      db.from('annonces').select('id,categorie,ville,budget,delai,statut,created_at,user_id,selected_artisan_id').eq('statut','ouvert').neq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50),
+      db.from('reponses').select('id,annonce_id,message,created_at,status,annonces(id,categorie,ville,budget,statut)').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
+      db.from('annonces').select('id,categorie,ville,budget,delai,statut,created_at,selected_artisan_id').eq('selected_artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
+      db.from('reviews').select('*').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
+      db.from('missions').select('id,total_amount,status,mission_type,annonce_id,created_at').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100)
+    ]);
+
+    const respondedIds=new Set((myResponses||[]).map(r=>r.annonce_id));
+    const availableFiltered=(available||[]).filter(a=>!respondedIds.has(a.id));
+    const avg=myReviews&&myReviews.length ? (myReviews.reduce((s,r)=>s+(Number(r.rating)||0),0)/myReviews.length).toFixed(1) : null;
+
+    const artisanRecord = currentProfile?.artisan_record || null;
+    const payoutStatus = artisanRecord?.payout_status || null;
+    const stripeBlock = (payoutStatus !== 'active') ? `
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:800;margin-bottom:4px">💳 Recevoir vos paiements</div>
+          <div style="font-size:13px;color:var(--ink3)">Connectez votre compte Stripe pour recevoir les paiements de vos missions. ${getStripeStatusBadge(artisanRecord)}</div>
+        </div>
+        <button onclick="connectStripeForArtisan()" style="background:var(--accent);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">Connecter Stripe →</button>
+      </div>` : `
+      <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">✅</span>
+        <div style="font-size:13px;font-weight:700;color:#166534">Stripe connecté — vous pouvez recevoir des paiements.</div>
+      </div>`;
+
+    box.innerHTML=`
+      ${stripeBlock}
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px">
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px"><div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Annonces ouvertes</div><div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${availableFiltered.length}</div></div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px"><div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Mes candidatures</div><div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${(myResponses||[]).length}</div></div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px"><div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Mes missions</div><div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${(missions||[]).length}</div></div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px"><div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Note moyenne</div><div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${avg?avg+' / 5':'—'}</div></div>
+      </div>
+
+      <div style="display:grid;gap:18px">
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">📥 Annonces disponibles</div>
+          ${availableFiltered.length?availableFiltered.map(a=>`<div style="padding:12px 0;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><div style="font-weight:700">${escapeHTML(a.categorie||'Travaux')} — ${escapeHTML(a.ville||'')}</div><div style="font-size:12px;color:var(--ink3)">Budget: ${escapeHTML(formatBudget(a.budget))} · Délai: ${escapeHTML(a.delai||'Flexible')}</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="showAnnonceDetail('${a.id}')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Voir</button></div></div></div>`).join(''):`<div class="empty-state"><p>Aucune annonce ouverte pour le moment.</p></div>`}
+        </div>
+
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">💬 Mes candidatures</div>
+          ${(myResponses||[]).length?myResponses.map(r=>`<div style="padding:12px 0;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px"><div style="font-weight:700">${escapeHTML(r.annonces?.categorie||'Travaux')} — ${escapeHTML(r.annonces?.ville||'')}</div><div>${r.status==='accepted' ? '<span class="small-badge badge-accepted">Acceptée</span>' : r.status==='rejected' ? '<span class="small-badge badge-rejected">Refusée</span>' : '<span class="small-badge badge-pending">En attente</span>'}</div></div><div style="font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:8px">${escapeHTML(r.message||'')}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="showAnnonceDetail('${r.annonce_id}')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Voir l'annonce</button></div></div>`).join(''):`<div class="empty-state"><p>Aucune candidature envoyée.</p></div>`}
+        </div>
+
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">🧰 Mes missions acceptées</div>
+          ${(missions||[]).length?missions.map(a=>`<div style="padding:12px 0;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><div style="font-weight:700">${escapeHTML(a.categorie||'Travaux')} — ${escapeHTML(a.ville||'')}</div><div style="font-size:12px;color:var(--ink3)">Statut: ${escapeHTML(a.statut||'en-cours')} · Budget: ${escapeHTML(a.budget||'À définir')}</div></div><div><button onclick="showAnnonceDetail('${a.id}')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Voir</button></div></div></div>`).join(''):`<div class="empty-state"><p>Aucune mission sélectionnée pour le moment.</p></div>`}
+        </div>
+
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">⭐ Avis reçus</div>
+          ${(myReviews||[]).length?myReviews.map(r=>`<div style="padding:12px 0;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div style="font-weight:700">${'★'.repeat(Math.max(1,Math.min(5,r.rating||0)))}${'☆'.repeat(5-Math.max(1,Math.min(5,r.rating||0)))}</div><div style="font-size:12px;color:var(--ink3)">${timeAgo(r.created_at)}</div></div><div style="font-size:13px;color:var(--ink2);line-height:1.6;margin-top:6px">${escapeHTML(r.comment||'')}</div></div>`).join(''):`<div class="empty-state"><p>Pas encore d'avis.</p></div>`}
+        </div>
+      </div>
+    `;
+  }catch(e){
+    console.error(e);
+    box.innerHTML=`<div class="empty-state"><div class="empty-icon">❌</div><p>Erreur artisan: ${escapeHTML(e.message||'inconnue')}</p></div>`;
+  }
+}
+
+async function submitReview(annonceId,artisanId){
+  if(!currentUser) return;
+  const rating=Number(document.getElementById('review-rating')?.value||0);
+  const comment=(document.getElementById('review-comment')?.value||'').trim();
+  if(!rating){showToast('⚠️ Choisissez une note','error');return;}
+  try{
+    const payload={annonce_id:annonceId,artisan_id:artisanId,client_id:currentUser.id,rating,comment};
+    const {error}=await db.from('reviews').insert([payload]);
+    if(error) throw error;
+    showToast('✅ Avis publié','success');
+    showAnnonceDetail(annonceId);
+    if(isArtisanRole()) loadArtisanDashboard();
+  }catch(e){
+    console.error(e);
+    showToast("❌ Impossible de publier l'avis",'error');
+  }
+}
+
+async function adminReviewVerification(userId,status){
+  if(!isAdmin()) return;
+  const note=prompt("Note admin (optionnelle) :", "");
+  try{
+    const payload={verification_status:status,reviewed_at:new Date().toISOString(),admin_note:note||null};
+    const {error}=await db.from('artisan_verifications').update(payload).eq('user_id',userId);
+    if(error) throw error;
+    showToast('✅ Vérification mise à jour','success');
+    loadAdminDashboard();
+  }catch(e){
+    console.error(e);
+    showToast('❌ Mise à jour impossible','error');
+  }
+}
+
+function switchDashTab(tab){
+  if(tab==='admin'&&!isAdmin()){
+    showToast("⛔ Accès admin refusé",'error');
+    return;
+  }
+  document.querySelectorAll('.dash-tab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.tab===tab);
+  });
+  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('panel-'+tab);
+  if(panel) panel.classList.add('active');
+}
+
+
+async function loadAdminDashboard(){
+  const box=document.getElementById('admin-content');
+  if(!box)return;
+  box.innerHTML=`<div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement des données admin...</p></div>`;
+  try{
+    const [
+      profilesRes,
+      annoncesRes,
+      reponsesRes,
+      verificationsRes
+    ] = await Promise.all([
+      db.from('profiles').select('id,nom,telephone,role,created_at').order('created_at',{ascending:false}).limit(100),
+      db.from('annonces').select('id,categorie,ville,budget,statut,created_at,user_id').order('created_at',{ascending:false}).limit(100),
+      db.from('reponses').select('id,annonce_id,artisan_id,message,created_at,status').order('created_at',{ascending:false}).limit(100),
+      db.from('artisan_verifications').select('*').order('updated_at',{ascending:false}).limit(100)
+    ]);
+
+    const profiles=profilesRes.data||[];
+    const annonces=annoncesRes.data||[];
+    const reponses=reponsesRes.data||[];
+    const verifications=verificationsRes.data||[];
+
+    box.innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px">
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Utilisateurs</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${profiles.length}</div>
+        </div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Annonces</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${annonces.length}</div>
+        </div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Candidatures</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${reponses.length}</div>
+        </div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Vérifications artisan</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${verifications.length}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;gap:18px">
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">👥 Derniers utilisateurs</div>
+          ${profiles.length?profiles.map(p=>`
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--border)">
+              <div>
+                <div style="font-weight:700">${escapeHTML(p.nom||'Sans nom')}</div>
+                <div style="font-size:12px;color:var(--ink3)">${escapeHTML(p.role||'client')} · ${escapeHTML(p.telephone||'Sans téléphone')}</div>
+              </div>
+              <div style="font-size:12px;color:var(--ink3)">${timeAgo(p.created_at)}</div>
+            </div>`).join(''):`<div class="empty-state"><p>Aucun utilisateur</p></div>`}
+        </div>
+
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">📋 Dernières annonces</div>
+          ${annonces.length?annonces.map(a=>`
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--border)">
+              <div>
+                <div style="font-weight:700">${escapeHTML(a.categorie||'Travaux')} — ${escapeHTML(a.ville||'')}</div>
+                <div style="font-size:12px;color:var(--ink3)">Budget: ${escapeHTML(formatBudget(a.budget))} · Statut: ${escapeHTML(a.statut||'ouvert')}</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+                <button onclick="showAnnonceDetail('${a.id}')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Voir</button>
+                <button onclick="adminSetAnnonceStatus('${a.id}','termine')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Terminer</button>
+                <button onclick="adminDeleteAnnonce('${a.id}')" style="background:#fff0eb;border:1.5px solid #ffd4c7;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:var(--accent)">Supprimer</button>
+              </div>
+            </div>`).join(''):`<div class="empty-state"><p>Aucune annonce</p></div>`}
+        </div>
+
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">🛡️ Vérifications artisan</div>
+          ${verifications.length?verifications.map(v=>`
+            <div style="padding:12px 0;border-top:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+                <div>
+                  <div style="font-weight:700">${escapeHTML(v.company_name||'Entreprise sans nom')}</div>
+                  <div style="font-size:12px;color:var(--ink3)">SIREN: ${escapeHTML(v.siren||'Non renseigné')} · User: ${escapeHTML(v.user_id||'')}</div>
+                </div>
+                <div>${verificationBadgeHtml(v.verification_status||'non_verifie')}</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+                ${v.identity_doc_url?'<span class="small-badge badge-review">Pièce ID</span>':''}
+                ${v.business_doc_url?'<span class="small-badge badge-review">Kbis/RNE</span>':''}
+                ${v.qualification_doc_url?'<span class="small-badge badge-review">Qualification</span>':''}
+                ${v.insurance_doc_url?'<span class="small-badge badge-review">Assurance</span>':''}
+              </div>
+              ${v.admin_note?`<div style="font-size:12px;color:var(--ink2);margin-bottom:8px"><strong>Note:</strong> ${escapeHTML(v.admin_note)}</div>`:''}
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button onclick="adminReviewVerification('${v.user_id}','verifie')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">✅ Valider</button>
+                <button onclick="adminReviewVerification('${v.user_id}','complement_requis')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">🟡 Complément</button>
+                <button onclick="adminReviewVerification('${v.user_id}','refuse')" style="background:#fff0eb;border:1.5px solid #ffd4c7;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:var(--accent)">❌ Refuser</button>
+              </div>
+            </div>`).join(''):`<div class="empty-state"><p>Aucune vérification artisan</p></div>`}
+        </div>
+
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">💬 Dernières candidatures</div>
+          ${reponses.length?reponses.map(r=>`
+            <div style="padding:12px 0;border-top:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+                <div style="font-weight:700">Annonce ${escapeHTML(r.annonce_id||'')}</div>
+                <div style="display:flex;gap:8px;align-items:center">${r.status==='accepted' ? '<span class="small-badge badge-accepted">Acceptée</span>' : r.status==='rejected' ? '<span class="small-badge badge-rejected">Refusée</span>' : '<span class="small-badge badge-pending">En attente</span>'}<div style="font-size:12px;color:var(--ink3)">${timeAgo(r.created_at)}</div></div>
+              </div>
+              <div style="font-size:13px;color:var(--ink2);line-height:1.6">${escapeHTML((r.message||'').slice(0,160))}</div>
+            </div>`).join(''):`<div class="empty-state"><p>Aucune candidature</p></div>`}
+        </div>
+      </div>
+    `;
+  }catch(e){
+    box.innerHTML=`<div class="empty-state"><div class="empty-icon">❌</div><p>Erreur admin: ${escapeHTML(e.message||'inconnue')}</p></div>`;
+  }
+}
+
+async function adminSetAnnonceStatus(annonceId,statut){
+  if(!isAdmin()) return;
+  const {error}=await db.from('annonces').update({statut}).eq('id',annonceId);
+  if(error){showToast('❌ Impossible de modifier le statut','error');return;}
+  showToast('✅ Statut mis à jour','success');
+  loadMesAnnonces();
+  loadAdminDashboard();
+}
+
+async function adminDeleteAnnonce(annonceId){
+  if(!isAdmin()) return;
+  if(!confirm('Supprimer cette annonce ?')) return;
+  const {error}=await db.from('annonces').delete().eq('id',annonceId);
+  if(error){showToast('❌ Suppression impossible','error');return;}
+  showToast('🗑️ Annonce supprimée','success');
+  loadMesAnnonces();
+  loadAdminDashboard();
+}
+
+function escapeHTML(str=''){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+async function loadStats(){
+  try{
+    const{count:ca}=await db.from('annonces').select('*',{count:'exact',head:true});
+    const{count:cb}=await db.from('artisans').select('*',{count:'exact',head:true});
+    if(ca!==null)document.getElementById('stat-annonces').textContent=ca+'+';
+    if(cb!==null)document.getElementById('stat-artisans').textContent=cb+'+';
+  }catch(e){}
+}
+
+function previewPhotos(input){
+  photoFiles=Array.from(input.files).slice(0,5);
+  const preview=document.getElementById('photo-preview');
+  preview.innerHTML=photoFiles.map(f=>`<img class="photo-thumb" src="${URL.createObjectURL(f)}">`).join('');
+}
+
+async function submitAnnonce(){
+  if(!currentUser){openModal();showToast('⚠️ Connectez-vous pour publier une annonce','error');return;}
+  const description=document.getElementById('f-description').value;
+  const budget=document.getElementById('f-budget').value;
+  const ville=document.getElementById('f-ville').value;
+  const delai=document.getElementById('f-delai').value;
+  const telephone=document.getElementById('f-telephone').value;
+  const email=document.getElementById('f-email').value;
+  const rgpd=document.getElementById('post-rgpd').checked;
+  if(!description||!ville||!telephone){showToast('⚠️ Remplissez les champs obligatoires','error');return;}
+  if(!isFrenchPhone(telephone)){
+    setFieldState(document.getElementById('f-telephone'),'f-tel-error',false);
+    showToast('⚠️ Numéro de téléphone français invalide','error');return;
+  }
+  if(email && !isValidEmail(email)){
+    setFieldState(document.getElementById('f-email'),'f-email-error',false);
+    showToast('⚠️ Adresse email invalide','error');return;
+  }
+  if(!rgpd){showToast('⚠️ Acceptez la politique de confidentialité','error');return;}
+  const btn=document.getElementById('submit-annonce');
+  btn.disabled=true;btn.textContent='Publication en cours...';
+  let photosData=[];
+  for(const file of photoFiles){const b=await fileToBase64(file);photosData.push(b);}
+  const{error}=await db.from('annonces').insert([{
+    categorie:selectedCatValue||'Autre',description,budget,ville,delai,telephone,email,
+    photos:photosData.length>0?photosData:null,
+    user_id:currentUser?.id||null,statut:'ouvert'
+  }]);
+  if(error){showToast('❌ Erreur','error');btn.disabled=false;btn.textContent='Publier mon annonce gratuitement →';return;}
+  document.getElementById('post-form').style.display='none';
+  document.getElementById('success-annonce').classList.add('show');
+  showToast('✅ Annonce publiée !','success');
+  btn.disabled=false;btn.textContent='Publier mon annonce gratuitement →';
+}
+
+function fileToBase64(file){return new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(file);});}
+
+function selectCat(el,cat){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');selectedCatValue=cat;
+}
+
+function timeAgo(date){
+  const diff=Math.floor((new Date()-new Date(date))/1000);
+  if(diff<60)return"À l'instant";
+  if(diff<3600)return"Il y a "+Math.floor(diff/60)+"min";
+  if(diff<86400)return"Il y a "+Math.floor(diff/3600)+"h";
+  return"Il y a "+Math.floor(diff/86400)+"j";
+}
+
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+type;
+  setTimeout(()=>t.className='toast',3500);
+}
+
+document.getElementById('auth-modal')?.addEventListener('click',(e)=>{
+  if(e.target.id==='auth-modal') closeModal();
+});
+document.getElementById('mission-modal')?.addEventListener('click',(e)=>{
+  if(e.target.id==='mission-modal') closeMissionSetup();
+});
+
+/* ── Validation téléphone français & email ── */
+function isFrenchPhone(val){
+  const clean=val.replace(/[\s.\-()]/g,'');
+  // Accepte: 0XXXXXXXXX ou +33XXXXXXXXX ou 0033XXXXXXXXX
+  return /^(?:(?:\+|00)33|0)[1-9]\d{8}$/.test(clean);
+}
+
+function isValidEmail(val){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
+}
+
+function formatPhoneInput(input){
+  let v=input.value.replace(/\D/g,'');
+  if(v.startsWith('33') && v.length>2) v='0'+v.slice(2);
+  const parts=v.match(/^(\d{0,2})(\d{0,2})(\d{0,2})(\d{0,2})(\d{0,2})$/);
+  if(parts) input.value=[parts[1],parts[2],parts[3],parts[4],parts[5]].filter(Boolean).join(' ').trim();
+}
+
+function setFieldState(input, errorId, valid){
+  input.classList.toggle('valid', valid);
+  input.classList.toggle('error', !valid);
+  const msg=document.getElementById(errorId);
+  if(msg) msg.classList.toggle('show', !valid);
+}
+
+function validatePhoneField(input, errorId){
+  if(!input.value.trim()) return resetField(input, errorId);
+  setFieldState(input, errorId, isFrenchPhone(input.value));
+}
+
+function validateEmailField(input, errorId){
+  if(!input.value.trim()) return resetField(input, errorId);
+  setFieldState(input, errorId, isValidEmail(input.value));
+}
+
+function resetField(input, errorId){
+  input.classList.remove('valid','error');
+  const msg=document.getElementById(errorId);
+  if(msg) msg.classList.remove('show');
+}
+
+/* ── Filtres catégories & recherche ── */
+function setupCategoryFilters(){
+  document.querySelectorAll('.search-cats .cat-pill').forEach(pill=>{
+    pill.addEventListener('click',function(){
+      this.closest('.search-cats').querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+      this.classList.add('active');
+      const val=this.textContent.trim();
+      browseFilters.categorie=(val==='Tous')?'':val.replace(/^[^\w\u00C0-\u017E]+/,'').trim();
+      loadAnnonces(document.getElementById('browse')?.classList.contains('active')?'browse':'home');
+    });
+  });
+}
+
+function applySearchFromHome(){
+  browseFilters.categorie=(document.getElementById('home-search-categorie')?.value||'').trim();
+  browseFilters.ville=(document.getElementById('home-search-ville')?.value||'').trim();
+  showPage('browse');
+}
+
+function applySearchFromBrowse(){
+  browseFilters.categorie=(document.getElementById('browse-search-categorie')?.value||'').trim();
+  browseFilters.ville=(document.getElementById('browse-search-ville')?.value||'').trim();
+  loadAnnonces('browse');
+}
+
+/* ── Formatage budget texte libre ── */
+function formatBudget(val){
+  if(!val||String(val).trim()==='') return 'À définir';
+  const s=String(val).trim();
+  return /€/.test(s) ? s : s+' €';
+}
+
+document.addEventListener('DOMContentLoaded', init);
+/* Stripe step 1 patch for current working index.html */
+
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TJZObK2IJwjiIORGPCaZwxpdw5hDtHTy9b3Bmsl92WkvoxPFqcTXhRSVou5E93qPGMQ0Hgt0oyyVYIA3TDja1md00ZTygh8Iz ';
+
+async function apiPost(path, payload = {}) {
+  const tokenData = await db.auth.getSession();
+  const accessToken = tokenData?.data?.session?.access_token;
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+    },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+function getStripeStatusBadge(artisan) {
+  if (!artisan) return '<span class="meta">Stripe: non connecté</span>';
+  if (artisan.payout_status === 'active') return '<span class="meta">✅ Stripe connecté</span>';
+  if (artisan.payout_status === 'pending_onboarding') return '<span class="meta">🟡 Stripe onboarding</span>';
+  return '<span class="meta">⚪ Stripe non finalisé</span>';
+}
+
+async function connectStripeForArtisan() {
+  showToast('Connexion Stripe en cours...');
+  let created = await apiPost('/api/create-connect-account');
+  if (created.error) {
+    showToast(`❌ ${created.error}`, 'error');
+    return;
+  }
+  let link = await apiPost('/api/create-connect-onboarding-link');
+  if (link.error || !link.url) {
+    showToast(`❌ ${link.error || 'Lien Stripe introuvable'}`, 'error');
+    return;
+  }
+  window.location.href = link.url;
+}
+
+async function payMilestone(milestoneId) {
+  const result = await apiPost('/api/create-checkout-session', {
+    milestone_id: milestoneId
+  });
+  if (result.error) {
+    showToast(`❌ ${result.error}`, 'error');
+    return;
+  }
+  if (result.url) {
+    window.location.href = result.url;
+  }
+}
+
+async function releaseMilestone(milestoneId) {
+  const result = await apiPost('/api/release-milestone', {
+    milestone_id: milestoneId
+  });
+  if (result.error) {
+    showToast(`❌ ${result.error}`, 'error');
+    return;
+  }
+  showToast('✅ Paiement libéré à l\'artisan', 'success');
+  if (typeof showPage === 'function') showPage('dashboard');
+}
+
+function renderMilestonePaymentButtons(milestone, isClientOwner) {
+  let html = '';
+  if (isClientOwner && milestone.status === 'awaiting_payment') {
+    html += `<button class="small-btn primary" onclick="payMilestone('${milestone.id}')">💳 Payer l'étape</button>`;
+  }
+  if (isClientOwner && milestone.status === 'paid_locked') {
+    html += `<button class="small-btn" onclick="releaseMilestone('${milestone.id}')">✅ Valider et libérer</button>`;
+  }
+  if (milestone.status === 'released') {
+    html += `<span class="meta">✅ Paiement versé</span>`;
+  }
+  return html;
+}
+
+
+</script>
+</body>
+</html>
