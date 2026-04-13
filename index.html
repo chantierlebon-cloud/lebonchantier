@@ -2139,7 +2139,10 @@ async function connectStripeForArtisan() {
     showToast(`❌ ${created.error}`, 'error');
     return;
   }
-  let link = await apiPost('/api/create-connect-onboarding-link');
+  // Passe le stripe_account_id du step 1 directement au step 2 (filet de sécurité si la DB était lente)
+  let link = await apiPost('/api/create-connect-onboarding-link', {
+    stripe_account_id: created.stripe_account_id || null
+  });
   if (link.error || !link.url) {
     showToast(`❌ ${link.error || 'Lien Stripe introuvable'}`, 'error');
     return;

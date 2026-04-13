@@ -39,10 +39,15 @@ module.exports = async (req, res) => {
       metadata: { user_id: user.id, platform: 'LeBonChantier' }
     });
 
-    await supabase
+    const { error: updateError } = await supabase
       .from('artisans')
       .update({ stripe_account_id: account.id, payout_status: 'pending_onboarding' })
       .eq('user_id', user.id);
+
+    if (updateError) {
+      console.error('Supabase update error:', updateError);
+      return res.status(500).json({ error: `DB update failed: ${updateError.message}` });
+    }
 
     return res.status(200).json({ stripe_account_id: account.id, already_exists: false });
   } catch (error) {

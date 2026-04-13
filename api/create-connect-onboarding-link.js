@@ -13,18 +13,25 @@ module.exports = async (req, res) => {
     const supabase = getSupabaseAdmin();
     const siteUrl = getEnv('SITE_URL');
 
-    const { data: artisan } = await supabase
-      .from('artisans')
-      .select('stripe_account_id')
-      .eq('user_id', user.id)
-      .single();
+    // Accepte stripe_account_id depuis le body (passé par le client depuis le step 1)
+    // ou le relit depuis la base en fallback
+    let stripeAccountId = req.body?.stripe_account_id || null;
 
-    if (!artisan?.stripe_account_id) {
+    if (!stripeAccountId) {
+      const { data: artisan } = await supabase
+        .from('artisans')
+        .select('stripe_account_id')
+        .eq('user_id', user.id)
+        .single();
+      stripeAccountId = artisan?.stripe_account_id || null;
+    }
+
+    if (!stripeAccountId) {
       return res.status(400).json({ error: 'Create Stripe account first' });
     }
 
     const link = await stripe.accountLinks.create({
-      account: artisan.stripe_account_id,
+      account: stripeAccountId,
       refresh_url: `${siteUrl}/?stripe_refresh=1`,
       return_url: `${siteUrl}/?stripe_return=1`,
       type: 'account_onboarding'
