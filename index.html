@@ -594,13 +594,15 @@ const{createClient}=supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_KEY);
 let currentUser=null,currentProfile=null,selectedCatValue='',selectedRole='client',photoFiles=[],currentMissionAnnonceId=null;
 let browseFilters={categorie:'',ville:''};
+let currentAccessToken=null;
 const ADMIN_EMAILS=['sarkissiannar707@gmail.com'];
 
 
 async function init(){
   const{data:{session}}=await db.auth.getSession();
-  if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();}
+  if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();}
   db.auth.onAuthStateChange(async(event,session)=>{
+    currentAccessToken=session?.access_token||null;
     if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');}
     else{currentUser=null;currentProfile=null;updateNav(false);updateDashboardUI();}
   });
@@ -2108,13 +2110,15 @@ document.addEventListener('DOMContentLoaded', init);
 const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TJZObK2IJwjiIORGPCaZwxpdw5hDtHTy9b3Bmsl92WkvoxPFqcTXhRSVou5E93qPGMQ0Hgt0oyyVYIA3TDja1md00ZTygh8Iz ';
 
 async function apiPost(path, payload = {}) {
-  const tokenData = await db.auth.getSession();
-  const accessToken = tokenData?.data?.session?.access_token;
+  if (!currentAccessToken) {
+    console.error('apiPost: aucun token disponible pour', path);
+    return { error: 'Non authentifié. Veuillez vous reconnecter.' };
+  }
   const res = await fetch(path, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+      'Authorization': `Bearer ${currentAccessToken}`
     },
     body: JSON.stringify(payload)
   });
