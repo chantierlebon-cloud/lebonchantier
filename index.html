@@ -835,16 +835,20 @@ async function showAnnonceDetail(id){
   const photosHtml=a.photos&&a.photos.length>0?`<div class="photos-grid">${a.photos.map(p=>`<img src="${p}" alt="photo">`).join('')}</div>`:'';
   const verificationStatus=currentProfile?.verification_status||'non_verifie';
   const canApply=isArtisan&&verificationStatus!=='suspendu';
+  const alreadyApplied=isArtisan&&(reponses||[]).some(r=>r.artisan_id===currentUser?.id);
   const verificationHint=isArtisan&&verificationStatus!=='verifie'
     ? `<div style="font-size:12px;color:var(--ink3);margin-bottom:10px">ℹ️ Votre profil artisan n'est pas encore vérifié. Vous pouvez postuler, mais l'admin devra valider vos documents.</div>`
     : '';
-  const repondreHtml=canApply&&!isOwner&&a.statut==='ouvert'?`
-    <div class="repondre-box">
+  const repondreHtml=canApply&&!isOwner&&a.statut==='ouvert'
+    ? alreadyApplied
+      ? `<div class="repondre-box"><p style="font-size:14px;color:var(--green);font-weight:600;text-align:center">✅ Vous avez déjà envoyé une candidature pour cette annonce.</p></div>`
+      : `<div class="repondre-box">
       <h3>💬 Envoyer ma candidature</h3>
       ${verificationHint}
       <textarea class="f-textarea" id="reponse-msg" placeholder="Présentez-vous et décrivez votre approche..."></textarea>
       <button class="submit-btn" id="btn-envoyer-reponse" onclick="envoyerReponse('${id}','${a.email||''}','${a.categorie||''}','${a.ville||''}','${a.user_id||''}')">Envoyer ma candidature →</button>
-    </div>`:'';
+    </div>`
+    :'';
   const reponsesHtml=isOwner&&reponses&&reponses.length>0?`
     <div style="margin-top:24px">
       <h3 style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px">💬 ${reponses.length} candidature${reponses.length>1?'s':''}</h3>
@@ -1165,8 +1169,17 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
 
   // Désactiver le bouton pendant l'envoi
   const btn=document.getElementById('btn-envoyer-reponse');
-  if(btn){btn.disabled=true;btn.textContent='Envoi en cours...';}
+  if(btn){btn.disabled=true;btn.textContent='Vérification...';}
 
+  // Vérifier si une candidature existe déjà pour cette annonce
+  const{data:existing}=await db.from('reponses').select('id').eq('annonce_id',annonceId).eq('artisan_id',currentUser.id).maybeSingle();
+  if(existing){
+    showToast('⚠️ Vous avez déjà postulé à cette annonce','error');
+    if(btn){btn.disabled=false;btn.textContent='Envoyer ma candidature →';}
+    return;
+  }
+
+  if(btn) btn.textContent='Envoi en cours...';
   const{error}=await db.from('reponses').insert([{
     annonce_id:annonceId,artisan_id:currentUser.id,message:msg,status:'pending'
   }]);
