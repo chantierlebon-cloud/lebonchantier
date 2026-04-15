@@ -860,13 +860,13 @@ async function showAnnonceDetail(id){
           ? '<span class="small-badge badge-verified" style="margin-left:8px">Artisan vérifié</span>'
           : '<span class="small-badge badge-review" style="margin-left:8px">Non vérifié</span>';
         return `
-        <div class="reponse-item">
+        <div class="reponse-item" id="reponse-item-${r.id}" data-response-id="${r.id}" data-artisan-id="${r.artisan_id}" data-annonce-id="${id}" data-status="${responseStatus}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-            <div class="reponse-artisan">🔨 ${escapeHTML(artisansMap[r.artisan_id]?.nom||'Artisan')} — ${escapeHTML(artisansMap[r.artisan_id]?.specialite||'')}</div>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${statusBadge}${verificationBadge}<div class="reponse-date">${timeAgo(r.created_at)}</div></div>
+            <div class="reponse-artisan" id="reponse-artisan-name-${r.id}">🔨 ${escapeHTML(artisansMap[r.artisan_id]?.nom||'Artisan')} — ${escapeHTML(artisansMap[r.artisan_id]?.specialite||'')}</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="reponse-status-badge-${r.id}">${statusBadge}</span>${verificationBadge}<div class="reponse-date">${timeAgo(r.created_at)}</div></div>
           </div>
           <div class="reponse-msg">${escapeHTML(r.message||'')}</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <div id="reponse-actions-${r.id}" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
             ${a.statut==='ouvert'&&responseStatus!=='accepted'?`<button class="choisir-btn" onclick="choisirArtisan('${id}','${r.artisan_id}','${r.id}')">✅ Accepter</button>`:''}
             ${responseStatus!=='rejected'&&a.statut==='ouvert'?`<button class="submit-btn" onclick="ownerSetResponseStatus('${r.id}','rejected')" style="max-width:180px;background:#fff;color:var(--ink);border:1.5px solid var(--border)">❌ Refuser</button>`:''}
             ${responseStatus==='rejected'&&a.statut==='ouvert'?`<button class="submit-btn" onclick="ownerSetResponseStatus('${r.id}','pending')" style="max-width:180px;background:#fff;color:var(--ink);border:1.5px solid var(--border)">↩️ Remettre en attente</button>`:''}
@@ -908,9 +908,13 @@ async function showAnnonceDetail(id){
     }
   }
 
-  document.getElementById('detail-content').dataset.currentAnnonceId=id;
-  document.getElementById('detail-content').innerHTML=`
-    <span class="statut-badge statut-${a.statut||'ouvert'}" style="display:inline-block;margin-bottom:16px">${a.statut==='ouvert'?'🟢 Ouvert':a.statut==='en-cours'?'🔵 En cours':'✅ Terminé'}</span>
+  const detailEl=document.getElementById('detail-content');
+  detailEl.dataset.currentAnnonceId=id;
+  detailEl.dataset.statut=a.statut||'ouvert';
+  detailEl.dataset.categorie=a.categorie||'';
+  detailEl.dataset.ville=a.ville||'';
+  detailEl.innerHTML=`
+    <span id="detail-statut-badge" class="statut-badge statut-${a.statut||'ouvert'}" style="display:inline-block;margin-bottom:16px">${a.statut==='ouvert'?'🟢 Ouvert':a.statut==='en-cours'?'🔵 En cours':'✅ Terminé'}</span>
     <h1 style="font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,32px);font-weight:900;letter-spacing:-0.5px;margin-bottom:16px">${a.categorie||'Travaux'} — ${a.ville||''}</h1>
     <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:${chatBtnHtml?'12px':'20px'}">
       <span class="meta">📍 ${a.ville||'Non précisé'}</span>
@@ -1211,24 +1215,29 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
 }
 
 async function choisirArtisan(annonceId,artisanId,responseId=null){
+  // Lire le nom artisan et les métadonnées annonce depuis le DOM (évite 2 requêtes DB)
+  const artisanNameEl=responseId?document.getElementById(`reponse-artisan-name-${responseId}`):null;
+  const artisanNom=artisanNameEl?artisanNameEl.textContent.replace(/^🔨\s*/,'').split(' — ')[0].trim():'Artisan';
+  const detailEl=document.getElementById('detail-content');
+  const categorie=detailEl?.dataset?.categorie||'';
+  const ville=detailEl?.dataset?.ville||'';
   try{
-    const {error:annonceError}=await db.from('annonces').update({statut:'en-cours',selected_artisan_id:artisanId}).eq('id',annonceId);
-    if(annonceError) throw annonceError;
-    await db.from('reponses').update({status:'rejected'}).eq('annonce_id',annonceId);
+    // Écriture en parallèle : mise à jour annonce + refus de toutes les candidatures
+    const [annonceRes]=await Promise.all([
+      db.from('annonces').update({statut:'en-cours',selected_artisan_id:artisanId}).eq('id',annonceId),
+      db.from('reponses').update({status:'rejected'}).eq('annonce_id',annonceId)
+    ]);
+    if(annonceRes.error) throw annonceRes.error;
+    // Puis accepter la candidature choisie
     if(responseId){
       await db.from('reponses').update({status:'accepted'}).eq('id',responseId);
     }else{
       await db.from('reponses').update({status:'accepted'}).eq('annonce_id',annonceId).eq('artisan_id',artisanId);
     }
     showToast('✅ Artisan accepté !','success');
-    showAnnonceDetail(annonceId);
-    loadMesAnnonces();
     updateCandidaturesBadge();
-    // Ouvrir le chat avec l'artisan sélectionné
-    const rep=(await db.from('reponses').select('artisans(nom)').eq('annonce_id',annonceId).eq('artisan_id',artisanId).maybeSingle()).data;
-    const artisanNom=rep?.artisans?.nom||'Artisan';
-    const ann=(await db.from('annonces').select('categorie,ville').eq('id',annonceId).single()).data;
-    openChat(annonceId, artisanId, artisanNom, `${ann?.categorie||''} — ${ann?.ville||''}`);
+    showAnnonceDetail(annonceId);
+    openChat(annonceId,artisanId,artisanNom,`${categorie} — ${ville}`);
   }catch(e){
     console.error(e);
     showToast('❌ Impossible de sélectionner cet artisan','error');
@@ -1236,16 +1245,34 @@ async function choisirArtisan(annonceId,artisanId,responseId=null){
 }
 
 async function ownerSetResponseStatus(responseId,status){
+  // Mise à jour DOM immédiate (optimistic)
+  const item=document.getElementById(`reponse-item-${responseId}`);
+  const annonceId=item?.dataset?.annonceId||'';
+  const artisanId=item?.dataset?.artisanId||'';
+  if(item){
+    item.dataset.status=status;
+    const badgeEl=document.getElementById(`reponse-status-badge-${responseId}`);
+    if(badgeEl) badgeEl.innerHTML=status==='accepted'
+      ?'<span class="small-badge badge-accepted">Acceptée</span>'
+      :status==='rejected'
+        ?'<span class="small-badge badge-rejected">Refusée</span>'
+        :'<span class="small-badge badge-pending">En attente</span>';
+    const actionsEl=document.getElementById(`reponse-actions-${responseId}`);
+    if(actionsEl) actionsEl.innerHTML=`
+      ${status!=='accepted'?`<button class="choisir-btn" onclick="choisirArtisan('${annonceId}','${artisanId}','${responseId}')">✅ Accepter</button>`:''}
+      ${status!=='rejected'?`<button class="submit-btn" onclick="ownerSetResponseStatus('${responseId}','rejected')" style="max-width:180px;background:#fff;color:var(--ink);border:1.5px solid var(--border)">❌ Refuser</button>`:''}
+      ${status==='rejected'?`<button class="submit-btn" onclick="ownerSetResponseStatus('${responseId}','pending')" style="max-width:180px;background:#fff;color:var(--ink);border:1.5px solid var(--border)">↩️ Remettre en attente</button>`:''}`;
+  }
   try{
     const {error}=await db.from('reponses').update({status}).eq('id',responseId);
     if(error) throw error;
     showToast(status==='rejected'?'❌ Candidature refusée':'↩️ Candidature remise en attente','success');
-    const currentDetailId=(document.querySelector('[data-current-annonce-id]')||{}).dataset?.currentAnnonceId;
-    if(currentDetailId) showAnnonceDetail(currentDetailId);
     updateCandidaturesBadge();
   }catch(e){
     console.error(e);
     showToast('❌ Action impossible','error');
+    // Rollback : re-charger le détail en cas d'erreur
+    if(annonceId) showAnnonceDetail(annonceId);
   }
 }
 
