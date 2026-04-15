@@ -816,7 +816,7 @@ async function showAnnonceDetail(id){
       <h3>💬 Envoyer ma candidature</h3>
       ${verificationHint}
       <textarea class="f-textarea" id="reponse-msg" placeholder="Présentez-vous et décrivez votre approche..."></textarea>
-      <button class="submit-btn" onclick="envoyerReponse('${id}','${a.email||''}','${a.categorie||''}','${a.ville||''}')">Envoyer ma candidature →</button>
+      <button class="submit-btn" id="btn-envoyer-reponse" onclick="envoyerReponse('${id}','${a.email||''}','${a.categorie||''}','${a.ville||''}','${a.user_id||''}')">Envoyer ma candidature →</button>
     </div>`:'';
   const reponsesHtml=isOwner&&reponses&&reponses.length>0?`
     <div style="margin-top:24px">
@@ -1127,28 +1127,60 @@ async function flagMissionStageIssue(stageId, annonceId, missionId){
   }
 }
 
-async function envoyerReponse(annonceId,clientEmail,categorie,ville){
+async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUserId){
   if(!currentUser){openModal();return;}
-  const msg=document.getElementById('reponse-msg').value;
+  const msg=(document.getElementById('reponse-msg')?.value||'').trim();
   if(!msg){showToast('⚠️ Écrivez un message','error');return;}
-  const{error}=await db.from('reponses').insert([{annonce_id:annonceId,artisan_id:currentUser.id,message:msg,status:'pending'}]);
-  if(error){showToast('❌ Erreur','error');return;}
-  if(clientEmail){
-    const artisanNom=currentProfile?.nom||'Un artisan';
-    await sendEmail(
-      clientEmail,
-      '🔨 Un artisan a répondu à votre annonce — LeBonChantier',
-      `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
-        <h2 style="color:#E63B00;font-family:sans-serif">Bonne nouvelle !</h2>
-        <p><strong>${artisanNom}</strong> a envoyé une candidature pour votre chantier <strong>${categorie} à ${ville}</strong>.</p>
-        <div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0">${msg}</div>
-        <a href="https://lebonchantier.fr" style="display:inline-block;background:#E63B00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">Voir la candidature →</a>
-        <p style="color:#999;font-size:12px;margin-top:24px">LeBonChantier.fr — Trouvez un artisan. Sans galère.</p>
-      </div>`
-    );
+
+  // Désactiver le bouton pendant l'envoi
+  const btn=document.getElementById('btn-envoyer-reponse');
+  if(btn){btn.disabled=true;btn.textContent='Envoi en cours...';}
+
+  const{error}=await db.from('reponses').insert([{
+    annonce_id:annonceId,artisan_id:currentUser.id,message:msg,status:'pending'
+  }]);
+
+  if(error){
+    showToast('❌ Erreur lors de l\'envoi : '+error.message,'error');
+    if(btn){btn.disabled=false;btn.textContent='Envoyer ma candidature →';}
+    return;
   }
-  showToast('✅ Candidature envoyée ! Le client a été notifié par email.','success');
-  showAnnonceDetail(annonceId);
+
+  // Récupérer l'email du client : priorité à a.email, sinon chercher dans profiles
+  let emailDest=clientEmail||'';
+  if(!emailDest && clientUserId){
+    const{data:profile}=await db.from('profiles').select('email').eq('id',clientUserId).maybeSingle();
+    emailDest=profile?.email||'';
+  }
+
+  // Envoyer l'email de notification
+  let emailEnvoye=false;
+  if(emailDest){
+    const artisanNom=currentProfile?.nom||'Un artisan';
+    try{
+      await sendEmail(
+        emailDest,
+        '🔨 Un artisan a répondu à votre annonce — LeBonChantier',
+        `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+          <h2 style="color:#E63B00">Bonne nouvelle !</h2>
+          <p><strong>${artisanNom}</strong> a envoyé une candidature pour votre chantier <strong>${escapeHTML(categorie)} à ${escapeHTML(ville)}</strong>.</p>
+          <div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0">${escapeHTML(msg)}</div>
+          <a href="https://lebonchantier.fr" style="display:inline-block;background:#E63B00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">Voir la candidature →</a>
+          <p style="color:#999;font-size:12px;margin-top:24px">LeBonChantier.fr — Trouvez un artisan. Sans galère.</p>
+        </div>`
+      );
+      emailEnvoye=true;
+    }catch(e){
+      console.warn('Email non envoyé:',e);
+    }
+  }
+
+  // Toast AVANT showAnnonceDetail pour qu'il soit visible
+  showToast(emailEnvoye ? '✅ Candidature envoyée ! Le client a été notifié.' : '✅ Candidature envoyée !','success');
+
+  // Attendre un court instant pour que le toast soit perceptible, puis recharger
+  await new Promise(r=>setTimeout(r,600));
+  await showAnnonceDetail(annonceId);
 }
 
 async function choisirArtisan(annonceId,artisanId,responseId=null){
@@ -1848,7 +1880,7 @@ async function submitAnnonce(){
   const telephone=document.getElementById('f-telephone').value;
   const email=document.getElementById('f-email').value;
   const rgpd=document.getElementById('post-rgpd').checked;
-  if(!description||!ville||!telephone){showToast('⚠️ Remplissez les champs obligatoires','error');return;}
+  if(!description||!ville||!telephone||!email){showToast('⚠️ Remplissez tous les champs obligatoires (description, ville, téléphone, email)','error');return;}
   if(!isFrenchPhone(telephone)){
     setFieldState(document.getElementById('f-telephone'),'f-tel-error',false);
     showToast('⚠️ Numéro de téléphone français invalide','error');return;
