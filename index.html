@@ -846,11 +846,16 @@ async function showAnnonceDetail(id){
         </div>`
       : alreadyApplied
         ? `<div class="repondre-box"><p style="font-size:14px;color:var(--green);font-weight:600;text-align:center">✅ Vous avez déjà envoyé une candidature pour cette annonce.</p></div>`
-        : `<div class="repondre-box">
-            <h3>💬 Envoyer ma candidature</h3>
-            <textarea class="f-textarea" id="reponse-msg" placeholder="Présentez-vous et décrivez votre approche..."></textarea>
-            <button class="submit-btn" id="btn-envoyer-reponse" onclick="envoyerReponse('${id}','${a.email||''}','${a.categorie||''}','${a.ville||''}','${a.user_id||''}')">Envoyer ma candidature →</button>
-          </div>`
+        : (()=>{
+            const maxQ=currentProfile?.artisan_record?.max_candidatures??5;
+            const usedQ=(reponses||[]).filter(r=>false).length; // sera compté en live dans envoyerReponse
+            return `<div class="repondre-box">
+              <h3>💬 Envoyer ma candidature</h3>
+              <div style="font-size:12px;color:var(--ink3);margin-bottom:10px">📊 Quota : <strong>${maxQ} candidature${maxQ>1?'s':''} gratuite${maxQ>1?'s':''}</strong> au total</div>
+              <textarea class="f-textarea" id="reponse-msg" placeholder="Présentez-vous et décrivez votre approche..."></textarea>
+              <button class="submit-btn" id="btn-envoyer-reponse" onclick="envoyerReponse('${id}','${a.email||''}','${a.categorie||''}','${a.ville||''}','${a.user_id||''}')">Envoyer ma candidature →</button>
+            </div>`;
+          })()
     :'';
   const reponsesHtml=isOwner&&reponses&&reponses.length>0?`
     <div style="margin-top:24px">
@@ -1177,6 +1182,15 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
   // Désactiver le bouton pendant l'envoi
   const btn=document.getElementById('btn-envoyer-reponse');
   if(btn){btn.disabled=true;btn.textContent='Vérification...';}
+
+  // Vérifier la limite max de candidatures de l'artisan
+  const maxCandidatures=currentProfile?.artisan_record?.max_candidatures??5;
+  const{count:totalSent}=await db.from('reponses').select('id',{count:'exact',head:true}).eq('artisan_id',currentUser.id);
+  if((totalSent||0)>=maxCandidatures){
+    showToast(`⚠️ Limite atteinte : vous avez utilisé vos ${maxCandidatures} candidatures gratuites`,'error');
+    if(btn){btn.disabled=false;btn.textContent='Envoyer ma candidature →';}
+    return;
+  }
 
   // Vérifier si une candidature existe déjà pour cette annonce
   const{data:existing}=await db.from('reponses').select('id').eq('annonce_id',annonceId).eq('artisan_id',currentUser.id).maybeSingle();
@@ -1804,18 +1818,27 @@ async function loadAdminDashboard(){
       profilesRes,
       annoncesRes,
       reponsesRes,
-      verificationsRes
+      verificationsRes,
+      artisansRes
     ] = await Promise.all([
-      db.from('profiles').select('id,nom,telephone,role,created_at').order('created_at',{ascending:false}).limit(100),
+      db.from('profiles').select('id,nom,email,telephone,role,created_at').order('created_at',{ascending:false}).limit(200),
       db.from('annonces').select('id,categorie,ville,budget,statut,created_at,user_id').order('created_at',{ascending:false}).limit(100),
-      db.from('reponses').select('id,annonce_id,artisan_id,message,created_at,status').order('created_at',{ascending:false}).limit(100),
-      db.from('artisan_verifications').select('*').order('updated_at',{ascending:false}).limit(100)
+      db.from('reponses').select('id,annonce_id,artisan_id,message,created_at,status').order('created_at',{ascending:false}).limit(500),
+      db.from('artisan_verifications').select('*').order('updated_at',{ascending:false}).limit(100),
+      db.from('artisans').select('id,user_id,nom,specialite,max_candidatures,payout_status').order('created_at',{ascending:false}).limit(200)
     ]);
 
     const profiles=profilesRes.data||[];
     const annonces=annoncesRes.data||[];
     const reponses=reponsesRes.data||[];
     const verifications=verificationsRes.data||[];
+    const artisans=artisansRes.data||[];
+
+    // Maps utilitaires pour le panel artisans
+    const profilesMap=Object.fromEntries(profiles.map(p=>[p.id,p]));
+    const verifMap=Object.fromEntries(verifications.map(v=>[v.user_id,v.verification_status||'non_verifie']));
+    const candidatureCountMap={};
+    reponses.forEach(r=>{if(r.artisan_id) candidatureCountMap[r.artisan_id]=(candidatureCountMap[r.artisan_id]||0)+1;});
 
     box.innerHTML=`
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px">
@@ -1893,6 +1916,50 @@ async function loadAdminDashboard(){
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">🔨 Gestion des artisans</div>
+          ${artisans.length?`
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13px">
+              <thead>
+                <tr style="border-bottom:2px solid var(--border);text-align:left">
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Nom</th>
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Email</th>
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Statut</th>
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700;text-align:center">Candidatures</th>
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700;text-align:center">Max autorisé</th>
+                  <th style="padding:8px 12px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${artisans.map(art=>{
+                  const profile=profilesMap[art.user_id]||{};
+                  const vs=verifMap[art.user_id]||'non_verifie';
+                  const count=candidatureCountMap[art.user_id]||0;
+                  const maxVal=art.max_candidatures??5;
+                  const isVerif=vs==='verifie';
+                  return `<tr style="border-bottom:1px solid var(--border)">
+                    <td style="padding:10px 12px;font-weight:600">${escapeHTML(art.nom||profile.nom||'—')}</td>
+                    <td style="padding:10px 12px;color:var(--ink3)">${escapeHTML(profile.email||'—')}</td>
+                    <td style="padding:10px 12px">${isVerif?'<span class="small-badge badge-accepted">Vérifié</span>':'<span class="small-badge badge-pending">Non vérifié</span>'}</td>
+                    <td style="padding:10px 12px;text-align:center">
+                      <span style="font-family:'Unbounded',sans-serif;font-weight:700;${count>=maxVal?'color:var(--accent)':''}">${count}</span>
+                      <span style="color:var(--ink3);font-size:11px"> / ${maxVal}</span>
+                    </td>
+                    <td style="padding:10px 12px;text-align:center">
+                      <input type="number" id="max-cand-${art.user_id}" value="${maxVal}" min="0" max="9999"
+                        style="width:70px;border:1.5px solid var(--border);border-radius:8px;padding:6px 8px;font-size:13px;text-align:center;background:var(--bg)">
+                    </td>
+                    <td style="padding:10px 12px">
+                      <button onclick="adminSetMaxCandidatures('${art.user_id}')" style="background:var(--accent);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">Enregistrer</button>
+                    </td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>`:`<div class="empty-state"><p>Aucun artisan inscrit</p></div>`}
+        </div>
+
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
           <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">💬 Dernières candidatures</div>
           ${reponses.length?reponses.map(r=>`
             <div style="padding:12px 0;border-top:1px solid var(--border)">
@@ -1927,6 +1994,16 @@ async function adminDeleteAnnonce(annonceId){
   showToast('🗑️ Annonce supprimée','success');
   loadMesAnnonces();
   loadAdminDashboard();
+}
+
+async function adminSetMaxCandidatures(artisanUserId){
+  if(!isAdmin()) return;
+  const input=document.getElementById(`max-cand-${artisanUserId}`);
+  const val=parseInt(input?.value??'5',10);
+  if(isNaN(val)||val<0){showToast('⚠️ Valeur invalide','error');return;}
+  const {error}=await db.from('artisans').update({max_candidatures:val}).eq('user_id',artisanUserId);
+  if(error){showToast('❌ Erreur : '+error.message,'error');return;}
+  showToast('✅ Limite mise à jour','success');
 }
 
 function escapeHTML(str=''){
