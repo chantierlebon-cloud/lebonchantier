@@ -806,7 +806,8 @@ async function loadAnnonces(page='home'){
 
 
 async function showAnnonceDetail(id){
-  showPage('annonce-detail');
+  const alreadyOnDetail=document.getElementById('annonce-detail').classList.contains('active');
+  if(!alreadyOnDetail) showPage('annonce-detail');
   const{data:a}=await db.from('annonces').select('*').eq('id',id).single();
   const{data:reponses}=await db.from('reponses').select('*').eq('annonce_id',id).order('created_at',{ascending:false});
   const artisanIds=(reponses||[]).map(r=>r.artisan_id).filter(Boolean);
@@ -1222,6 +1223,7 @@ async function choisirArtisan(annonceId,artisanId,responseId=null){
     showToast('✅ Artisan accepté !','success');
     showAnnonceDetail(annonceId);
     loadMesAnnonces();
+    updateCandidaturesBadge();
     // Ouvrir le chat avec l'artisan sélectionné
     const rep=(await db.from('reponses').select('artisans(nom)').eq('annonce_id',annonceId).eq('artisan_id',artisanId).maybeSingle()).data;
     const artisanNom=rep?.artisans?.nom||'Artisan';
@@ -1240,6 +1242,7 @@ async function ownerSetResponseStatus(responseId,status){
     showToast(status==='rejected'?'❌ Candidature refusée':'↩️ Candidature remise en attente','success');
     const currentDetailId=(document.querySelector('[data-current-annonce-id]')||{}).dataset?.currentAnnonceId;
     if(currentDetailId) showAnnonceDetail(currentDetailId);
+    updateCandidaturesBadge();
   }catch(e){
     console.error(e);
     showToast('❌ Action impossible','error');
