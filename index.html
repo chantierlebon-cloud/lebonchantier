@@ -785,10 +785,13 @@ async function loadAnnonces(page='home'){
 async function showAnnonceDetail(id){
   showPage('annonce-detail');
   const{data:a}=await db.from('annonces').select('*').eq('id',id).single();
-  const{data:reponses}=await db.from('reponses').select('*, artisans(nom,specialite)').eq('annonce_id',id).order('created_at',{ascending:false});
+  const{data:reponses}=await db.from('reponses').select('*').eq('annonce_id',id).order('created_at',{ascending:false});
   const artisanIds=(reponses||[]).map(r=>r.artisan_id).filter(Boolean);
+  let artisansMap={};
   let verificationMap={};
   if(artisanIds.length){
+    const {data:artisansData}=await db.from('artisans').select('user_id,nom,specialite').in('user_id',artisanIds);
+    artisansMap=Object.fromEntries((artisansData||[]).map(a=>[a.user_id,a]));
     const {data:verifs}=await db.from('artisan_verifications').select('user_id,verification_status').in('user_id',artisanIds);
     verificationMap=Object.fromEntries((verifs||[]).map(v=>[v.user_id,v.verification_status]));
   }
@@ -835,7 +838,7 @@ async function showAnnonceDetail(id){
         return `
         <div class="reponse-item">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-            <div class="reponse-artisan">🔨 ${escapeHTML(r.artisans?.nom||'Artisan')} — ${escapeHTML(r.artisans?.specialite||'')}</div>
+            <div class="reponse-artisan">🔨 ${escapeHTML(artisansMap[r.artisan_id]?.nom||'Artisan')} — ${escapeHTML(artisansMap[r.artisan_id]?.specialite||'')}</div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${statusBadge}${verificationBadge}<div class="reponse-date">${timeAgo(r.created_at)}</div></div>
           </div>
           <div class="reponse-msg">${escapeHTML(r.message||'')}</div>
@@ -874,7 +877,7 @@ async function showAnnonceDetail(id){
   let chatBtnHtml = '';
   if (currentUser && a.selected_artisan_id) {
     if (isOwner) {
-      const artisanNom = (reponses||[]).find(r=>r.artisan_id===a.selected_artisan_id)?.artisans?.nom || 'Artisan';
+      const artisanNom = artisansMap[a.selected_artisan_id]?.nom || 'Artisan';
       chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.selected_artisan_id}','${escapeHTML(artisanNom)}','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Chat avec ${escapeHTML(artisanNom)}</button>`;
     } else if (isSelectedArtisan) {
       chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.user_id}','Client','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Chat avec le client</button>`;
