@@ -22,6 +22,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .nav-btn{font-size:13px;font-weight:600;color:var(--white);background:var(--accent);padding:9px 18px;border-radius:8px;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;}
 .user-avatar{width:34px;height:34px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--white);cursor:pointer;}
 .logout-btn{font-size:12px;color:var(--ink3);background:none;border:none;cursor:pointer;}
+.notif-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;background:var(--accent);color:#fff;border-radius:9px;font-size:10px;font-weight:800;padding:0 5px;margin-left:5px;line-height:1;font-family:'Plus Jakarta Sans',sans-serif;vertical-align:middle;}
 .page{display:none;}.page.active{display:block;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:24px;}
 .modal-overlay.show{display:flex;}
@@ -600,11 +601,11 @@ const ADMIN_EMAILS=['sarkissiannar707@gmail.com'];
 
 async function init(){
   const{data:{session}}=await db.auth.getSession();
-  if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();}
+  if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();subscribeCandidaturesRealtime();}
   db.auth.onAuthStateChange(async(event,session)=>{
     currentAccessToken=session?.access_token||null;
-    if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');}
-    else{currentUser=null;currentProfile=null;updateNav(false);updateDashboardUI();}
+    if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');subscribeCandidaturesRealtime();}
+    else{currentUser=null;currentProfile=null;updateNav(false);updateDashboardUI();if(_candidaturesRealtimeSub){db.removeChannel(_candidaturesRealtimeSub);_candidaturesRealtimeSub=null;}}
   });
   setupCategoryFilters();
   loadAnnonces('home');loadStats();
@@ -641,11 +642,33 @@ function updateDashboardUI(){
   if(artisanBtn) artisanBtn.style.display=isArtisanRole() ? 'inline-block' : 'none';
 }
 
+let _candidaturesRealtimeSub = null;
+
+async function updateCandidaturesBadge(){
+  if(!currentUser) return;
+  const badge=document.getElementById('nav-candidatures-badge');
+  if(!badge) return;
+  const {data:annonces}=await db.from('annonces').select('id').eq('user_id',currentUser.id);
+  if(!annonces||annonces.length===0){badge.style.display='none';return;}
+  const ids=annonces.map(a=>a.id);
+  const {count}=await db.from('reponses').select('id',{count:'exact',head:true}).in('annonce_id',ids).eq('status','pending');
+  if(count&&count>0){badge.textContent=count>99?'99+':String(count);badge.style.display='inline-flex';}
+  else{badge.style.display='none';}
+}
+
+function subscribeCandidaturesRealtime(){
+  if(_candidaturesRealtimeSub){db.removeChannel(_candidaturesRealtimeSub);_candidaturesRealtimeSub=null;}
+  _candidaturesRealtimeSub=db.channel('candidatures-notif-'+currentUser.id)
+    .on('postgres_changes',{event:'*',schema:'public',table:'reponses'},()=>updateCandidaturesBadge())
+    .subscribe();
+}
+
 function updateNav(loggedIn){
   const nav=document.getElementById('nav-right');
   if(loggedIn){
     const initial=currentUser.email?currentUser.email[0].toUpperCase():'U';
-    nav.innerHTML=`<button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="showPage('dashboard')">Mon espace</button><div class="user-avatar" onclick="showPage('dashboard')">${initial}</div><button class="logout-btn" onclick="logout()">Déconnexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
+    nav.innerHTML=`<button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="showPage('dashboard')">Mon espace<span id="nav-candidatures-badge" class="notif-badge" style="display:none">0</span></button><div class="user-avatar" onclick="showPage('dashboard')">${initial}</div><button class="logout-btn" onclick="logout()">Déconnexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
+    updateCandidaturesBadge();
   }else{
     nav.innerHTML=`<button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="openModal()">Connexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
   }
@@ -1613,6 +1636,12 @@ async function loadArtisanDashboard(){
       db.from('missions').select('id,total_amount,status,mission_type,annonce_id,created_at').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100)
     ]);
 
+    // Mettre à jour le bouton de l'onglet artisan avec le compteur de candidatures
+    const artisanTabBtn=document.getElementById('artisan-tab-btn');
+    if(artisanTabBtn){
+      const cnt=(myResponses||[]).length;
+      artisanTabBtn.innerHTML=`🔨 Espace artisan${cnt>0?` <span class="notif-badge" style="background:var(--ink2)">${cnt>99?'99+':cnt}</span>`:''}`;
+    }
     const respondedIds=new Set((myResponses||[]).map(r=>r.annonce_id));
     const availableFiltered=(available||[]).filter(a=>!respondedIds.has(a.id));
     const avg=myReviews&&myReviews.length ? (myReviews.reduce((s,r)=>s+(Number(r.rating)||0),0)/myReviews.length).toFixed(1) : null;
@@ -1648,7 +1677,7 @@ async function loadArtisanDashboard(){
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
-          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">💬 Mes candidatures</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">💬 Mes candidatures${(myResponses||[]).length>0?` <span class="notif-badge" style="background:var(--ink2)">${(myResponses||[]).length}</span>`:''}</div>
           ${(myResponses||[]).length?myResponses.map(r=>`<div style="padding:12px 0;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px"><div style="font-weight:700">${escapeHTML(r.annonces?.categorie||'Travaux')} — ${escapeHTML(r.annonces?.ville||'')}</div><div>${r.status==='accepted' ? '<span class="small-badge badge-accepted">Acceptée</span>' : r.status==='rejected' ? '<span class="small-badge badge-rejected">Refusée</span>' : '<span class="small-badge badge-pending">En attente</span>'}</div></div><div style="font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:8px">${escapeHTML(r.message||'')}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="showAnnonceDetail('${r.annonce_id}')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Voir l'annonce</button></div></div>`).join(''):`<div class="empty-state"><p>Aucune candidature envoyée.</p></div>`}
         </div>
 
