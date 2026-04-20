@@ -79,7 +79,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .search-big input::placeholder{color:var(--ink3);}
 .search-big .sep{width:1.5px;background:var(--border);margin:12px 0;}
 .search-big .search-go{height:56px;padding:0 24px;background:var(--accent);color:var(--white);border:none;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
-.search-cats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.5s ease 0.3s both;}
+.search-cats{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;animation:fadeUp 0.5s ease 0.3s both;padding-bottom:6px;scrollbar-width:none;-ms-overflow-style:none;}
+.search-cats::-webkit-scrollbar{display:none;}
 .cat-pill{font-size:13px;font-weight:500;color:var(--ink2);background:var(--bg);border:1.5px solid var(--border);padding:6px 14px;border-radius:100px;cursor:pointer;transition:all 0.15s;}
 .cat-pill:hover,.cat-pill.active{border-color:var(--accent);color:var(--accent);background:#FFF0EB;}
 .stats-bar{background:var(--ink);padding:14px 24px;display:flex;justify-content:center;gap:48px;flex-wrap:wrap;}
@@ -387,6 +388,15 @@ footer a{color:var(--accent);cursor:pointer;}
         <div class="cat-pill">🎨 Peinture</div><div class="cat-pill">🔧 Plomberie</div>
         <div class="cat-pill">⚡ Électricité</div><div class="cat-pill">🪵 Menuiserie</div>
         <div class="cat-pill">🧱 Maçonnerie</div><div class="cat-pill">🏠 Toiture</div>
+        <div class="cat-pill">🛁 Salle de bain</div>
+        <div class="cat-pill">🧹 Ménage/Nettoyage</div><div class="cat-pill">🚚 Déménagement</div>
+        <div class="cat-pill">🌿 Jardinage</div><div class="cat-pill">👶 Garde d'enfants</div>
+        <div class="cat-pill">🐕 Pet sitting</div><div class="cat-pill">💻 Informatique/Dépannage</div>
+        <div class="cat-pill">🚗 Transport/Livraison</div><div class="cat-pill">💪 Coach sportif</div>
+        <div class="cat-pill">🍳 Cours particuliers</div><div class="cat-pill">🔩 Bricolage</div>
+        <div class="cat-pill">🍽️ Cuisine à domicile</div><div class="cat-pill">💆 Massage à domicile</div>
+        <div class="cat-pill">💇 Coiffure à domicile</div><div class="cat-pill">🩺 Soins à domicile</div>
+        <div class="cat-pill">🖼️ Cours d'art à domicile</div>
       </div>
     </div>
   </div>
@@ -438,6 +448,15 @@ footer a{color:var(--accent);cursor:pointer;}
         <div class="cat-pill">🎨 Peinture</div><div class="cat-pill">🔧 Plomberie</div>
         <div class="cat-pill">⚡ Électricité</div><div class="cat-pill">🪵 Menuiserie</div>
         <div class="cat-pill">🧱 Maçonnerie</div><div class="cat-pill">🏠 Toiture</div>
+        <div class="cat-pill">🛁 Salle de bain</div>
+        <div class="cat-pill">🧹 Ménage/Nettoyage</div><div class="cat-pill">🚚 Déménagement</div>
+        <div class="cat-pill">🌿 Jardinage</div><div class="cat-pill">👶 Garde d'enfants</div>
+        <div class="cat-pill">🐕 Pet sitting</div><div class="cat-pill">💻 Informatique/Dépannage</div>
+        <div class="cat-pill">🚗 Transport/Livraison</div><div class="cat-pill">💪 Coach sportif</div>
+        <div class="cat-pill">🍳 Cours particuliers</div><div class="cat-pill">🔩 Bricolage</div>
+        <div class="cat-pill">🍽️ Cuisine à domicile</div><div class="cat-pill">💆 Massage à domicile</div>
+        <div class="cat-pill">💇 Coiffure à domicile</div><div class="cat-pill">🩺 Soins à domicile</div>
+        <div class="cat-pill">🖼️ Cours d'art à domicile</div>
       </div>
     </div>
   </div>
@@ -466,6 +485,7 @@ footer a{color:var(--accent);cursor:pointer;}
         <div class="form-step-num">ÉTAPE 01</div>
         <h3>Quel type de travaux ?</h3>
         <div class="cat-grid">
+          <div style="grid-column:1/-1;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;padding:2px 0 4px">🏗️ BTP & Rénovation</div>
           <div class="cat-btn" onclick="selectCat(this,'Peinture')"><span class="cat-emoji">🎨</span>Peinture</div>
           <div class="cat-btn" onclick="selectCat(this,'Plomberie')"><span class="cat-emoji">🔧</span>Plomberie</div>
           <div class="cat-btn" onclick="selectCat(this,'Électricité')"><span class="cat-emoji">⚡</span>Électricité</div>
@@ -473,7 +493,23 @@ footer a{color:var(--accent);cursor:pointer;}
           <div class="cat-btn" onclick="selectCat(this,'Maçonnerie')"><span class="cat-emoji">🧱</span>Maçonnerie</div>
           <div class="cat-btn" onclick="selectCat(this,'Toiture')"><span class="cat-emoji">🏠</span>Toiture</div>
           <div class="cat-btn" onclick="selectCat(this,'Salle de bain')"><span class="cat-emoji">🛁</span>Salle de bain</div>
-          <div class="cat-btn" onclick="selectCat(this,'Cuisine')"><span class="cat-emoji">🍳</span>Cuisine</div>
+          <div class="cat-btn" onclick="selectCat(this,'Rénovation cuisine')"><span class="cat-emoji">🍴</span>Rénovation cuisine</div>
+          <div class="cat-btn" onclick="selectCat(this,'Bricolage')"><span class="cat-emoji">🔩</span>Bricolage</div>
+          <div style="grid-column:1/-1;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;padding:10px 0 4px;border-top:1px solid var(--border);margin-top:4px">🏠 Services à domicile</div>
+          <div class="cat-btn" onclick="selectCat(this,'Ménage/Nettoyage')"><span class="cat-emoji">🧹</span>Ménage</div>
+          <div class="cat-btn" onclick="selectCat(this,'Déménagement')"><span class="cat-emoji">🚚</span>Déménagement</div>
+          <div class="cat-btn" onclick="selectCat(this,'Jardinage')"><span class="cat-emoji">🌿</span>Jardinage</div>
+          <div class="cat-btn" onclick="selectCat(this,'Garde d\'enfants')"><span class="cat-emoji">👶</span>Garde d'enfants</div>
+          <div class="cat-btn" onclick="selectCat(this,'Pet sitting')"><span class="cat-emoji">🐕</span>Pet sitting</div>
+          <div class="cat-btn" onclick="selectCat(this,'Informatique/Dépannage')"><span class="cat-emoji">💻</span>Informatique</div>
+          <div class="cat-btn" onclick="selectCat(this,'Transport/Livraison')"><span class="cat-emoji">🚗</span>Transport</div>
+          <div class="cat-btn" onclick="selectCat(this,'Coach sportif')"><span class="cat-emoji">💪</span>Coach sportif</div>
+          <div class="cat-btn" onclick="selectCat(this,'Cours particuliers')"><span class="cat-emoji">🍳</span>Cours particuliers</div>
+          <div class="cat-btn" onclick="selectCat(this,'Cuisine à domicile')"><span class="cat-emoji">🍽️</span>Cuisine à domicile</div>
+          <div class="cat-btn" onclick="selectCat(this,'Massage à domicile')"><span class="cat-emoji">💆</span>Massage</div>
+          <div class="cat-btn" onclick="selectCat(this,'Coiffure à domicile')"><span class="cat-emoji">💇</span>Coiffure</div>
+          <div class="cat-btn" onclick="selectCat(this,'Soins à domicile')"><span class="cat-emoji">🩺</span>Soins</div>
+          <div class="cat-btn" onclick="selectCat(this,'Cours d\'art à domicile')"><span class="cat-emoji">🖼️</span>Cours d'art</div>
           <div class="cat-btn" onclick="selectCat(this,'Autre')"><span class="cat-emoji">✨</span>Autre</div>
         </div>
       </div>
