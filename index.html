@@ -1782,12 +1782,13 @@ async function submitReview(annonceId,artisanId){
 
 async function adminReviewVerification(userId,status){
   if(!isAdmin()) return;
-  const note=prompt("Note admin (optionnelle) :", "");
+  const note=document.getElementById(`admin-note-${userId}`)?.value||null;
   try{
     const payload={verification_status:status,reviewed_at:new Date().toISOString(),admin_note:note||null};
     const {error}=await db.from('artisan_verifications').update(payload).eq('user_id',userId);
     if(error) throw error;
-    showToast('✅ Vérification mise à jour','success');
+    const labels={verifie:'✅ Artisan validé',complement_requis:'🟡 Complément demandé',refuse:'❌ Dossier refusé'};
+    showToast(labels[status]||'✅ Mis à jour','success');
     loadAdminDashboard();
   }catch(e){
     console.error(e);
@@ -1867,7 +1868,9 @@ async function loadAdminDashboard(){
 
       <div style="display:grid;gap:18px">
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
-          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px">👥 Utilisateurs inscrits <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:400;color:var(--ink3)">(${profiles.length})</span></div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">👥 Utilisateurs inscrits <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:400;color:var(--ink3)">(${profiles.length})</span></div>
+          <input type="search" placeholder="🔍 Rechercher par nom ou email..." oninput="adminSearchTable(this.value,'#users-tbody')"
+            style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;font-size:13px;background:var(--bg);margin-bottom:10px;outline:none">
           <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
             <button onclick="adminFilterUsers('all')" id="uf-all" style="padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent);color:#fff">Tous</button>
             <button onclick="adminFilterUsers('client')" id="uf-client" style="padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--ink2)">Clients</button>
@@ -1880,24 +1883,42 @@ async function loadAdminDashboard(){
               <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Rôle</th>
               <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Téléphone</th>
               <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Inscription</th>
+              <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Actions</th>
             </tr></thead>
             <tbody id="users-tbody">
-              ${profiles.map(p=>`
-              <tr class="user-row" data-role="${escapeHTML(p.role||'client')}" style="border-bottom:1px solid var(--border)">
-                <td style="padding:10px 12px;font-weight:600">${escapeHTML(p.nom||'—')}</td>
-                <td style="padding:10px 12px;color:var(--ink2)">${escapeHTML(p.email||'—')}</td>
-                <td style="padding:10px 12px">${p.role==='artisan'||p.role==='both'?'<span class="small-badge badge-review">Artisan</span>':'<span class="small-badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe">Client</span>'}</td>
-                <td style="padding:10px 12px;color:var(--ink3)">${escapeHTML(p.telephone||'—')}</td>
-                <td style="padding:10px 12px;color:var(--ink3);white-space:nowrap">${timeAgo(p.created_at)}</td>
-              </tr>`).join('')}
+              ${profiles.map(p=>{
+                const isSusp=p.role==='suspendu';
+                const roleBadge=isSusp
+                  ?'<span class="small-badge badge-rejected">Suspendu</span>'
+                  :p.role==='artisan'||p.role==='both'
+                    ?'<span class="small-badge badge-review">Artisan</span>'
+                    :'<span class="small-badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe">Client</span>';
+                return `<tr class="user-row" data-role="${escapeHTML(p.role||'client')}" data-search="${escapeHTML((p.nom||'')+' '+(p.email||'')).toLowerCase()}" style="border-bottom:1px solid var(--border)">
+                  <td style="padding:10px 12px;font-weight:600">${escapeHTML(p.nom||'—')}</td>
+                  <td style="padding:10px 12px;color:var(--ink2)">${escapeHTML(p.email||'—')}</td>
+                  <td style="padding:10px 12px">${roleBadge}</td>
+                  <td style="padding:10px 12px;color:var(--ink3)">${escapeHTML(p.telephone||'—')}</td>
+                  <td style="padding:10px 12px;color:var(--ink3);white-space:nowrap">${timeAgo(p.created_at)}</td>
+                  <td style="padding:10px 12px">
+                    <div style="display:flex;gap:6px;flex-wrap:wrap">
+                      ${!isSusp?`<button onclick="adminSuspendUser('${p.id}')" style="padding:4px 10px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid #fbbf24;background:#fffbeb;color:#92400e">Suspendre</button>`
+                                :`<button onclick="adminUnsuspendUser('${p.id}')" style="padding:4px 10px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid #bbf7d0;background:#f0fdf4;color:#166534">Réactiver</button>`}
+                      <button onclick="adminDeleteUser('${p.id}')" style="padding:4px 10px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid #ffd4c7;background:#fff0eb;color:var(--accent)">Supprimer</button>
+                    </div>
+                  </td>
+                </tr>`;
+              }).join('')}
             </tbody>
           </table></div>`:`<div class="empty-state"><p>Aucun utilisateur</p></div>`}
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
-          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">📋 Dernières annonces</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">📋 Dernières annonces <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:400;color:var(--ink3)">(${annonces.length})</span></div>
+          <input type="search" placeholder="🔍 Rechercher par catégorie ou ville..." oninput="adminSearchDivList(this.value,'#annonces-list')"
+            style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;font-size:13px;background:var(--bg);margin-bottom:12px;outline:none">
+          <div id="annonces-list">
           ${annonces.length?annonces.map(a=>`
-            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--border)">
+            <div class="admin-annonce-row" data-search="${escapeHTML((a.categorie||'')+' '+(a.ville||'')).toLowerCase()}" style="display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--border)">
               <div>
                 <div style="font-weight:700">${escapeHTML(a.categorie||'Travaux')} — ${escapeHTML(a.ville||'')}</div>
                 <div style="font-size:12px;color:var(--ink3)">Budget: ${escapeHTML(formatBudget(a.budget))} · Statut: ${escapeHTML(a.statut||'ouvert')}</div>
@@ -1908,6 +1929,7 @@ async function loadAdminDashboard(){
                 <button onclick="adminDeleteAnnonce('${a.id}')" style="background:#fff0eb;border:1.5px solid #ffd4c7;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:var(--accent)">Supprimer</button>
               </div>
             </div>`).join(''):`<div class="empty-state"><p>Aucune annonce</p></div>`}
+          </div>
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
@@ -1922,22 +1944,25 @@ async function loadAdminDashboard(){
                 <div>${verificationBadgeHtml(v.verification_status||'non_verifie')}</div>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-                ${v.identity_doc_url?'<span class="small-badge badge-review">Pièce ID</span>':''}
-                ${v.business_doc_url?'<span class="small-badge badge-review">Kbis/RNE</span>':''}
-                ${v.qualification_doc_url?'<span class="small-badge badge-review">Qualification</span>':''}
-                ${v.insurance_doc_url?'<span class="small-badge badge-review">Assurance</span>':''}
+                ${v.identity_doc_url?`<a href="${escapeHTML(v.identity_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Pièce ID</a>`:''}
+                ${v.business_doc_url?`<a href="${escapeHTML(v.business_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Kbis/RNE</a>`:''}
+                ${v.qualification_doc_url?`<a href="${escapeHTML(v.qualification_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Qualification</a>`:''}
+                ${v.insurance_doc_url?`<a href="${escapeHTML(v.insurance_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Assurance</a>`:''}
               </div>
-              ${v.admin_note?`<div style="font-size:12px;color:var(--ink2);margin-bottom:8px"><strong>Note:</strong> ${escapeHTML(v.admin_note)}</div>`:''}
+              <textarea id="admin-note-${v.user_id}" placeholder="Note admin (optionnelle)..." rows="2"
+                style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);resize:vertical;margin-bottom:8px">${escapeHTML(v.admin_note||'')}</textarea>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button onclick="adminReviewVerification('${v.user_id}','verifie')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">✅ Valider</button>
-                <button onclick="adminReviewVerification('${v.user_id}','complement_requis')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">🟡 Complément</button>
+                <button onclick="adminReviewVerification('${v.user_id}','verifie')" style="background:#f0fdf4;border:1.5px solid #bbf7d0;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:#166534">✅ Valider</button>
+                <button onclick="adminReviewVerification('${v.user_id}','complement_requis')" style="background:#fffbeb;border:1.5px solid #fde68a;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:#92400e">🟡 Complément</button>
                 <button onclick="adminReviewVerification('${v.user_id}','refuse')" style="background:#fff0eb;border:1.5px solid #ffd4c7;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:var(--accent)">❌ Refuser</button>
               </div>
             </div>`).join(''):`<div class="empty-state"><p>Aucune vérification artisan</p></div>`}
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
-          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">🔨 Gestion des artisans</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">🔨 Gestion des artisans <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:400;color:var(--ink3)">(${artisans.length})</span></div>
+          <input type="search" placeholder="🔍 Rechercher par nom ou email..." oninput="adminSearchTable(this.value,'#artisans-tbody')"
+            style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;font-size:13px;background:var(--bg);margin-bottom:12px;outline:none">
           ${artisans.length?`
           <div style="overflow-x:auto">
             <table style="width:100%;border-collapse:collapse;font-size:13px">
@@ -1945,33 +1970,41 @@ async function loadAdminDashboard(){
                 <tr style="border-bottom:2px solid var(--border);text-align:left">
                   <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Nom</th>
                   <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Email</th>
-                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Statut</th>
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Vérifié</th>
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700">Paiement</th>
                   <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700;text-align:center">Candidatures</th>
-                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700;text-align:center">Max autorisé</th>
+                  <th style="padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--ink3);font-weight:700;text-align:center">Max</th>
                   <th style="padding:8px 12px"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="artisans-tbody">
                 ${artisans.map(art=>{
                   const profile=profilesMap[art.user_id]||{};
                   const vs=verifMap[art.user_id]||'non_verifie';
                   const count=candidatureCountMap[art.user_id]||0;
                   const maxVal=art.max_candidatures??5;
                   const isVerif=vs==='verifie';
-                  return `<tr style="border-bottom:1px solid var(--border)">
+                  const ps=art.payout_status||'non_connecté';
+                  const payoutBadge=ps==='active'
+                    ?'<span class="small-badge badge-accepted">Actif</span>'
+                    :ps==='pending_onboarding'
+                      ?'<span class="small-badge badge-pending">En cours</span>'
+                      :'<span class="small-badge" style="background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">Non connecté</span>';
+                  return `<tr data-search="${escapeHTML((art.nom||profile.nom||'')+' '+(profile.email||'')).toLowerCase()}" style="border-bottom:1px solid var(--border)">
                     <td style="padding:10px 12px;font-weight:600">${escapeHTML(art.nom||profile.nom||'—')}</td>
                     <td style="padding:10px 12px;color:var(--ink3)">${escapeHTML(profile.email||'—')}</td>
-                    <td style="padding:10px 12px">${isVerif?'<span class="small-badge badge-accepted">Vérifié</span>':'<span class="small-badge badge-pending">Non vérifié</span>'}</td>
+                    <td style="padding:10px 12px">${isVerif?'<span class="small-badge badge-accepted">✅</span>':'<span class="small-badge badge-pending">—</span>'}</td>
+                    <td style="padding:10px 12px">${payoutBadge}</td>
                     <td style="padding:10px 12px;text-align:center">
                       <span style="font-family:'Unbounded',sans-serif;font-weight:700;${count>=maxVal?'color:var(--accent)':''}">${count}</span>
                       <span style="color:var(--ink3);font-size:11px"> / ${maxVal}</span>
                     </td>
                     <td style="padding:10px 12px;text-align:center">
                       <input type="number" id="max-cand-${art.user_id}" value="${maxVal}" min="0" max="9999"
-                        style="width:70px;border:1.5px solid var(--border);border-radius:8px;padding:6px 8px;font-size:13px;text-align:center;background:var(--bg)">
+                        style="width:65px;border:1.5px solid var(--border);border-radius:8px;padding:5px 6px;font-size:13px;text-align:center;background:var(--bg)">
                     </td>
                     <td style="padding:10px 12px">
-                      <button onclick="adminSetMaxCandidatures('${art.user_id}')" style="background:var(--accent);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">Enregistrer</button>
+                      <button onclick="adminSetMaxCandidatures('${art.user_id}')" style="background:var(--accent);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Sauver</button>
                     </td>
                   </tr>`;
                 }).join('')}
@@ -2024,7 +2057,8 @@ function adminFilterUsers(role){
   });
   document.querySelectorAll('#users-tbody .user-row').forEach(row=>{
     const r=row.dataset.role||'client';
-    row.style.display=(role==='all'||r===role||((role==='artisan')&&r==='both'))?'':'none';
+    const matchRole=(role==='all'||r===role||(role==='artisan'&&r==='both'));
+    row.style.display=matchRole?'':'none';
   });
 }
 
@@ -2036,6 +2070,50 @@ async function adminSetMaxCandidatures(artisanUserId){
   const {error}=await db.from('artisans').update({max_candidatures:val}).eq('user_id',artisanUserId);
   if(error){showToast('❌ Erreur : '+error.message,'error');return;}
   showToast('✅ Limite mise à jour','success');
+  loadAdminDashboard();
+}
+
+async function adminSuspendUser(userId){
+  if(!isAdmin()) return;
+  if(!confirm('Suspendre cet utilisateur ? Il ne pourra plus postuler ni publier.')) return;
+  const {error}=await db.from('profiles').update({role:'suspendu'}).eq('id',userId);
+  if(error){showToast('❌ Erreur : '+error.message,'error');return;}
+  showToast('⛔ Compte suspendu','success');
+  loadAdminDashboard();
+}
+
+async function adminUnsuspendUser(userId){
+  if(!isAdmin()) return;
+  const {error}=await db.from('profiles').update({role:'client'}).eq('id',userId);
+  if(error){showToast('❌ Erreur : '+error.message,'error');return;}
+  showToast('✅ Compte réactivé','success');
+  loadAdminDashboard();
+}
+
+async function adminDeleteUser(userId){
+  if(!isAdmin()) return;
+  if(!confirm('⚠️ Supprimer définitivement ce compte et toutes ses données ? Cette action est irréversible.')) return;
+  if(!confirm('Dernière confirmation : supprimer ce compte ?')) return;
+  const {error}=await db.from('profiles').delete().eq('id',userId);
+  if(error){showToast('❌ Suppression impossible : '+error.message,'error');return;}
+  showToast('🗑️ Compte supprimé','success');
+  loadAdminDashboard();
+}
+
+function adminSearchTable(query, tbodySelector){
+  const q=query.toLowerCase().trim();
+  document.querySelectorAll(tbodySelector+' tr').forEach(row=>{
+    const search=row.dataset.search||row.textContent.toLowerCase();
+    row.style.display=(!q||search.includes(q))?'':'none';
+  });
+}
+
+function adminSearchDivList(query, listSelector){
+  const q=query.toLowerCase().trim();
+  document.querySelectorAll(listSelector+' .admin-annonce-row').forEach(el=>{
+    const search=el.dataset.search||el.textContent.toLowerCase();
+    el.style.display=(!q||search.includes(q))?'':'none';
+  });
 }
 
 function escapeHTML(str=''){
