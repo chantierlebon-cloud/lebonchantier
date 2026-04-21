@@ -158,10 +158,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cat-group:hover .cat-group-btn,.cat-group.open .cat-group-btn{transform:scale(1.03);border-color:var(--accent);background:var(--accent-light);box-shadow:var(--shadow-sm);}
 .cat-group.open .cat-group-caret,.cat-group:hover .cat-group-caret{color:var(--accent);}
 .cat-group.open .cat-group-caret{transform:rotate(90deg);}
-.cat-dropdown{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(6px);min-width:190px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-md);padding:6px;z-index:50;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease,visibility 0.18s;}
-.cat-dropdown::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:12px;height:12px;background:var(--white);border-left:1.5px solid var(--border);border-top:1.5px solid var(--border);transform:translateX(-50%) rotate(45deg);}
-@media(hover:hover){.cat-group:hover .cat-dropdown{opacity:1;visibility:visible;pointer-events:all;transform:translateX(-50%) translateY(0);}}
-.cat-group.open .cat-dropdown{opacity:1;visibility:visible;pointer-events:all;transform:translateX(-50%) translateY(0);}
+.cat-dropdown{position:fixed;top:0;left:0;transform:translateX(-50%);min-width:190px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-md);padding:6px;z-index:1000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.18s ease,visibility 0.18s;}
+.cat-dropdown::before{content:'';position:absolute;top:-6px;left:50%;width:12px;height:12px;background:var(--white);border-left:1.5px solid var(--border);border-top:1.5px solid var(--border);transform:translateX(-50%) rotate(45deg);}
+.cat-group.open .cat-dropdown{opacity:1;visibility:visible;pointer-events:all;}
 .cat-dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:background 0.15s,color 0.15s;white-space:nowrap;}
 .cat-dropdown-item:hover{background:var(--accent-light);color:var(--accent);}
 
@@ -2606,13 +2605,38 @@ function scrollCategories(direction){
   if(el) el.scrollBy({left:direction,behavior:'smooth'});
 }
 
+function _positionCatDropdown(group){
+  const btn=group.querySelector('.cat-group-btn');
+  const dd=group.querySelector('.cat-dropdown');
+  if(!btn||!dd) return;
+  const r=btn.getBoundingClientRect();
+  dd.style.top=(r.bottom+8)+'px';
+  dd.style.left=(r.left+r.width/2)+'px';
+}
+
 function toggleCatGroup(btn){
-  // On touch/no-hover devices only — desktop uses CSS :hover
-  if(window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
   const group=btn.closest('.cat-group');
   const isOpen=group.classList.contains('open');
   document.querySelectorAll('.cat-group.open').forEach(g=>g.classList.remove('open'));
-  if(!isOpen) group.classList.add('open');
+  if(!isOpen){
+    _positionCatDropdown(group);
+    group.classList.add('open');
+  }
+}
+
+function setupCatSlider(){
+  document.querySelectorAll('.cat-group').forEach(function(group){
+    var leaveTimer;
+    group.addEventListener('mouseenter',function(){
+      clearTimeout(leaveTimer);
+      document.querySelectorAll('.cat-group.open').forEach(function(g){if(g!==group)g.classList.remove('open');});
+      _positionCatDropdown(group);
+      group.classList.add('open');
+    });
+    group.addEventListener('mouseleave',function(){
+      leaveTimer=setTimeout(function(){group.classList.remove('open');},220);
+    });
+  });
 }
 
 document.addEventListener('click',function(e){
@@ -2622,6 +2646,7 @@ document.addEventListener('click',function(e){
 });
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', setupCatSlider);
 /* Stripe step 1 patch for current working index.html */
 
 const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TJZObK2IJwjiIORGPCaZwxpdw5hDtHTy9b3Bmsl92WkvoxPFqcTXhRSVou5E93qPGMQ0Hgt0oyyVYIA3TDja1md00ZTygh8Iz ';
