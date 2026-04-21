@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LeBonChantier — Trouvez un artisan. Simple et sécurisé.</title>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -138,16 +138,32 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .job-price-sub{font-size:10px;color:var(--ink3);}
 .escrow-badge{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:4px 10px;border-radius:100px;}
 .job-time{font-size:11px;color:var(--ink3);}
-/* ── CATEGORY ICONS ── */
-.cat-icon-section{background:var(--white);border-bottom:1px solid var(--border);padding:28px 24px;}
-.cat-icon-inner{max-width:1120px;margin:0 auto;}
-.cat-icon-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;}
-.cat-icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;}
-.cat-icon-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);padding:16px 6px 12px;text-align:center;cursor:pointer;transition:all 0.18s;box-shadow:var(--shadow-xs);}
-.cat-icon-item:hover{border-color:var(--accent);background:var(--accent-light);box-shadow:var(--shadow-sm);transform:translateY(-2px);}
-.cat-icon-item:hover .ci-label{color:var(--accent);}
-.ci-emoji{font-size:28px;display:block;margin-bottom:7px;}
-.ci-label{font-size:11px;font-weight:700;color:var(--ink2);line-height:1.3;display:block;}
+/* ── CATEGORY SLIDER ── */
+.cat-icon-section{background:#F1F5F9;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 0;overflow:visible;}
+.cat-icon-inner{max-width:1120px;margin:0 auto;padding:0 52px;}
+.cat-icon-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;}
+.cat-slider-wrapper{position:relative;display:flex;align-items:center;}
+.cat-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:var(--white);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink2);z-index:10;box-shadow:var(--shadow-sm);transition:all 0.18s;flex-shrink:0;line-height:1;padding:0;}
+.cat-arrow:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:var(--shadow-md);}
+.cat-arrow:active{transform:translateY(-50%) scale(0.9);}
+.cat-arrow-left{left:-46px;}
+.cat-arrow-right{right:-46px;}
+.cat-scroll{display:flex;gap:12px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:8px 2px 12px;flex:1;align-items:flex-start;}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-group{flex-shrink:0;position:relative;}
+.cat-group-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 22px;min-width:148px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:transform 0.2s ease,box-shadow 0.2s ease,border-color 0.2s ease,background 0.2s ease;box-shadow:var(--shadow-xs);user-select:none;-webkit-user-select:none;}
+.cat-group-emoji{font-size:30px;line-height:1;display:block;}
+.cat-group-name{font-size:12px;font-weight:700;color:var(--ink);text-align:center;line-height:1.35;}
+.cat-group-caret{font-size:11px;color:var(--ink3);transition:transform 0.2s;display:block;margin-top:2px;}
+.cat-group:hover .cat-group-btn,.cat-group.open .cat-group-btn{transform:scale(1.03);border-color:var(--accent);background:var(--accent-light);box-shadow:var(--shadow-sm);}
+.cat-group.open .cat-group-caret,.cat-group:hover .cat-group-caret{color:var(--accent);}
+.cat-group.open .cat-group-caret{transform:rotate(90deg);}
+.cat-dropdown{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(6px);min-width:190px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-md);padding:6px;z-index:50;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease,visibility 0.18s;}
+.cat-dropdown::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:12px;height:12px;background:var(--white);border-left:1.5px solid var(--border);border-top:1.5px solid var(--border);transform:translateX(-50%) rotate(45deg);}
+@media(hover:hover){.cat-group:hover .cat-dropdown{opacity:1;visibility:visible;pointer-events:all;transform:translateX(-50%) translateY(0);}}
+.cat-group.open .cat-dropdown{opacity:1;visibility:visible;pointer-events:all;transform:translateX(-50%) translateY(0);}
+.cat-dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:background 0.15s,color 0.15s;white-space:nowrap;}
+.cat-dropdown-item:hover{background:var(--accent-light);color:var(--accent);}
 
 /* ── BADGES ── */
 .statut-badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:100px;}
@@ -250,14 +266,18 @@ footer a{color:var(--accent);cursor:pointer;}
   .jobs-grid{grid-template-columns:1fr;}
   .f-row{grid-template-columns:1fr;}
   .cat-grid{grid-template-columns:repeat(2,1fr);}
-  .cat-icon-grid{grid-template-columns:repeat(3,1fr);}
   .stats-bar{gap:32px;}
   .nav .nav-link{display:none;}
   .role-selector{grid-template-columns:1fr 1fr;}
   .nav{padding:0 20px;}
   .hero{padding:36px 20px 28px;}
   .listings-section,.dashboard,.post-page,.annonce-detail-page{padding-left:16px;padding-right:16px;}
-  .cat-icon-section{padding:20px 16px;}
+  .cat-icon-section{padding:20px 0;}
+  .cat-icon-inner{padding:0 20px;}
+  .cat-arrow{display:none;}
+  .cat-group-btn{min-width:120px;padding:14px 14px;}
+  .cat-group-emoji{font-size:26px;}
+  .cat-group-name{font-size:11px;}
 }
 
 /* ── CHAT ── */
@@ -466,23 +486,76 @@ footer a{color:var(--accent);cursor:pointer;}
       </div>
     </div>
   </div>
-  <!-- CATEGORY ICONS -->
+  <!-- CATEGORY SLIDER -->
   <div class="cat-icon-section">
     <div class="cat-icon-inner">
       <div class="cat-icon-label">Trouvez par catégorie</div>
-      <div class="cat-icon-grid">
-        <div class="cat-icon-item" onclick="filterByCategory('Peinture')"><span class="ci-emoji">🎨</span><span class="ci-label">Peinture</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Plomberie')"><span class="ci-emoji">🔧</span><span class="ci-label">Plomberie</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Électricité')"><span class="ci-emoji">⚡</span><span class="ci-label">Électricité</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Menuiserie')"><span class="ci-emoji">🪵</span><span class="ci-label">Menuiserie</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Maçonnerie')"><span class="ci-emoji">🧱</span><span class="ci-label">Maçonnerie</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Toiture')"><span class="ci-emoji">🏠</span><span class="ci-label">Toiture</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Ménage/Nettoyage')"><span class="ci-emoji">🧹</span><span class="ci-label">Ménage</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Déménagement')"><span class="ci-emoji">🚚</span><span class="ci-label">Déménagement</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Jardinage')"><span class="ci-emoji">🌿</span><span class="ci-label">Jardinage</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Garde d\'enfants')"><span class="ci-emoji">👶</span><span class="ci-label">Garde enfants</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Informatique/Dépannage')"><span class="ci-emoji">💻</span><span class="ci-label">Informatique</span></div>
-        <div class="cat-icon-item" onclick="filterByCategory('Autre')"><span class="ci-emoji">✨</span><span class="ci-label">Autre</span></div>
+      <div class="cat-slider-wrapper">
+        <button class="cat-arrow cat-arrow-left" onclick="scrollCategories(-320)" aria-label="Précédent">&#8249;</button>
+        <div class="cat-scroll" id="categoryScroll">
+
+          <!-- 1. Construction -->
+          <div class="cat-group">
+            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
+              <span class="cat-group-emoji">🏗️</span>
+              <span class="cat-group-name">Construction</span>
+              <span class="cat-group-caret">›</span>
+            </div>
+            <div class="cat-dropdown">
+              <div class="cat-dropdown-item" onclick="filterByCategory('Maçonnerie')">🧱 Maçonnerie</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Toiture')">🏠 Toiture</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Rénovation cuisine')">🔨 Rénovation</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Menuiserie')">🪵 Menuiserie</div>
+            </div>
+          </div>
+
+          <!-- 2. Réparation & Installation -->
+          <div class="cat-group">
+            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
+              <span class="cat-group-emoji">🔧</span>
+              <span class="cat-group-name">Réparation &amp; Installation</span>
+              <span class="cat-group-caret">›</span>
+            </div>
+            <div class="cat-dropdown">
+              <div class="cat-dropdown-item" onclick="filterByCategory('Plomberie')">💧 Plomberie</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Électricité')">⚡ Électricité</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Bricolage')">🔩 Bricolage</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Peinture')">🎨 Peinture</div>
+            </div>
+          </div>
+
+          <!-- 3. Services maison -->
+          <div class="cat-group">
+            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
+              <span class="cat-group-emoji">🏡</span>
+              <span class="cat-group-name">Services maison</span>
+              <span class="cat-group-caret">›</span>
+            </div>
+            <div class="cat-dropdown">
+              <div class="cat-dropdown-item" onclick="filterByCategory('Ménage/Nettoyage')">🧹 Ménage</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Jardinage')">🌿 Jardinage</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Déménagement')">🚚 Déménagement</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Cuisine à domicile')">🍽️ Cuisine</div>
+            </div>
+          </div>
+
+          <!-- 4. Autres services -->
+          <div class="cat-group">
+            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
+              <span class="cat-group-emoji">✨</span>
+              <span class="cat-group-name">Autres services</span>
+              <span class="cat-group-caret">›</span>
+            </div>
+            <div class="cat-dropdown">
+              <div class="cat-dropdown-item" onclick="filterByCategory('Informatique/Dépannage')">💻 Informatique</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Garde d\'enfants')">👶 Baby-sitting</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Coach sportif')">💪 Coach sportif</div>
+              <div class="cat-dropdown-item" onclick="filterByCategory('Autre')">🎯 Autre</div>
+            </div>
+          </div>
+
+        </div>
+        <button class="cat-arrow cat-arrow-right" onclick="scrollCategories(320)" aria-label="Suivant">&#8250;</button>
       </div>
     </div>
   </div>
@@ -2526,6 +2599,27 @@ function formatBudget(val){
   const s=String(val).trim();
   return /€/.test(s) ? s : s+' €';
 }
+
+/* ── Category slider & dropdown ── */
+function scrollCategories(direction){
+  const el=document.getElementById('categoryScroll');
+  if(el) el.scrollBy({left:direction,behavior:'smooth'});
+}
+
+function toggleCatGroup(btn){
+  // On touch/no-hover devices only — desktop uses CSS :hover
+  if(window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  const group=btn.closest('.cat-group');
+  const isOpen=group.classList.contains('open');
+  document.querySelectorAll('.cat-group.open').forEach(g=>g.classList.remove('open'));
+  if(!isOpen) group.classList.add('open');
+}
+
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.cat-group')){
+    document.querySelectorAll('.cat-group.open').forEach(g=>g.classList.remove('open'));
+  }
+});
 
 document.addEventListener('DOMContentLoaded', init);
 /* Stripe step 1 patch for current working index.html */
