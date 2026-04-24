@@ -762,7 +762,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 <!-- ANNONCE DETAIL -->
 <div id="annonce-detail" class="page">
   <div class="annonce-detail-page">
-    <button onclick="showPage('browse')" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:6px;">← Retour</button>
+    <button onclick="history.back()" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:6px;">← Retour</button>
     <div id="detail-content"></div>
   </div>
 </div>
@@ -938,6 +938,16 @@ async function init(){
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
     var sp=document.getElementById('search');
     if(sp){sp.classList.add('active');loadSearchResults();}
+  }
+  // URL-based routing: /annonce?id=...
+  if(window.location.pathname==='/annonce'){
+    var aid=new URLSearchParams(window.location.search).get('id');
+    if(aid){
+      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+      var ap=document.getElementById('annonce-detail');
+      if(ap) ap.classList.add('active');
+      showAnnonceDetail(aid);
+    }
   }
 }
 
@@ -2886,7 +2896,7 @@ async function loadSearchResults(){
   if(countEl) countEl.textContent=data.length+' annonce'+(data.length>1?'s':'')+' trouvée'+(data.length>1?'s':'');
   container.innerHTML=data.map(function(a){
     var photoTop=(a.photos&&a.photos.length)?'<div class="job-card-photo"><img src="'+a.photos[0]+'" alt="photo" loading="lazy"></div>':'';
-    return '<div class="job-card" onclick="showAnnonceDetail(\''+a.id+'\')">'
+    return '<div class="job-card" onclick="window.location.href=\'/annonce?id='+a.id+'\'">'
       +photoTop
       +'<div class="job-card-body">'
       +'<div class="job-tags"><span class="tag">'+escapeHTML(a.categorie||'Autre')+'</span>'
