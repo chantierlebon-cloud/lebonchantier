@@ -391,7 +391,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <div class="chat-empty"><div class="chat-empty-icon">💬</div>Aucun message pour l'instant.</div>
   </div>
   <div class="chat-footer">
-    <div class="chat-blocked-msg" id="chat-blocked-msg">⚠️ Pour la sécurité de tous, les numéros de téléphone et adresses email ne peuvent pas être partagés dans le chat. Utilisez la plateforme pour tous vos échanges.</div>
+    <div class="chat-blocked-msg" id="chat-blocked-msg">🔒 Pour votre sécurité, les coordonnées sont bloquées avant paiement. Une fois le paiement effectué, vous pourrez communiquer librement.</div>
     <div class="chat-input-row">
       <textarea class="chat-input" id="chat-input" placeholder="Votre message... (Entrée pour envoyer)" rows="1" oninput="autoResizeChatInput(this)" onkeydown="chatKeydown(event)"></textarea>
       <button class="chat-send" id="chat-send-btn" onclick="sendChatMessage()">
@@ -2587,7 +2587,7 @@ function resetField(input, errorId){
 }
 
 /* ── CHAT ── */
-let chatState = { annonceId:null, receiverId:null, receiverName:null, sub:null };
+let chatState = { annonceId:null, receiverId:null, receiverName:null, sub:null, paymentFunded:false };
 
 function contactAnnonceOwner(annonceId, ownerId, annonceTitle) {
   if (!currentUser) { openModal(); return; }
@@ -2595,11 +2595,22 @@ function contactAnnonceOwner(annonceId, ownerId, annonceTitle) {
   openChat(annonceId, ownerId, 'Client', annonceTitle);
 }
 
-function openChat(annonceId, receiverId, receiverName, annonceTitle) {
+async function openChat(annonceId, receiverId, receiverName, annonceTitle) {
   if (!currentUser) { openModal(); return; }
   chatState.annonceId = annonceId;
   chatState.receiverId = receiverId;
   chatState.receiverName = receiverName;
+  chatState.paymentFunded = false;
+
+  // Check if a funded mission exists for this annonce (unlocks contact-info sharing)
+  try {
+    const { data: mission } = await db.from('missions')
+      .select('id,status')
+      .eq('annonce_id', annonceId)
+      .maybeSingle();
+    chatState.paymentFunded = mission?.status === 'in_progress' || mission?.status === 'completed';
+  } catch(_) {}
+
   const initial = (receiverName||'?')[0].toUpperCase();
   document.getElementById('chat-avatar').textContent = initial;
   document.getElementById('chat-header-name').textContent = receiverName || 'Chat';
@@ -2663,13 +2674,14 @@ function renderChatMessages(messages) {
   container.scrollTop = container.scrollHeight;
 }
 
-function containsContactInfo(text) {
-  const phone = /(?:(?:\+|00)33[\s.\-]?|0)[1-9](?:[\s.\-]?\d{2}){4}/;
-  const email = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/;
-  // Masquage des séparateurs courants (points, tirets, espaces entre chiffres)
-  const normalized = text.replace(/[\s.\-()]/g,'');
-  const plainPhone = /0[1-9]\d{8}|(?:00|\+)33[1-9]\d{8}/.test(normalized);
-  return phone.test(text) || email.test(text) || plainPhone;
+function containsPhone(text) {
+  // 6+ consecutive digits (catches any phone number format)
+  if (/\d{6,}/.test(text.replace(/[\s.\-()]/g, ''))) return true;
+  // Email address
+  if (/@/.test(text)) return true;
+  // Keywords that hint at out-of-platform contact attempts
+  if (/whatsapp|numéro|numero|signal|telegram|appelle[z-]?|mon\s+tel/i.test(text)) return true;
+  return false;
 }
 
 async function sendChatMessage() {
@@ -2678,9 +2690,8 @@ async function sendChatMessage() {
   const content = (input.value || '').trim();
   if (!content) return;
 
-  if (containsContactInfo(content)) {
-    const blocked = document.getElementById('chat-blocked-msg');
-    blocked.classList.add('show');
+  if (!chatState.paymentFunded && containsPhone(content)) {
+    document.getElementById('chat-blocked-msg').classList.add('show');
     return;
   }
   document.getElementById('chat-blocked-msg').classList.remove('show');
