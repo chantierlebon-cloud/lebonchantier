@@ -703,6 +703,31 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   </footer>
 </div>
 
+<!-- SEARCH -->
+<div id="search" class="page">
+  <div style="max-width:1100px;margin:0 auto;padding:40px 24px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;">
+      <button onclick="showPage('home')" style="background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink3);display:flex;align-items:center;gap:5px;padding:0;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Accueil
+      </button>
+      <h1 id="search-title" style="font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,28px);font-weight:900;margin:0;letter-spacing:-0.5px;">Résultats</h1>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;">
+      <input id="search-input" placeholder="Type de travaux..."
+        style="flex:1;min-width:180px;height:48px;padding:0 16px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;color:var(--ink);background:var(--white);outline:none;transition:border-color 0.2s;"
+        oninput="loadSearchResults()" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      <input id="search-city" placeholder="Ville"
+        style="width:160px;height:48px;padding:0 16px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;color:var(--ink);background:var(--white);outline:none;transition:border-color 0.2s;"
+        oninput="loadSearchResults()" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+    <div id="search-count" style="font-size:13px;color:var(--ink3);margin-bottom:16px;"></div>
+    <div id="search-results" class="jobs-grid">
+      <div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div>
+    </div>
+  </div>
+</div>
+
 <!-- BROWSE -->
 <div id="browse" class="page">
   <div class="hero" style="padding:28px 24px">
@@ -908,6 +933,12 @@ async function init(){
   });
   setupCategoryFilters();
   loadAnnonces('home');loadStats();
+  // URL-based routing: /search?category=...
+  if(window.location.pathname==='/search'){
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    var sp=document.getElementById('search');
+    if(sp){sp.classList.add('active');loadSearchResults();}
+  }
 }
 
 async function loadProfile(){
@@ -2789,8 +2820,8 @@ function showCat(key){
   if(!content) return;
   var items=(_catData[key]||{items:[]}).items;
   content.innerHTML=items.map(function(item){
-    var safecat=item.cat.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return '<div class="card" onclick="filterByCategory(\''+safecat+'\')">'
+    var enccat=encodeURIComponent(item.cat);
+    return '<div class="card" onclick="window.location.href=\'/search?category='+enccat+'\'">'
       +'<img src="'+item.img+'?w=600&h=420&fit=crop&q=85&auto=format" alt="'+item.title+'" loading="lazy"'
       +' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
       +'<div class="card-fallback">'+item.emoji+'</div>'
@@ -2815,15 +2846,59 @@ function initCatSection(){
 }
 
 function applySearchFromHome(){
-  browseFilters.categorie=(document.getElementById('home-search-categorie')?.value||'').trim();
-  browseFilters.ville=(document.getElementById('home-search-ville')?.value||'').trim();
-  showPage('browse');
+  var cat=(document.getElementById('home-search-categorie')?.value||'').trim();
+  var city=(document.getElementById('home-search-ville')?.value||'').trim();
+  var params=new URLSearchParams();
+  if(cat) params.set('category',cat);
+  if(city) params.set('city',city);
+  window.location.href='/search?'+params.toString();
 }
 
 function applySearchFromBrowse(){
   browseFilters.categorie=(document.getElementById('browse-search-categorie')?.value||'').trim();
   browseFilters.ville=(document.getElementById('browse-search-ville')?.value||'').trim();
   loadAnnonces('browse');
+}
+
+async function loadSearchResults(){
+  var params=new URLSearchParams(window.location.search);
+  var searchEl=document.getElementById('search-input');
+  var cityEl=document.getElementById('search-city');
+  // Populate inputs from URL on first load (inputs are empty)
+  if(searchEl&&searchEl.value==='') searchEl.value=params.get('category')||'';
+  if(cityEl&&cityEl.value==='') cityEl.value=params.get('city')||'';
+  var cat=(searchEl?searchEl.value:(params.get('category')||'')).trim();
+  var city=(cityEl?cityEl.value:(params.get('city')||'')).trim();
+  // Update title
+  var titleEl=document.getElementById('search-title');
+  if(titleEl) titleEl.textContent=cat?'Résultats · '+cat:'Toutes les annonces';
+  var container=document.getElementById('search-results');
+  if(!container) return;
+  container.innerHTML='<div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div>';
+  var countEl=document.getElementById('search-count');
+  if(countEl) countEl.textContent='';
+  var q=db.from('annonces').select('*').eq('statut','ouvert').order('created_at',{ascending:false}).limit(50);
+  if(cat) q=q.ilike('categorie','%'+cat+'%');
+  if(city) q=q.ilike('ville','%'+city+'%');
+  const{data,error}=await q;
+  if(error){console.error(error);container.innerHTML='<div class="empty-state"><div class="empty-icon">❌</div><p>Erreur lors du chargement.</p></div>';return;}
+  if(!data||data.length===0){container.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><h3>Aucun résultat</h3><p>Essayez avec d\'autres mots-clés ou une autre ville.</p></div>';return;}
+  if(countEl) countEl.textContent=data.length+' annonce'+(data.length>1?'s':'')+' trouvée'+(data.length>1?'s':'');
+  container.innerHTML=data.map(function(a){
+    var photoTop=(a.photos&&a.photos.length)?'<div class="job-card-photo"><img src="'+a.photos[0]+'" alt="photo" loading="lazy"></div>':'';
+    return '<div class="job-card" onclick="showAnnonceDetail(\''+a.id+'\')">'
+      +photoTop
+      +'<div class="job-card-body">'
+      +'<div class="job-tags"><span class="tag">'+escapeHTML(a.categorie||'Autre')+'</span>'
+      +'<span class="statut-badge statut-'+(a.statut||'ouvert')+'">'+(a.statut==='ouvert'?'🟢 Ouvert':'🔵 En cours')+'</span></div>'
+      +'<div class="job-card-title">'+escapeHTML(a.categorie||'Travaux')+' — '+escapeHTML(a.ville||'')+'</div>'
+      +'<div class="job-card-meta"><span class="meta">📍 '+escapeHTML(a.ville||'Non précisé')+'</span><span class="meta">📅 '+timeAgo(a.created_at)+'</span></div>'
+      +'<div class="job-card-desc">'+escapeHTML(a.description||'')+'</div>'
+      +'<div class="job-card-footer">'
+      +'<div><div class="job-price">'+escapeHTML(formatBudget(a.budget))+'</div><div class="job-price-sub">Budget max</div></div>'
+      +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><div class="escrow-badge">🔒 Sécurisé</div></div>'
+      +'</div></div></div>';
+  }).join('');
 }
 
 /* ── Formatage budget texte libre ── */
