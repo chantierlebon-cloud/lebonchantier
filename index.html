@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LeBonChantier — Trouvez un artisan. Simple et sécurisé.</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -111,6 +112,44 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cat-pill:hover{border-color:var(--accent);color:var(--accent);}
 .cat-pill.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
 
+/* ── HERO HOME SPLIT ── */
+.hero-home{padding:0!important;background:linear-gradient(150deg,#FFFFFF 0%,#FFF6F3 55%,#FFFFFF 100%);}
+.hero-split{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;min-height:580px;align-items:center;padding:64px 40px;gap:64px;}
+.hero-left{display:flex;flex-direction:column;justify-content:center;}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:0.6px;padding:7px 14px;border-radius:100px;margin-bottom:22px;text-transform:uppercase;width:fit-content;}
+.hero-tag-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;flex-shrink:0;}
+.hero-search{display:flex;align-items:center;background:var(--white);border:2px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08),0 1px 4px rgba(0,0,0,0.05);margin-bottom:20px;transition:border-color 0.2s,box-shadow 0.2s;}
+.hero-search:focus-within{border-color:var(--accent);box-shadow:0 8px 32px rgba(197,52,10,0.12),0 2px 8px rgba(0,0,0,0.06);}
+.hero-search-field{display:flex;align-items:center;flex:1;padding:0 16px;gap:10px;min-width:0;}
+.hero-search-icon{font-family:'Material Symbols Outlined';font-style:normal;font-weight:300;font-variation-settings:'FILL' 0,'wght' 300;color:var(--ink3);font-size:20px;flex-shrink:0;line-height:1;}
+.hero-search-field input{flex:1;height:56px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;background:transparent;min-width:0;}
+.hero-search-field input::placeholder{color:var(--ink3);}
+.hero-search-sep{width:1px;background:var(--border);margin:12px 0;flex-shrink:0;}
+.hero-search-btn{margin:6px 6px 6px 0;padding:0 24px;height:44px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.15s,transform 0.1s;flex-shrink:0;}
+.hero-search-btn:hover{background:var(--accent-hover);transform:translateY(-1px);}
+.hero-trust-hints{display:flex;gap:20px;flex-wrap:wrap;}
+.hero-trust-hint{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink3);}
+.hero-trust-hint svg{color:var(--green);flex-shrink:0;}
+.hero-right{position:relative;}
+.hero-right-img{border-radius:20px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 24px 64px rgba(0,0,0,0.14);}
+.hero-right-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-badge{position:absolute;bottom:-16px;left:-20px;background:rgba(255,255,255,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 18px;border-radius:var(--r-md);box-shadow:0 8px 32px rgba(0,0,0,0.12);display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.8);}
+.hero-badge-icon{width:42px;height:42px;background:#EFF6FF;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hero-badge-title{font-size:13px;font-weight:700;color:var(--ink);}
+.hero-badge-sub{font-size:11px;color:var(--ink3);margin-top:1px;}
+.hero-rating{position:absolute;top:20px;right:-16px;background:rgba(255,255,255,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 14px;border-radius:var(--r-md);box-shadow:0 4px 20px rgba(0,0,0,0.10);display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.8);}
+.hero-rating-stars{color:#F59E0B;font-size:13px;letter-spacing:1px;}
+.hero-rating-text{font-size:11px;font-weight:600;color:var(--ink2);}
+
+/* ── TRUST BAR ── */
+.trust-bar{background:var(--white);border-bottom:1px solid var(--border);}
+.trust-bar-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);}
+.trust-item{display:flex;align-items:flex-start;gap:16px;padding:28px 36px;border-right:1px solid var(--border);}
+.trust-item:last-child{border-right:none;}
+.trust-item-icon{width:48px;height:48px;background:var(--accent-light);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.trust-item-body strong{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.trust-item-body span{font-size:12px;color:var(--ink3);line-height:1.55;}
+
 /* ── STATS ── */
 .stats-bar{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 24px;display:flex;justify-content:center;gap:64px;flex-wrap:wrap;}
 .stat-n{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;color:var(--accent);text-align:center;}
@@ -138,31 +177,31 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .job-price-sub{font-size:10px;color:var(--ink3);}
 .escrow-badge{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:4px 10px;border-radius:100px;}
 .job-time{font-size:11px;color:var(--ink3);}
-/* ── CATEGORY SLIDER ── */
-.cat-icon-section{background:#F1F5F9;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 0;overflow:visible;}
-.cat-icon-inner{max-width:1120px;margin:0 auto;padding:0 52px;}
-.cat-icon-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;}
-.cat-slider-wrapper{position:relative;display:flex;align-items:center;}
-.cat-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:var(--white);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink2);z-index:10;box-shadow:var(--shadow-sm);transition:all 0.18s;flex-shrink:0;line-height:1;padding:0;}
-.cat-arrow:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:var(--shadow-md);}
-.cat-arrow:active{transform:translateY(-50%) scale(0.9);}
-.cat-arrow-left{left:-46px;}
-.cat-arrow-right{right:-46px;}
-.cat-scroll{display:flex;gap:12px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:8px 2px 12px;flex:1;align-items:flex-start;}
-.cat-scroll::-webkit-scrollbar{display:none;}
-.cat-group{flex-shrink:0;position:relative;}
-.cat-group-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 22px;min-width:148px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:transform 0.2s ease,box-shadow 0.2s ease,border-color 0.2s ease,background 0.2s ease;box-shadow:var(--shadow-xs);user-select:none;-webkit-user-select:none;}
-.cat-group-emoji{font-size:30px;line-height:1;display:block;}
-.cat-group-name{font-size:12px;font-weight:700;color:var(--ink);text-align:center;line-height:1.35;}
-.cat-group-caret{font-size:11px;color:var(--ink3);transition:transform 0.2s;display:block;margin-top:2px;}
-.cat-group:hover .cat-group-btn,.cat-group.open .cat-group-btn{transform:scale(1.03);border-color:var(--accent);background:var(--accent-light);box-shadow:var(--shadow-sm);}
-.cat-group.open .cat-group-caret,.cat-group:hover .cat-group-caret{color:var(--accent);}
-.cat-group.open .cat-group-caret{transform:rotate(90deg);}
-.cat-dropdown{position:fixed;top:0;left:0;transform:translateX(-50%);min-width:190px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-md);padding:6px;z-index:1000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.18s ease,visibility 0.18s;}
-.cat-dropdown::before{content:'';position:absolute;top:-6px;left:50%;width:12px;height:12px;background:var(--white);border-left:1.5px solid var(--border);border-top:1.5px solid var(--border);transform:translateX(-50%) rotate(45deg);}
-.cat-group.open .cat-dropdown{opacity:1;visibility:visible;pointer-events:all;}
-.cat-dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:background 0.15s,color 0.15s;white-space:nowrap;}
-.cat-dropdown-item:hover{background:var(--accent-light);color:var(--accent);}
+/* ── CATEGORIES ── */
+.msym{font-family:'Material Symbols Outlined';font-style:normal;font-weight:normal;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;line-height:1;display:inline-block;vertical-align:middle;}
+.categories{padding:64px 0;background:#F8F9FB;border-bottom:1px solid var(--border);}
+.categories-inner{max-width:1120px;margin:0 auto;padding:0 32px;}
+.cat-sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;}
+.cat-sec-title{font-family:'Unbounded',sans-serif;font-size:clamp(18px,2.5vw,26px);font-weight:900;color:var(--ink);letter-spacing:-0.5px;margin-bottom:6px;}
+.cat-sec-sub{font-size:13px;color:var(--ink3);font-weight:400;}
+.cat-sec-all{font-size:13px;font-weight:700;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;white-space:nowrap;padding:0;}
+.cat-sec-all:hover{text-decoration:underline;}
+.tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{cursor:pointer;font-weight:600;font-size:14px;color:var(--ink3);padding:10px 24px 12px;border:none;background:none;font-family:inherit;transition:color 0.15s;white-space:nowrap;position:relative;top:2px;flex-shrink:0;}
+.tab.active{color:var(--accent);border-bottom:2px solid var(--accent);}
+.tab:hover:not(.active){color:var(--ink2);}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.card{position:relative;aspect-ratio:4/5;border-radius:var(--r-xl);overflow:hidden;cursor:pointer;background:#1a1a2e;transition:transform 0.3s cubic-bezier(.4,0,.2,1),box-shadow 0.3s cubic-bezier(.4,0,.2,1);}
+.card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(0,0,0,0.22);}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s cubic-bezier(.4,0,.2,1);}
+.card:hover img{transform:scale(1.07);}
+.card-fallback{width:100%;height:100%;display:none;align-items:center;justify-content:center;font-size:60px;background:linear-gradient(135deg,#2d3748 0%,#1a202c 100%);}
+.card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,14,28,0.84) 0%,rgba(10,14,28,0.20) 50%,transparent 100%);}
+.card-title{position:absolute;bottom:0;left:0;right:0;padding:24px 20px 20px;color:#fff;line-height:1.3;display:flex;flex-direction:column;gap:3px;}
+.card-title-emoji{font-size:20px;margin-bottom:4px;}
+.card-title-text{font-size:17px;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,0.5);}
+.card-title-sub{font-size:11px;font-weight:500;opacity:0.80;letter-spacing:0.2px;}
 
 /* ── BADGES ── */
 .statut-badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:100px;}
@@ -224,15 +263,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 /* ── HOW IT WORKS ── */
 .hiw{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 24px;}
-.hiw-inner{max-width:800px;margin:0 auto;}
-.hiw h2{font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,32px);font-weight:900;letter-spacing:-1px;margin-bottom:48px;text-align:center;}
-.hiw-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
-.hiw-step{text-align:center;padding:36px 24px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--white);box-shadow:var(--shadow-xs);transition:box-shadow 0.2s,transform 0.2s;}
-.hiw-step:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
-.hiw-num{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-bottom:16px;}
-.hiw-icon{font-size:36px;margin-bottom:14px;}
-.hiw-step h3{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;}
-.hiw-step p{font-size:13px;color:var(--ink2);line-height:1.65;}
+.hiw-inner{max-width:1120px;margin:0 auto;}
+.hiw h2{font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,32px);font-weight:900;letter-spacing:-1px;margin-bottom:8px;text-align:center;}
+.hiw-subtitle{text-align:center;font-size:15px;color:var(--ink3);margin-bottom:48px;font-weight:400;}
+.hiw-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.hiw-step{position:relative;text-align:left;padding:36px 32px 32px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--white);box-shadow:var(--shadow-sm);transition:box-shadow 0.22s,transform 0.22s;overflow:hidden;}
+.hiw-step::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#FF8C69);border-radius:var(--r-lg) var(--r-lg) 0 0;}
+.hiw-step:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);}
+.hiw-num{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;background:var(--accent-light);border-radius:50%;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:900;color:var(--accent);margin-bottom:20px;}
+.hiw-icon{font-size:38px;margin-bottom:14px;display:block;}
+.hiw-step h3{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;letter-spacing:-0.2px;}
+.hiw-step p{font-size:13px;color:var(--ink2);line-height:1.7;}
 
 /* ── CTA BAND ── */
 .cta-band{background:var(--accent);padding:64px 24px;text-align:center;}
@@ -251,11 +292,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.success{background:var(--green);}
 .toast.error{background:#DC2626;}
-footer{background:var(--surface);border-top:1px solid var(--border);padding:40px 24px;text-align:center;}
-.footer-logo{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px;}
+footer{background:var(--white);border-top:1px solid var(--border);padding:56px 24px 32px;}
+.footer-inner{max-width:1120px;margin:0 auto;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
+.footer-logo{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:900;margin-bottom:14px;}
 .footer-logo span{color:var(--accent);}
-footer p{font-size:12px;color:var(--ink3);}
-footer a{color:var(--accent);cursor:pointer;}
+.footer-brand p{font-size:13px;color:var(--ink3);line-height:1.7;max-width:260px;}
+.footer-col h4{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:900;color:var(--ink);margin-bottom:20px;letter-spacing:0.5px;text-transform:uppercase;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.footer-col ul li a{font-size:13px;color:var(--ink3);cursor:pointer;transition:color 0.15s;}
+.footer-col ul li a:hover{color:var(--accent);}
+.footer-bottom{padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-copy{font-size:12px;color:var(--ink3);}
+.footer-copy a{color:var(--accent);cursor:pointer;}
 .empty-state{text-align:center;padding:56px 24px;color:var(--ink3);}
 .empty-state .empty-icon{font-size:40px;margin-bottom:14px;}
 .empty-state h3{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--ink);}
@@ -270,13 +319,22 @@ footer a{color:var(--accent);cursor:pointer;}
   .role-selector{grid-template-columns:1fr 1fr;}
   .nav{padding:0 20px;}
   .hero{padding:36px 20px 28px;}
+  .hero-split{grid-template-columns:1fr;padding:40px 20px 32px;gap:0;}
+  .hero-right{display:none;}
+  .hero-tag{margin-bottom:16px;}
+  .trust-bar-inner{grid-template-columns:1fr;}
+  .trust-item{border-right:none;border-bottom:1px solid var(--border);}
+  .trust-item:last-child{border-bottom:none;}
   .listings-section,.dashboard,.post-page,.annonce-detail-page{padding-left:16px;padding-right:16px;}
-  .cat-icon-section{padding:20px 0;}
-  .cat-icon-inner{padding:0 20px;}
-  .cat-arrow{display:none;}
-  .cat-group-btn{min-width:120px;padding:14px 14px;}
-  .cat-group-emoji{font-size:26px;}
-  .cat-group-name{font-size:11px;}
+  .categories-inner{padding:0 16px;}
+  .cat-sec-head{flex-direction:column;align-items:flex-start;gap:10px;}
+  .tab{font-size:13px;padding:9px 14px 11px;}
+  .cards{grid-template-columns:1fr 1fr;gap:12px;}
+  .card-title-text{font-size:14px;}
+  .card-title{padding:16px 12px 14px;}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+  .footer-brand{grid-column:1/-1;}
+  .footer-bottom{flex-direction:column;text-align:center;}
 }
 
 /* ── CHAT ── */
@@ -473,91 +531,92 @@ footer a{color:var(--accent);cursor:pointer;}
 
 <!-- HOME -->
 <div id="home" class="page active">
-  <div class="hero">
-    <div class="hero-inner">
-      <h1>Trouvez un artisan.<br><span>Sans galère.</span></h1>
-      <p>Publiez votre chantier en 60 secondes. Les artisans viennent à vous. Paiement sécurisé jusqu'à la fin des travaux.</p>
-      <div class="search-big">
-        <input type="text" id="home-search-categorie" placeholder="Quel type de travaux ?">
-        <div class="sep"></div>
-        <input type="text" id="home-search-ville" placeholder="Ville..." style="max-width:180px">
-        <button class="search-go" onclick="applySearchFromHome()">Chercher →</button>
-      </div>
-    </div>
-  </div>
-  <!-- CATEGORY SLIDER -->
-  <div class="cat-icon-section">
-    <div class="cat-icon-inner">
-      <div class="cat-icon-label">Trouvez par catégorie</div>
-      <div class="cat-slider-wrapper">
-        <button class="cat-arrow cat-arrow-left" onclick="scrollCategories(-320)" aria-label="Précédent">&#8249;</button>
-        <div class="cat-scroll" id="categoryScroll">
+  <div class="hero hero-home">
+    <div style="max-width:1200px;margin:0 auto;padding:72px 40px;display:flex;align-items:center;gap:64px;">
 
-          <!-- 1. Construction -->
-          <div class="cat-group">
-            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
-              <span class="cat-group-emoji">🏗️</span>
-              <span class="cat-group-name">Construction</span>
-              <span class="cat-group-caret">›</span>
-            </div>
-            <div class="cat-dropdown">
-              <div class="cat-dropdown-item" onclick="filterByCategory('Maçonnerie')">🧱 Maçonnerie</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Toiture')">🏠 Toiture</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Rénovation cuisine')">🔨 Rénovation</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Menuiserie')">🪵 Menuiserie</div>
-            </div>
-          </div>
+      <!-- Colonne gauche -->
+      <div style="flex:1;min-width:0;">
+        <h1 style="font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.15;margin:0 0 18px;color:#1A1A2E;">
+          Trouvez le bon service.<br><span style="color:#C5340A;">Rapidement.</span>
+        </h1>
+        <p style="font-size:17px;color:#4A5568;line-height:1.65;margin:0 0 32px;max-width:480px;">
+          Publiez votre chantier en 60 secondes. Les artisans viennent à vous. Paiement sécurisé jusqu'à la fin des travaux.
+        </p>
 
-          <!-- 2. Réparation & Installation -->
-          <div class="cat-group">
-            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
-              <span class="cat-group-emoji">🔧</span>
-              <span class="cat-group-name">Réparation &amp; Installation</span>
-              <span class="cat-group-caret">›</span>
-            </div>
-            <div class="cat-dropdown">
-              <div class="cat-dropdown-item" onclick="filterByCategory('Plomberie')">💧 Plomberie</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Électricité')">⚡ Électricité</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Bricolage')">🔩 Bricolage</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Peinture')">🎨 Peinture</div>
-            </div>
-          </div>
-
-          <!-- 3. Services maison -->
-          <div class="cat-group">
-            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
-              <span class="cat-group-emoji">🏡</span>
-              <span class="cat-group-name">Services maison</span>
-              <span class="cat-group-caret">›</span>
-            </div>
-            <div class="cat-dropdown">
-              <div class="cat-dropdown-item" onclick="filterByCategory('Ménage/Nettoyage')">🧹 Ménage</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Jardinage')">🌿 Jardinage</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Déménagement')">🚚 Déménagement</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Cuisine à domicile')">🍽️ Cuisine</div>
-            </div>
-          </div>
-
-          <!-- 4. Autres services -->
-          <div class="cat-group">
-            <div class="cat-group-btn" onclick="toggleCatGroup(this)">
-              <span class="cat-group-emoji">✨</span>
-              <span class="cat-group-name">Autres services</span>
-              <span class="cat-group-caret">›</span>
-            </div>
-            <div class="cat-dropdown">
-              <div class="cat-dropdown-item" onclick="filterByCategory('Informatique/Dépannage')">💻 Informatique</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Garde d\'enfants')">👶 Baby-sitting</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Coach sportif')">💪 Coach sportif</div>
-              <div class="cat-dropdown-item" onclick="filterByCategory('Autre')">🎯 Autre</div>
-            </div>
-          </div>
-
+        <!-- Barre de recherche -->
+        <div style="display:flex;align-items:center;background:#fff;border:2px solid #DDE1E7;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-bottom:20px;">
+          <input type="text" id="home-search-categorie" placeholder="Quel type de travaux ?"
+            style="flex:1;height:54px;border:none;outline:none;padding:0 20px;font-size:15px;background:transparent;color:#1A1A2E;font-family:inherit;">
+          <div style="width:1px;height:28px;background:#DDE1E7;flex-shrink:0;"></div>
+          <input type="text" id="home-search-ville" placeholder="Votre ville"
+            style="width:160px;height:54px;border:none;outline:none;padding:0 16px;font-size:15px;background:transparent;color:#1A1A2E;font-family:inherit;">
+          <button onclick="applySearchFromHome()"
+            style="margin:6px;padding:0 24px;height:42px;background:#C5340A;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;">
+            Chercher
+          </button>
         </div>
-        <button class="cat-arrow cat-arrow-right" onclick="scrollCategories(320)" aria-label="Suivant">&#8250;</button>
+
+        <!-- Trust hints -->
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4A5568;font-weight:500;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            100% gratuit
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4A5568;font-weight:500;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Artisans vérifiés
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4A5568;font-weight:500;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Paiement sécurisé
+          </span>
+        </div>
+      </div>
+
+      <!-- Colonne droite : image -->
+      <div style="flex:0 0 460px;max-width:460px;">
+        <div style="border-radius:20px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 24px 64px rgba(0,0,0,0.14);">
+          <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&h=700&fit=crop&q=85&auto=format"
+            alt="Artisan au travail"
+            style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-bar-inner">
+      <div class="trust-item">
+        <div class="trust-item-icon"><span class="msym" style="color:var(--accent);font-size:24px;">verified_user</span></div>
+        <div class="trust-item-body"><strong>Artisans vérifiés</strong><span>Profils et qualifications contrôlés par nos équipes.</span></div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-item-icon"><span class="msym" style="color:var(--accent);font-size:24px;">payments</span></div>
+        <div class="trust-item-body"><strong>Paiement sécurisé</strong><span>L'argent est bloqué en escrow jusqu'à votre validation.</span></div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-item-icon"><span class="msym" style="color:var(--accent);font-size:24px;">headset_mic</span></div>
+        <div class="trust-item-body"><strong>Support 7j/7</strong><span>Une équipe disponible pour répondre à vos questions.</span></div>
       </div>
     </div>
   </div>
+
+  <!-- CATEGORIES -->
+  <section class="categories">
+    <div class="categories-inner">
+      <div class="cat-sec-head">
+        <div>
+          <div class="cat-sec-title">Explorez par catégorie</div>
+          <div class="cat-sec-sub">Des spécialistes prêts à intervenir rapidement.</div>
+        </div>
+        <button class="cat-sec-all" onclick="showPage('browse')">Voir tout <span class="msym" style="font-size:16px;font-variation-settings:'FILL' 0">arrow_forward</span></button>
+      </div>
+      <div class="tabs" id="cat-tabs"></div>
+      <div class="cards" id="cat-content"></div>
+    </div>
+  </section>
   <div class="stats-bar">
     <div><div class="stat-n" id="stat-annonces">0</div><div class="stat-l">Annonces publiées</div></div>
     <div><div class="stat-n">0€</div><div class="stat-l">Pour poster</div></div>
@@ -574,10 +633,26 @@ footer a{color:var(--accent);cursor:pointer;}
   <div class="hiw">
     <div class="hiw-inner">
       <h2>Comment ça marche ?</h2>
+      <p class="hiw-subtitle">Simple, rapide et sécurisé — de la publication au paiement.</p>
       <div class="hiw-steps">
-        <div class="hiw-step"><div class="hiw-num">ÉTAPE 01</div><div class="hiw-icon">✏️</div><h3>Publiez votre chantier</h3><p>60 secondes. Avec photos. Gratuit.</p></div>
-        <div class="hiw-step"><div class="hiw-num">ÉTAPE 02</div><div class="hiw-icon">🤝</div><h3>Les artisans postulent</h3><p>Choisissez librement parmi les propositions.</p></div>
-        <div class="hiw-step"><div class="hiw-num">ÉTAPE 03</div><div class="hiw-icon">✅</div><h3>Payez en toute sécurité</h3><p>L'argent est bloqué jusqu'à votre validation.</p></div>
+        <div class="hiw-step">
+          <div class="hiw-num">01</div>
+          <div class="hiw-icon">✏️</div>
+          <h3>Publiez votre chantier</h3>
+          <p>Décrivez vos travaux, ajoutez des photos, fixez votre budget. En 60 secondes chrono, c'est en ligne.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">02</div>
+          <div class="hiw-icon">🤝</div>
+          <h3>Les artisans postulent</h3>
+          <p>Recevez des devis d'artisans locaux vérifiés. Comparez, discutez, choisissez librement.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">03</div>
+          <div class="hiw-icon">✅</div>
+          <h3>Payez en toute sécurité</h3>
+          <p>Votre paiement est bloqué jusqu'à votre validation. L'artisan est payé quand vous êtes satisfait.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -586,8 +661,45 @@ footer a{color:var(--accent);cursor:pointer;}
     <button class="cta-band-btn" onclick="requireAuth('post')">Publier gratuitement →</button>
   </div>
   <footer>
-    <div class="footer-logo">LeBon<span>Chantier</span></div>
-    <p>© 2025 LeBonChantier.fr · <a onclick="showPage('rgpd')">Politique de confidentialité</a> · <a onclick="showPage('rgpd')">CGU</a></p>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">LeBon<span>Chantier</span></div>
+          <p>La plateforme pour trouver des artisans de confiance. Publiez votre chantier, recevez des devis, payez en toute sécurité.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a onclick="filterByCategory('Plomberie')">Plomberie</a></li>
+            <li><a onclick="filterByCategory('Électricité')">Électricité</a></li>
+            <li><a onclick="filterByCategory('Peinture')">Peinture</a></li>
+            <li><a onclick="filterByCategory('Maçonnerie')">Maçonnerie</a></li>
+            <li><a onclick="filterByCategory('Jardinage')">Jardinage</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Plateforme</h4>
+          <ul>
+            <li><a onclick="showPage('browse')">Annonces</a></li>
+            <li><a onclick="requireAuth('post')">Publier un chantier</a></li>
+            <li><a onclick="openModal()">Devenir artisan</a></li>
+            <li><a onclick="showPage('home')">Accueil</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Légal</h4>
+          <ul>
+            <li><a onclick="showPage('rgpd')">CGU</a></li>
+            <li><a onclick="showPage('rgpd')">Confidentialité</a></li>
+            <li><a onclick="showPage('rgpd')">Mentions légales</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 LeBonChantier.fr · Tous droits réservés · <a onclick="showPage('rgpd')">CGU</a></span>
+        <span class="footer-copy">Paiement sécurisé par Stripe</span>
+      </div>
+    </div>
   </footer>
 </div>
 
@@ -791,7 +903,7 @@ async function init(){
   if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();subscribeCandidaturesRealtime();}
   db.auth.onAuthStateChange(async(event,session)=>{
     currentAccessToken=session?.access_token||null;
-    if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');subscribeCandidaturesRealtime();}
+    if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');subscribeCandidaturesRealtime();if(document.getElementById('dashboard')?.classList.contains('active'))loadDashboard();}
     else{currentUser=null;currentProfile=null;updateNav(false);updateDashboardUI();if(_candidaturesRealtimeSub){db.removeChannel(_candidaturesRealtimeSub);_candidaturesRealtimeSub=null;}}
   });
   setupCategoryFilters();
@@ -2580,6 +2692,106 @@ function filterByCategory(cat){
   showPage('browse');
 }
 
+/* ── Categories with photo cards ── */
+var _catData={
+  bricolage:{label:'🔨 Bricolage',items:[
+    {title:'Petits travaux',sub:'Réparation rapide',emoji:'🔧',
+     img:'https://images.unsplash.com/photo-1581578731548-c64695cc6952',cat:'Bricolage'},
+    {title:'Montage meubles',sub:'IKEA & sur mesure',emoji:'🪑',
+     img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc',cat:'Bricolage'},
+    {title:'Réparation maison',sub:'Fissures, enduits, plâtre',emoji:'🏠',
+     img:'https://images.unsplash.com/photo-1504307651254-35680f356dfd',cat:'Bricolage'},
+    {title:'Installation TV & étagères',sub:'Fixation murale',emoji:'📺',
+     img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89',cat:'Bricolage'}
+  ]},
+  menage:{label:'🧹 Ménage',items:[
+    {title:'Ménage à domicile',sub:'Régulier ou ponctuel',emoji:'🏠',
+     img:'https://images.unsplash.com/photo-1563453392212-326f5e854473',cat:'Ménage/Nettoyage'},
+    {title:'Nettoyage de canapé',sub:'Détachage & shampoing',emoji:'🛋️',
+     img:'https://images.unsplash.com/photo-1540518614846-7eded433c457',cat:'Ménage/Nettoyage'},
+    {title:'Nettoyage après travaux',sub:'Remise en état complète',emoji:'✨',
+     img:'https://images.unsplash.com/photo-1558317374-067fb5f30001',cat:'Ménage/Nettoyage'},
+    {title:'Repassage',sub:'À domicile ou en atelier',emoji:'👔',
+     img:'https://images.unsplash.com/photo-1582735689369-4fe89db7114c',cat:'Ménage/Nettoyage'}
+  ]},
+  jardin:{label:'🌿 Jardin',items:[
+    {title:'Aménagement jardin',sub:'Conception & plantation',emoji:'🌳',
+     img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b',cat:'Jardinage'},
+    {title:'Tonte de pelouse',sub:'Tondeuse & débroussaillage',emoji:'🌱',
+     img:'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b',cat:'Jardinage'},
+    {title:'Élagage & abattage',sub:'Arbres & haies',emoji:'🌲',
+     img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb',cat:'Jardinage'},
+    {title:'Création terrasse',sub:'Bois, carrelage, composite',emoji:'🪴',
+     img:'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3',cat:'Jardinage'}
+  ]},
+  demenagement:{label:'🚚 Déménagement',items:[
+    {title:'Déménagement complet',sub:'Emballage + transport',emoji:'📦',
+     img:'https://images.unsplash.com/photo-1600585152915-d208bec867a1',cat:'Déménagement'},
+    {title:'Transport de meubles',sub:'Livraison & montage',emoji:'🛋️',
+     img:'https://images.unsplash.com/photo-1523575166468-7a4a2b43fcbb',cat:'Déménagement'},
+    {title:'Location de camion',sub:'Avec ou sans chauffeur',emoji:'🚛',
+     img:'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7',cat:'Déménagement'},
+    {title:'Aide au déménagement',sub:'Portage & manutention',emoji:'💪',
+     img:'https://images.unsplash.com/photo-1530124566582-a618bc2615dc',cat:'Déménagement'}
+  ]},
+  plomberie:{label:'💧 Plomberie',items:[
+    {title:'Réparation de fuite',sub:'Intervention rapide',emoji:'🔩',
+     img:'https://images.unsplash.com/photo-1585704032915-c3400ca199e7',cat:'Plomberie'},
+    {title:'Salle de bain',sub:'Installation & rénovation',emoji:'🚿',
+     img:'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14',cat:'Plomberie'},
+    {title:'Débouchage',sub:'Canalisations & WC',emoji:'🌊',
+     img:'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1',cat:'Plomberie'},
+    {title:'Chauffe-eau',sub:'Installation & dépannage',emoji:'🔥',
+     img:'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc',cat:'Plomberie'}
+  ]},
+  electricite:{label:'⚡ Électricité',items:[
+    {title:'Installation électrique',sub:'Neuf & rénovation',emoji:'🔌',
+     img:'https://images.unsplash.com/photo-1621905251189-08b45d6a269e',cat:'Électricité'},
+    {title:'Dépannage électrique',sub:'Panne & urgence',emoji:'💡',
+     img:'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13',cat:'Électricité'},
+    {title:'Mise aux normes',sub:'Tableau & câblage',emoji:'📋',
+     img:'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e',cat:'Électricité'},
+    {title:'Éclairage & domotique',sub:'LED, spots, smart home',emoji:'🏮',
+     img:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89',cat:'Électricité'}
+  ]}
+};
+
+var _catActive='bricolage';
+
+function showCat(key){
+  _catActive=key;
+  document.querySelectorAll('#cat-tabs .tab').forEach(function(t){
+    t.classList.toggle('active',t.dataset.cat===key);
+  });
+  var content=document.getElementById('cat-content');
+  if(!content) return;
+  var items=(_catData[key]||{items:[]}).items;
+  content.innerHTML=items.map(function(item){
+    var safecat=item.cat.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return '<div class="card" onclick="filterByCategory(\''+safecat+'\')">'
+      +'<img src="'+item.img+'?w=600&h=420&fit=crop&q=85&auto=format" alt="'+item.title+'" loading="lazy"'
+      +' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+      +'<div class="card-fallback">'+item.emoji+'</div>'
+      +'<div class="card-overlay"></div>'
+      +'<div class="card-title">'
+      +'<span class="card-title-emoji">'+item.emoji+'</span>'
+      +'<span class="card-title-text">'+item.title+'</span>'
+      +'<span class="card-title-sub">'+item.sub+'</span>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function initCatSection(){
+  var tabsEl=document.getElementById('cat-tabs');
+  if(!tabsEl) return;
+  tabsEl.innerHTML=Object.keys(_catData).map(function(key){
+    return '<button class="tab'+(key===_catActive?' active':'')+'" data-cat="'+key+'" onclick="showCat(\''+key+'\')">'
+      +_catData[key].label+'</button>';
+  }).join('');
+  showCat(_catActive);
+}
+
 function applySearchFromHome(){
   browseFilters.categorie=(document.getElementById('home-search-categorie')?.value||'').trim();
   browseFilters.ville=(document.getElementById('home-search-ville')?.value||'').trim();
@@ -2599,54 +2811,8 @@ function formatBudget(val){
   return /€/.test(s) ? s : s+' €';
 }
 
-/* ── Category slider & dropdown ── */
-function scrollCategories(direction){
-  const el=document.getElementById('categoryScroll');
-  if(el) el.scrollBy({left:direction,behavior:'smooth'});
-}
-
-function _positionCatDropdown(group){
-  const btn=group.querySelector('.cat-group-btn');
-  const dd=group.querySelector('.cat-dropdown');
-  if(!btn||!dd) return;
-  const r=btn.getBoundingClientRect();
-  dd.style.top=(r.bottom+8)+'px';
-  dd.style.left=(r.left+r.width/2)+'px';
-}
-
-function toggleCatGroup(btn){
-  const group=btn.closest('.cat-group');
-  const isOpen=group.classList.contains('open');
-  document.querySelectorAll('.cat-group.open').forEach(g=>g.classList.remove('open'));
-  if(!isOpen){
-    _positionCatDropdown(group);
-    group.classList.add('open');
-  }
-}
-
-function setupCatSlider(){
-  document.querySelectorAll('.cat-group').forEach(function(group){
-    var leaveTimer;
-    group.addEventListener('mouseenter',function(){
-      clearTimeout(leaveTimer);
-      document.querySelectorAll('.cat-group.open').forEach(function(g){if(g!==group)g.classList.remove('open');});
-      _positionCatDropdown(group);
-      group.classList.add('open');
-    });
-    group.addEventListener('mouseleave',function(){
-      leaveTimer=setTimeout(function(){group.classList.remove('open');},220);
-    });
-  });
-}
-
-document.addEventListener('click',function(e){
-  if(!e.target.closest('.cat-group')){
-    document.querySelectorAll('.cat-group.open').forEach(g=>g.classList.remove('open'));
-  }
-});
-
 document.addEventListener('DOMContentLoaded', init);
-document.addEventListener('DOMContentLoaded', setupCatSlider);
+document.addEventListener('DOMContentLoaded', initCatSection);
 /* Stripe step 1 patch for current working index.html */
 
 const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TJZObK2IJwjiIORGPCaZwxpdw5hDtHTy9b3Bmsl92WkvoxPFqcTXhRSVou5E93qPGMQ0Hgt0oyyVYIA3TDja1md00ZTygh8Iz ';
