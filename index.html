@@ -1278,6 +1278,7 @@ async function showAnnonceDetail(id){
     ${chatBtnHtml?`<div style="margin-bottom:20px">${chatBtnHtml}</div>`:''}
     ${photosHtml}
     <div style="font-size:15px;color:var(--ink2);line-height:1.8;margin-bottom:24px">${a.description||''}</div>
+    ${currentUser&&!isOwner&&a.statut!=='termine'?`<div style="margin-bottom:22px"><button class="submit-btn" style="max-width:220px" onclick="contactAnnonceOwner('${a.id}','${a.user_id}','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Contacter</button></div>`:''}
     ${isOwner?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px">
       <button onclick="showPage('dashboard');setTimeout(()=>openAnnonceEditor('${a.id}'),150)" style="background:#fff;border:1.5px solid var(--border);padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700">✏️ Modifier</button>
       ${a.statut!=='termine'?`<button onclick="terminerAnnonce('${a.id}')" style="background:#fff7e8;border:1.5px solid #ffe1a6;padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;color:#9a6700">✅ Terminer</button>`:''}
@@ -2587,6 +2588,12 @@ function resetField(input, errorId){
 
 /* ── CHAT ── */
 let chatState = { annonceId:null, receiverId:null, receiverName:null, sub:null };
+
+function contactAnnonceOwner(annonceId, ownerId, annonceTitle) {
+  if (!currentUser) { openModal(); return; }
+  if (ownerId === currentUser.id) { showToast('Vous êtes l\'auteur de cette annonce', 'error'); return; }
+  openChat(annonceId, ownerId, 'Client', annonceTitle);
+}
 
 function openChat(annonceId, receiverId, receiverName, annonceTitle) {
   if (!currentUser) { openModal(); return; }
