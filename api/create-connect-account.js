@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
         transfers: { requested: true }
       },
       business_type: 'individual',
-      metadata: { user_id: user.id, platform: 'LeBonService' }
+      metadata: { user_id: user.id, platform: 'TrouvePro' }
     });
 
     const { error: updateError } = await supabase

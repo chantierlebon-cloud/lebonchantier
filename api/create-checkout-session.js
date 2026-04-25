@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
           price_data: {
             currency: mission.currency || 'eur',
             product_data: {
-              name: `LeBonService — ${milestone.title}`,
+              name: `TrouvePro — ${milestone.title}`,
               description: `Mission ${mission.title || mission.id}`
             },
             unit_amount: milestone.amount
@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
         client_id: mission.client_id,
         artisan_id: mission.artisan_id,
         transfer_group: transferGroup,
-        platform: 'LeBonService'
+        platform: 'TrouvePro'
       },
       payment_intent_data: {
         transfer_group: transferGroup,
@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
           client_id: mission.client_id,
           artisan_id: mission.artisan_id,
           transfer_group: transferGroup,
-          platform: 'LeBonService'
+          platform: 'TrouvePro'
         }
       }
     });

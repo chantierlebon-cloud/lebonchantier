@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Narevo — Trouvez un professionnel. Simple et sécurisé.</title>
+<title>TrouvePro — Trouvez un professionnel. Simple et sécurisé.</title>
+<meta name="description" content="TrouvePro — La plateforme pour trouver des professionnels de confiance en France. Publiez votre annonce, recevez des devis, payez en toute sécurité.">
+<meta property="og:title" content="TrouvePro — Trouvez un professionnel. Simple et sécurisé.">
+<meta property="og:description" content="Des professionnels vérifiés près de chez vous. Paiement sécurisé, support 7j/7.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://trouvepro.fr">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TrouvePro">
+<meta name="twitter:description" content="Trouvez un professionnel de confiance en France.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -641,7 +649,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="logo" onclick="showPage('home')">Nare<span>vo</span></div>
+  <div class="logo" onclick="showPage('home')">Trouve<span>Pro</span></div>
   <div class="nav-right" id="nav-right">
     <button class="nav-link" onclick="showPage('browse')">Annonces</button>
     <button class="nav-link" onclick="openModal()">Connexion</button>
@@ -786,7 +794,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <div class="footer-inner">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="footer-logo">Nare<span>vo</span></div>
+          <div class="footer-logo">Trouve<span>Pro</span></div>
           <p>La plateforme pour trouver des professionnels de confiance. Publiez votre annonce, recevez des devis, payez en toute sécurité.</p>
         </div>
         <div class="footer-col">
@@ -818,7 +826,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         </div>
       </div>
       <div class="footer-bottom">
-        <span class="footer-copy">© 2025 Narevo.fr · Tous droits réservés · <a onclick="showPage('rgpd')">CGU</a></span>
+        <span class="footer-copy">© 2025 TrouvePro.fr · Tous droits réservés · <a onclick="showPage('rgpd')">CGU</a></span>
         <span class="footer-copy">Paiement sécurisé par Stripe</span>
       </div>
     </div>
@@ -881,7 +889,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <div class="section-top"><div class="section-title" id="browse-count">Chargement...</div></div>
     <div class="jobs-grid" id="browse-listings"><div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div></div>
   </div>
-  <footer><div class="footer-logo">Nare<span>vo</span></div><p>© 2025 Narevo.fr</p></footer>
+  <footer><div class="footer-logo">Trouve<span>Pro</span></div><p>© 2025 TrouvePro.fr</p></footer>
 </div>
 
 <!-- ANNONCE DETAIL -->
@@ -1026,7 +1034,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <h1>Politique de confidentialité</h1>
     <div class="date">Dernière mise à jour : 25 mars 2026</div>
     <h2>1. Responsable du traitement</h2>
-    <p>Narevo (narevo.fr) — Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e1d161f100a171b0c121b1c11103e19131f1712501d1113">[email&#160;protected]</a></p>
+    <p>TrouvePro (trouvepro.fr) — Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e1d161f100a171b0c121b1c11103e19131f1712501d1113">[email&#160;protected]</a></p>
     <h2>2. Données collectées</h2>
     <ul><li>Nom et prénom</li><li>Email</li><li>Téléphone</li><li>Localisation (ville)</li><li>Informations professionnelles (artisans)</li><li>Photos de chantier</li></ul>
     <h2>3. Finalités</h2>
@@ -1697,13 +1705,13 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
     try{
       await sendEmail(
         emailDest,
-        '🔔 Un professionnel a répondu à votre annonce — Narevo',
+        '🔔 Un professionnel a répondu à votre annonce — TrouvePro',
         `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
           <h2 style="color:#C5340A">Bonne nouvelle !</h2>
           <p><strong>${artisanNom}</strong> a envoyé une candidature pour votre chantier <strong>${escapeHTML(categorie)} à ${escapeHTML(ville)}</strong>.</p>
           <div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0">${escapeHTML(msg)}</div>
-          <a href="https://narevo.fr" style="display:inline-block;background:#C5340A;color:#fff;padding:12px 24px;border-radius:14px;text-decoration:none;font-weight:600">Voir la candidature →</a>
-          <p style="color:#999;font-size:12px;margin-top:24px">Narevo.fr — Des professionnels fiables près de chez vous.</p>
+          <a href="https://trouvepro.fr" style="display:inline-block;background:#C5340A;color:#fff;padding:12px 24px;border-radius:14px;text-decoration:none;font-weight:600">Voir la candidature →</a>
+          <p style="color:#999;font-size:12px;margin-top:24px">TrouvePro.fr — Des professionnels fiables près de chez vous.</p>
         </div>`
       );
       emailEnvoye=true;
