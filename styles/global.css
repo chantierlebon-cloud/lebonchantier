@@ -1,6 +1,7 @@
+/* Narevo — global accent overrides */
 :root {
-  --primary: #F97316;
-  --primary-hover: #EA580C;
+  --primary: #C5340A;
+  --primary-hover: #A62C08;
   --bg: #F9FAFB;
   --text: #111827;
 }
@@ -10,25 +11,25 @@ body {
   color: var(--text);
 }
 
-/* BUTTONS */
-button, .btn {
+/* Only target action buttons — NOT tabs, nav-links, or utility buttons */
+.submit-btn,
+.nav-btn,
+.search-go,
+.hero-search-btn,
+.cta-band-btn,
+.choisir-btn,
+.btn {
   background: var(--primary) !important;
   color: white !important;
-  border-radius: 12px !important;
 }
 
-button:hover {
+.submit-btn:hover,
+.nav-btn:hover,
+.search-go:hover,
+.hero-search-btn:hover,
+.choisir-btn:hover,
+.btn:hover {
   background: var(--primary-hover) !important;
-}
-
-/* TITLE */
-h1 {
-  color: var(--text) !important;
-}
-
-/* ACCENT */
-.accent {
-  color: var(--primary) !important;
 }
 
 /* REMOVE BLUE */
