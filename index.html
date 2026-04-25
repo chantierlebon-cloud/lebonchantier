@@ -324,11 +324,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   .hero-col-right{flex:none!important;width:100%!important;max-width:100%!important;margin-top:4px;}
   .hero-img-wrap{border-radius:16px!important;aspect-ratio:16/9!important;}
 
-  /* ── SEARCH BAR (VERTICAL) ── */
-  .hero-search-bar{flex-direction:column!important;gap:10px!important;}
-  .hsearch-cat{width:100%!important;height:52px!important;}
-  .hsearch-ville{width:100%!important;height:52px!important;}
-  .hsearch-btn{width:100%!important;height:52px!important;font-size:15px!important;}
+  /* ── SEARCH BAR (already vertical — just tighten on mobile) ── */
+  .hero-search-bar{padding:12px!important;gap:8px!important;}
 
   /* ── TRUST HINTS ── */
   .hero-trust-row{gap:12px!important;}
@@ -667,17 +664,17 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         </p>
 
         <!-- Barre de recherche -->
-        <div class="hero-search-bar" style="display:flex;align-items:stretch;gap:8px;margin-bottom:20px;">
-          <input type="text" id="home-search-categorie" class="hsearch-input hsearch-cat" placeholder="Quel type de travaux ?"
-            style="flex:1;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#fff;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A'" onblur="this.style.borderColor='#E5E7EB'">
-          <div class="ville-ac-wrap" style="width:155px;flex-shrink:0;">
-          <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="Votre ville" autocomplete="off"
-            style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#fff;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A'" onblur="this.style.borderColor='#E5E7EB'">
-          <div class="ville-dropdown" id="dd-home-search-ville"></div>
+        <div class="hero-search-bar" style="display:flex;flex-direction:column;background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,0.07);gap:10px;margin-bottom:20px;">
+          <input type="text" id="home-search-categorie" class="hsearch-input hsearch-cat" placeholder="🔧  Quel type de travaux ?"
+            style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#FAFAFA;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A';this.style.background='#fff'" onblur="this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA'">
+          <div class="ville-ac-wrap block">
+            <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="📍  Votre ville" autocomplete="off"
+              style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#FAFAFA;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A';this.style.background='#fff'" onblur="this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA'">
+            <div class="ville-dropdown" id="dd-home-search-ville"></div>
           </div>
           <button class="hsearch-btn" onclick="applySearchFromHome()"
-            style="height:52px;padding:0 24px;background:#C5340A;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;flex-shrink:0;transition:background 0.2s ease;" onmouseover="this.style.background='#A62C08'" onmouseout="this.style.background='#C5340A'">
-            Chercher
+            style="width:100%;height:52px;background:#C5340A;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;transition:background 0.2s ease;margin-top:2px;" onmouseover="this.style.background='#A62C08'" onmouseout="this.style.background='#C5340A'">
+            Chercher →
           </button>
         </div>
 
