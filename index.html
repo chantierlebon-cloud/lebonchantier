@@ -484,6 +484,15 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 .chat-open-btn{display:inline-flex;align-items:center;gap:7px;background:var(--blue-bg);color:var(--blue);border:1.5px solid #FED7AA;padding:10px 18px;border-radius:var(--r-sm);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;}
 .chat-open-btn:hover{background:#FDBA74;}
 .chat-notif{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-size:10px;font-weight:900;min-width:18px;height:18px;border-radius:100px;padding:0 5px;}
+
+/* ── VILLE AUTOCOMPLETE ── */
+.ville-ac-wrap{position:relative;display:inline-block;}
+.ville-ac-wrap.block{display:block;width:100%;}
+.ville-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid #E5E7EB;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.10),0 2px 6px rgba(0,0,0,0.06);z-index:500;overflow:hidden;display:none;}
+.ville-dropdown.show{display:block;}
+.ville-option{padding:11px 14px;font-size:14px;color:#111827;cursor:pointer;transition:background 0.12s;}
+.ville-option:hover,.ville-option.focused{background:#FFF7ED;color:#C5340A;}
+.ville-option:not(:last-child){border-bottom:1px solid #F3F4F6;}
 </style>
 <link rel="stylesheet" href="/styles/global.css">
 </head>
@@ -661,8 +670,11 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         <div class="hero-search-bar" style="display:flex;align-items:stretch;gap:8px;margin-bottom:20px;">
           <input type="text" id="home-search-categorie" class="hsearch-input hsearch-cat" placeholder="Quel type de travaux ?"
             style="flex:1;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#fff;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A'" onblur="this.style.borderColor='#E5E7EB'">
-          <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="Votre ville"
-            style="width:155px;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#fff;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A'" onblur="this.style.borderColor='#E5E7EB'">
+          <div class="ville-ac-wrap" style="width:155px;flex-shrink:0;">
+          <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="Votre ville" autocomplete="off"
+            style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#fff;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A'" onblur="this.style.borderColor='#E5E7EB'">
+          <div class="ville-dropdown" id="dd-home-search-ville"></div>
+          </div>
           <button class="hsearch-btn" onclick="applySearchFromHome()"
             style="height:52px;padding:0 24px;background:#C5340A;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;flex-shrink:0;transition:background 0.2s ease;" onmouseover="this.style.background='#A62C08'" onmouseout="this.style.background='#C5340A'">
             Chercher
@@ -848,7 +860,10 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       <div class="search-big" style="margin-bottom:12px">
         <input type="text" id="browse-search-categorie" placeholder="Type de travaux...">
         <div class="sep"></div>
-        <input type="text" id="browse-search-ville" placeholder="Ville..." style="max-width:160px">
+        <div class="ville-ac-wrap" style="max-width:160px;flex-shrink:0;">
+        <input type="text" id="browse-search-ville" placeholder="Ville..." autocomplete="off" style="width:100%">
+        <div class="ville-dropdown" id="dd-browse-search-ville"></div>
+        </div>
         <button class="search-go" onclick="applySearchFromBrowse()">Chercher →</button>
       </div>
       <div class="search-cats">
@@ -932,7 +947,12 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         <h3>Budget et localisation</h3>
         <div class="f-row">
           <div><label class="f-label">Budget maximum</label><input class="f-input" id="f-budget" type="text" placeholder="Ex: 1 500 €"></div>
-          <div><label class="f-label">Ville</label><input class="f-input" id="f-ville" type="text" placeholder="Ex: Paris 75015"></div>
+          <div><label class="f-label">Ville</label>
+            <div class="ville-ac-wrap block">
+              <input class="f-input" id="f-ville" type="text" placeholder="Ex: Paris 75015" autocomplete="off">
+              <div class="ville-dropdown" id="dd-f-ville"></div>
+            </div>
+          </div>
         </div>
         <label class="f-label">Quand démarrer ?</label>
         <select class="f-select" id="f-delai">
@@ -3036,6 +3056,89 @@ function formatBudget(val){
   const s=String(val).trim();
   return /€/.test(s) ? s : s+' €';
 }
+
+/* ── VILLE AUTOCOMPLETE ── */
+function initVilleAutocomplete(inputId) {
+  var input = document.getElementById(inputId);
+  var dropdown = document.getElementById('dd-' + inputId);
+  if (!input || !dropdown) return;
+
+  var timer = null;
+  var focusedIdx = -1;
+
+  function getOptions() {
+    return dropdown.querySelectorAll('.ville-option');
+  }
+
+  function setFocused(idx) {
+    var opts = getOptions();
+    opts.forEach(function(o, i) { o.classList.toggle('focused', i === idx); });
+    focusedIdx = idx;
+  }
+
+  function showDropdown(items) {
+    dropdown.innerHTML = '';
+    focusedIdx = -1;
+    if (!items.length) { dropdown.classList.remove('show'); return; }
+    items.forEach(function(nom) {
+      var el = document.createElement('div');
+      el.className = 'ville-option';
+      el.textContent = nom;
+      el.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        input.value = nom;
+        input.dispatchEvent(new Event('input'));
+        dropdown.classList.remove('show');
+      });
+      dropdown.appendChild(el);
+    });
+    dropdown.classList.add('show');
+  }
+
+  async function fetchVilles(query) {
+    try {
+      var res = await fetch('https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(query) + '&limit=6&fields=nom');
+      if (!res.ok) return;
+      var data = await res.json();
+      showDropdown(data.map(function(c) { return c.nom; }));
+    } catch(e) { /* network error — fail silently */ }
+  }
+
+  input.addEventListener('input', function() {
+    var val = input.value.trim();
+    clearTimeout(timer);
+    if (val.length < 2) { dropdown.classList.remove('show'); return; }
+    timer = setTimeout(function() { fetchVilles(val); }, 200);
+  });
+
+  input.addEventListener('keydown', function(e) {
+    var opts = getOptions();
+    if (!dropdown.classList.contains('show') || !opts.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocused(Math.min(focusedIdx + 1, opts.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocused(Math.max(focusedIdx - 1, 0));
+    } else if (e.key === 'Enter' && focusedIdx >= 0) {
+      e.preventDefault();
+      input.value = opts[focusedIdx].textContent;
+      dropdown.classList.remove('show');
+    } else if (e.key === 'Escape') {
+      dropdown.classList.remove('show');
+    }
+  });
+
+  input.addEventListener('blur', function() {
+    setTimeout(function() { dropdown.classList.remove('show'); }, 150);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  initVilleAutocomplete('home-search-ville');
+  initVilleAutocomplete('browse-search-ville');
+  initVilleAutocomplete('f-ville');
+});
 
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('DOMContentLoaded', initCatSection);
