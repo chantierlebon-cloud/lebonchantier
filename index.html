@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LeBonService — Trouvez un artisan. Simple et sécurisé.</title>
+<title>Narevo — Trouvez un professionnel. Simple et sécurisé.</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#F7F8FA;--surface:#EDEEF0;--white:#FFFFFF;
-  --ink:#1A1A2E;--ink2:#4A5568;--ink3:#9AA5B4;
-  --accent:#C5340A;--accent-light:#FFF0EC;--accent-hover:#A82A08;
+  --ink:#0F172A;--ink2:#64748B;--ink3:#9AA5B4;
+  --accent:#2563EB;--accent-light:#EFF6FF;--accent-hover:#1D4ED8;
   --border:#DDE1E7;--border-light:#EDEEF0;
   --green:#059669;--green-bg:#ECFDF5;
   --blue:#2563EB;--blue-bg:#EFF6FF;
@@ -31,9 +31,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .nav-right{display:flex;align-items:center;gap:6px;}
 .nav-link{font-size:13px;font-weight:500;color:var(--ink2);padding:8px 14px;border-radius:var(--r-sm);cursor:pointer;border:none;background:none;transition:color 0.15s,background 0.15s;}
 .nav-link:hover{color:var(--ink);background:var(--surface);}
-.nav-btn{font-size:13px;font-weight:600;color:var(--white);background:var(--accent);padding:9px 20px;border-radius:var(--r-sm);cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:background 0.15s,transform 0.1s;box-shadow:0 2px 6px rgba(230,59,0,0.25);}
+.nav-btn{font-size:13px;font-weight:600;color:var(--white);background:var(--accent);padding:9px 20px;border-radius:var(--r-md);cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:background 0.2s ease,transform 0.1s;box-shadow:0 2px 6px rgba(37,99,235,0.25);}
 .nav-btn:hover{background:var(--accent-hover);transform:translateY(-1px);}
-.user-avatar{width:36px;height:36px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--white);cursor:pointer;box-shadow:0 2px 6px rgba(230,59,0,0.2);}
+.user-avatar{width:36px;height:36px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--white);cursor:pointer;box-shadow:0 2px 6px rgba(37,99,235,0.2);}
 .logout-btn{font-size:12px;color:var(--ink3);background:none;border:none;cursor:pointer;padding:4px 8px;transition:color 0.15s;}
 .logout-btn:hover{color:var(--ink);}
 .notif-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;background:var(--accent);color:#fff;border-radius:9px;font-size:10px;font-weight:800;padding:0 5px;margin-left:5px;line-height:1;font-family:'Plus Jakarta Sans',sans-serif;vertical-align:middle;}
@@ -63,7 +63,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* ── FORMS ── */
 .f-label{display:block;font-size:11px;font-weight:700;color:var(--ink2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.6px;}
 .f-input,.f-textarea,.f-select{width:100%;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:11px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--white);outline:none;transition:border-color 0.2s,box-shadow 0.2s;margin-bottom:4px;}
-.f-input:focus,.f-textarea:focus,.f-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(230,59,0,0.08);}
+.f-input:focus,.f-textarea:focus,.f-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,0.08);}
 .f-input::placeholder,.f-textarea::placeholder{color:var(--ink3);}
 .f-input.valid{border-color:#059669;}
 .f-input.valid:focus{box-shadow:0 0 0 3px rgba(5,150,105,0.1);}
@@ -87,8 +87,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .divider{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .divider span{font-size:12px;color:var(--ink3);}
-.submit-btn{width:100%;height:50px;background:var(--accent);color:var(--white);border:none;border-radius:var(--r-sm);font-family:'Unbounded',sans-serif;font-size:12px;font-weight:900;cursor:pointer;transition:background 0.15s,transform 0.1s,box-shadow 0.15s;box-shadow:0 2px 8px rgba(230,59,0,0.2);letter-spacing:0.2px;}
-.submit-btn:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(230,59,0,0.25);}
+.submit-btn{width:100%;height:50px;background:var(--accent);color:var(--white);border:none;border-radius:var(--r-md);font-family:'Unbounded',sans-serif;font-size:12px;font-weight:900;cursor:pointer;transition:background 0.2s ease,transform 0.1s,box-shadow 0.2s ease;box-shadow:0 2px 8px rgba(37,99,235,0.2);letter-spacing:0.2px;}
+.submit-btn:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,0.3);}
 .submit-btn:disabled{background:var(--ink3);cursor:not-allowed;box-shadow:none;transform:none;}
 .auth-switch{text-align:center;font-size:12px;color:var(--ink3);margin-top:16px;}
 .auth-switch a{color:var(--accent);cursor:pointer;text-decoration:underline;}
@@ -113,13 +113,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cat-pill.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
 
 /* ── HERO HOME SPLIT ── */
-.hero-home{padding:0!important;background:linear-gradient(150deg,#FFFFFF 0%,#FFF6F3 55%,#FFFFFF 100%);}
+.hero-home{padding:0!important;background:linear-gradient(150deg,#FFFFFF 0%,#EFF6FF 55%,#FFFFFF 100%);}
 .hero-split{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;min-height:580px;align-items:center;padding:64px 40px;gap:64px;}
 .hero-left{display:flex;flex-direction:column;justify-content:center;}
 .hero-tag{display:inline-flex;align-items:center;gap:7px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:0.6px;padding:7px 14px;border-radius:100px;margin-bottom:22px;text-transform:uppercase;width:fit-content;}
 .hero-tag-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;flex-shrink:0;}
 .hero-search{display:flex;align-items:center;background:var(--white);border:2px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08),0 1px 4px rgba(0,0,0,0.05);margin-bottom:20px;transition:border-color 0.2s,box-shadow 0.2s;}
-.hero-search:focus-within{border-color:var(--accent);box-shadow:0 8px 32px rgba(197,52,10,0.12),0 2px 8px rgba(0,0,0,0.06);}
+.hero-search:focus-within{border-color:var(--accent);box-shadow:0 8px 32px rgba(37,99,235,0.12),0 2px 8px rgba(0,0,0,0.06);}
 .hero-search-field{display:flex;align-items:center;flex:1;padding:0 16px;gap:10px;min-width:0;}
 .hero-search-icon{font-family:'Material Symbols Outlined';font-style:normal;font-weight:300;font-variation-settings:'FILL' 0,'wght' 300;color:var(--ink3);font-size:20px;flex-shrink:0;line-height:1;}
 .hero-search-field input{flex:1;height:56px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;background:transparent;min-width:0;}
@@ -161,8 +161,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .section-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;}
 .see-all{font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;border:none;background:none;}
 .jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;}
-.job-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);cursor:pointer;transition:all 0.22s;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm);}
-.job-card:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-4px);}
+.job-card{background:var(--white);border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all 0.22s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm);}
+.job-card:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-4px) scale(1.02);}
 .job-card-photo{height:150px;overflow:hidden;background:var(--surface);flex-shrink:0;}
 .job-card-photo img{width:100%;height:100%;object-fit:cover;display:block;}
 .job-card-body{padding:18px 20px;flex:1;display:flex;flex-direction:column;}
@@ -258,7 +258,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .reponse-artisan{font-size:14px;font-weight:700;}
 .reponse-date{font-size:11px;color:var(--ink3);}
 .reponse-msg{font-size:13px;color:var(--ink2);line-height:1.65;margin-top:8px;}
-.choisir-btn{background:var(--accent);color:var(--white);border:none;padding:9px 18px;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:12px;transition:background 0.15s;box-shadow:0 2px 6px rgba(230,59,0,0.2);}
+.choisir-btn{background:var(--accent);color:var(--white);border:none;padding:9px 18px;border-radius:var(--r-md);font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:12px;transition:background 0.2s ease;box-shadow:0 2px 6px rgba(37,99,235,0.2);}
 .choisir-btn:hover{background:var(--accent-hover);}
 
 /* ── HOW IT WORKS ── */
@@ -268,7 +268,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .hiw-subtitle{text-align:center;font-size:15px;color:var(--ink3);margin-bottom:48px;font-weight:400;}
 .hiw-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .hiw-step{position:relative;text-align:left;padding:36px 32px 32px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--white);box-shadow:var(--shadow-sm);transition:box-shadow 0.22s,transform 0.22s;overflow:hidden;}
-.hiw-step::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#FF8C69);border-radius:var(--r-lg) var(--r-lg) 0 0;}
+.hiw-step::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#60A5FA);border-radius:var(--r-lg) var(--r-lg) 0 0;}
 .hiw-step:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);}
 .hiw-num{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;background:var(--accent-light);border-radius:50%;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:900;color:var(--accent);margin-bottom:20px;}
 .hiw-icon{font-size:38px;margin-bottom:14px;display:block;}
@@ -521,7 +521,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="logo" onclick="showPage('home')">LeBon<span>Service</span></div>
+  <div class="logo" onclick="showPage('home')">Nare<span>vo</span></div>
   <div class="nav-right" id="nav-right">
     <button class="nav-link" onclick="showPage('browse')">Annonces</button>
     <button class="nav-link" onclick="openModal()">Connexion</button>
@@ -536,37 +536,37 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 
       <!-- Colonne gauche -->
       <div style="flex:1;min-width:0;">
-        <h1 style="font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.15;margin:0 0 18px;color:#1A1A2E;">
-          Trouvez le bon service.<br><span style="color:#C5340A;">Rapidement.</span>
+        <h1 style="font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.15;margin:0 0 18px;color:#0F172A;">
+          Trouvez le bon service<br><span style="color:#2563EB;">rapidement.</span>
         </h1>
-        <p style="font-size:17px;color:#4A5568;line-height:1.65;margin:0 0 32px;max-width:480px;">
-          Publiez votre chantier en 60 secondes. Les artisans viennent à vous. Paiement sécurisé jusqu'à la fin des travaux.
+        <p style="font-size:17px;color:#64748B;line-height:1.65;margin:0 0 32px;max-width:480px;">
+          Des professionnels fiables près de chez vous.
         </p>
 
         <!-- Barre de recherche -->
         <div style="display:flex;align-items:center;background:#fff;border:2px solid #DDE1E7;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-bottom:20px;">
           <input type="text" id="home-search-categorie" placeholder="Quel type de travaux ?"
-            style="flex:1;height:54px;border:none;outline:none;padding:0 20px;font-size:15px;background:transparent;color:#1A1A2E;font-family:inherit;">
+            style="flex:1;height:54px;border:none;outline:none;padding:0 20px;font-size:15px;background:transparent;color:#0F172A;font-family:inherit;">
           <div style="width:1px;height:28px;background:#DDE1E7;flex-shrink:0;"></div>
           <input type="text" id="home-search-ville" placeholder="Votre ville"
-            style="width:160px;height:54px;border:none;outline:none;padding:0 16px;font-size:15px;background:transparent;color:#1A1A2E;font-family:inherit;">
+            style="width:160px;height:54px;border:none;outline:none;padding:0 16px;font-size:15px;background:transparent;color:#0F172A;font-family:inherit;">
           <button onclick="applySearchFromHome()"
-            style="margin:6px;padding:0 24px;height:42px;background:#C5340A;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;">
+            style="margin:6px;padding:0 24px;height:42px;background:#2563EB;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;transition:background 0.2s ease;" onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
             Chercher
           </button>
         </div>
 
         <!-- Trust hints -->
         <div style="display:flex;gap:20px;flex-wrap:wrap;">
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4A5568;font-weight:500;">
+          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             100% gratuit
           </span>
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4A5568;font-weight:500;">
+          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             Artisans vérifiés
           </span>
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4A5568;font-weight:500;">
+          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             Paiement sécurisé
           </span>
@@ -664,8 +664,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <div class="footer-inner">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="footer-logo">LeBon<span>Service</span></div>
-          <p>La plateforme pour trouver des artisans de confiance. Publiez votre chantier, recevez des devis, payez en toute sécurité.</p>
+          <div class="footer-logo">Nare<span>vo</span></div>
+          <p>La plateforme pour trouver des professionnels de confiance. Publiez votre annonce, recevez des devis, payez en toute sécurité.</p>
         </div>
         <div class="footer-col">
           <h4>Services</h4>
@@ -696,7 +696,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         </div>
       </div>
       <div class="footer-bottom">
-        <span class="footer-copy">© 2025 LeBonService.fr · Tous droits réservés · <a onclick="showPage('rgpd')">CGU</a></span>
+        <span class="footer-copy">© 2025 Narevo.fr · Tous droits réservés · <a onclick="showPage('rgpd')">CGU</a></span>
         <span class="footer-copy">Paiement sécurisé par Stripe</span>
       </div>
     </div>
@@ -756,7 +756,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <div class="section-top"><div class="section-title" id="browse-count">Chargement...</div></div>
     <div class="jobs-grid" id="browse-listings"><div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div></div>
   </div>
-  <footer><div class="footer-logo">LeBon<span>Service</span></div><p>© 2025 LeBonService.fr</p></footer>
+  <footer><div class="footer-logo">Nare<span>vo</span></div><p>© 2025 Narevo.fr</p></footer>
 </div>
 
 <!-- ANNONCE DETAIL -->
@@ -896,7 +896,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <h1>Politique de confidentialité</h1>
     <div class="date">Dernière mise à jour : 25 mars 2026</div>
     <h2>1. Responsable du traitement</h2>
-    <p>LeBonService (lebonservice.fr) — Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e1d161f100a171b0c121b1c11103e19131f1712501d1113">[email&#160;protected]</a></p>
+    <p>Narevo (narevo.fr) — Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e1d161f100a171b0c121b1c11103e19131f1712501d1113">[email&#160;protected]</a></p>
     <h2>2. Données collectées</h2>
     <ul><li>Nom et prénom</li><li>Email</li><li>Téléphone</li><li>Localisation (ville)</li><li>Informations professionnelles (artisans)</li><li>Photos de chantier</li></ul>
     <h2>3. Finalités</h2>
@@ -1567,13 +1567,13 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
     try{
       await sendEmail(
         emailDest,
-        '🔨 Un artisan a répondu à votre annonce — LeBonService',
+        '🔔 Un professionnel a répondu à votre annonce — Narevo',
         `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
-          <h2 style="color:#E63B00">Bonne nouvelle !</h2>
+          <h2 style="color:#2563EB">Bonne nouvelle !</h2>
           <p><strong>${artisanNom}</strong> a envoyé une candidature pour votre chantier <strong>${escapeHTML(categorie)} à ${escapeHTML(ville)}</strong>.</p>
           <div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0">${escapeHTML(msg)}</div>
-          <a href="https://lebonservice.fr" style="display:inline-block;background:#E63B00;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">Voir la candidature →</a>
-          <p style="color:#999;font-size:12px;margin-top:24px">LeBonService.fr — Trouvez un artisan. Sans galère.</p>
+          <a href="https://narevo.fr" style="display:inline-block;background:#2563EB;color:white;padding:12px 24px;border-radius:12px;text-decoration:none">Voir la candidature →</a>
+          <p style="color:#999;font-size:12px;margin-top:24px">Narevo.fr — Des professionnels fiables près de chez vous.</p>
         </div>`
       );
       emailEnvoye=true;
