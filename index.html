@@ -398,6 +398,57 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   .hero-split{grid-template-columns:1fr;padding:32px 16px;gap:0;}
   .hero-right{display:none;}
   .hero-tag{margin-bottom:14px;}
+
+  /* ── CATEGORY CARDS — white clean cards ── */
+  .cards{gap:14px;}
+  .card{
+    background:#FFFFFF!important;
+    aspect-ratio:auto!important;
+    border-radius:14px!important;
+    box-shadow:0 4px 20px rgba(0,0,0,0.05)!important;
+    border:1px solid #F3F4F6;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    transform:none!important;
+  }
+  .card:hover{transform:none!important;box-shadow:0 4px 20px rgba(0,0,0,0.07)!important;}
+  .card img{width:100%;height:160px!important;object-fit:cover;flex-shrink:0;transform:none!important;}
+  .card:hover img{transform:none!important;}
+  .card-overlay{display:none!important;}
+  .card-fallback{height:160px!important;background:#F3F4F6!important;}
+  .card-title{
+    position:static!important;
+    padding:14px 16px 16px!important;
+    color:#111827!important;
+    background:#FFFFFF;
+    gap:2px!important;
+  }
+  .card-title-emoji{font-size:18px!important;margin-bottom:2px!important;}
+  .card-title-text{
+    font-size:14px!important;
+    font-weight:700!important;
+    color:#111827!important;
+    text-shadow:none!important;
+  }
+  .card-title-sub{
+    font-size:12px!important;
+    color:#6B7280!important;
+    opacity:1!important;
+    letter-spacing:0!important;
+  }
+
+  /* ── JOB CARDS ── */
+  .job-card{border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,0.05);}
+
+  /* ── CTA BAND — lighter on mobile ── */
+  .cta-band{background:#FFF7ED!important;padding:48px 16px!important;}
+  .cta-band h2{color:#111827!important;font-size:20px!important;}
+  .cta-band-btn{background:#C5340A!important;color:#FFFFFF!important;border-radius:12px!important;}
+
+  /* ── BODY BG ── */
+  body{background:#F9FAFB;}
+  .categories{background:#F9FAFB;}
 }
 
 /* ── CHAT ── */
