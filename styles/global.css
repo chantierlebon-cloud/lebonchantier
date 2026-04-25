@@ -1,0 +1,37 @@
+:root {
+  --primary: #C5340A;
+  --primary-hover: #A62C08;
+  --bg: #F9FAFB;
+  --text: #111827;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* BUTTONS */
+button, .btn {
+  background: var(--primary) !important;
+  color: white !important;
+  border-radius: 12px !important;
+}
+
+button:hover {
+  background: var(--primary-hover) !important;
+}
+
+/* TITLE */
+h1 {
+  color: var(--text) !important;
+}
+
+/* ACCENT */
+.accent {
+  color: var(--primary) !important;
+}
+
+/* REMOVE BLUE */
+* {
+  --tw-ring-color: transparent !important;
+}
