@@ -200,6 +200,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .tab.active{color:var(--accent);border-bottom:2px solid var(--accent);}
 .tab:hover:not(.active){color:var(--ink2);}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+/* ── CAT SECONDARY ── */
+.cat-secondary{margin-top:36px;padding-top:24px;border-top:1px solid var(--border);}
+.cat-secondary-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;}
+.cat-secondary-items{display:flex;gap:10px;flex-wrap:wrap;}
+.cat-secondary-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border:1.5px solid var(--border);border-radius:100px;background:var(--white);font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all 0.15s;font-family:inherit;}
+.cat-secondary-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
 .card{position:relative;aspect-ratio:4/5;border-radius:var(--r-xl);overflow:hidden;cursor:pointer;background:#1a1a2e;transition:transform 0.3s cubic-bezier(.4,0,.2,1),box-shadow 0.3s cubic-bezier(.4,0,.2,1);}
 .card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(0,0,0,0.22);}
 .card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s cubic-bezier(.4,0,.2,1);}
@@ -444,6 +450,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 
   /* ── JOB CARDS ── */
   .job-card{border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,0.05);}
+  /* ── CAT SECONDARY MOBILE ── */
+  .cat-secondary-btn{font-size:12px;padding:7px 14px;}
 
   /* ── CTA BAND — lighter on mobile ── */
   .cta-band{background:#FFF7ED!important;padding:48px 16px!important;}
@@ -739,12 +747,23 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       <div class="cat-sec-head">
         <div>
           <div class="cat-sec-title">Explorez par catégorie</div>
-          <div class="cat-sec-sub">Des spécialistes prêts à intervenir rapidement.</div>
+          <div class="cat-sec-sub">Des artisans qualifiés pour vos travaux et rénovations.</div>
         </div>
         <button class="cat-sec-all" onclick="showPage('browse')">Voir tout <span class="msym" style="font-size:16px;font-variation-settings:'FILL' 0">arrow_forward</span></button>
       </div>
       <div class="tabs" id="cat-tabs"></div>
       <div class="cards" id="cat-content"></div>
+
+      <!-- Section secondaire : autres services -->
+      <div class="cat-secondary">
+        <div class="cat-secondary-label">Aussi disponibles sur TrouvePro</div>
+        <div class="cat-secondary-items">
+          <button class="cat-secondary-btn" onclick="filterByCategory('Ménage/Nettoyage')" aria-label="Voir les services de ménage">🧹 Ménage</button>
+          <button class="cat-secondary-btn" onclick="filterByCategory('Jardinage')" aria-label="Voir les services de jardinage">🌿 Jardin</button>
+          <button class="cat-secondary-btn" onclick="filterByCategory('Déménagement')" aria-label="Voir les services de déménagement">🚚 Déménagement</button>
+          <button class="cat-secondary-btn" onclick="filterByCategory('Transport')" aria-label="Voir les services de transport et location">🚗 Transport &amp; Location</button>
+        </div>
+      </div>
     </div>
   </section>
   <div class="stats-bar">
@@ -2951,6 +2970,16 @@ var _catData={
     {title:'Éclairage & domotique',sub:'LED, spots, smart home',emoji:'🏮',
      img:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89',cat:'Électricité'}
   ]},
+  renovation:{label:'🛠️ Rénovation',items:[
+    {title:'Peinture intérieure',sub:'Murs, plafonds, finitions',emoji:'🖌️',
+     img:'https://images.unsplash.com/photo-1562259949-e8e7689d7828',cat:'Rénovation'},
+    {title:'Pose de carrelage',sub:'Sol & mural, cuisine & salle de bain',emoji:'🪟',
+     img:'https://images.unsplash.com/photo-1584622650111-993a426fbf0a',cat:'Rénovation'},
+    {title:'Rénovation salle de bain',sub:'Complète ou partielle',emoji:'🚿',
+     img:'https://images.unsplash.com/photo-1620626011761-996317702782',cat:'Rénovation'},
+    {title:'Isolation',sub:'Combles, murs, fenêtres',emoji:'🏠',
+     img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64',cat:'Rénovation'}
+  ]},
   transport:{label:'🚗 Transport & Location',items:[
     {title:'Location voiture',sub:'Courte & longue durée',emoji:'🚗',
      img:'https://images.unsplash.com/photo-1503376780353-7e6692767b70',cat:'Transport & Location'},
@@ -2963,7 +2992,8 @@ var _catData={
   ]}
 };
 
-var _catActive='bricolage';
+var _catActive='plomberie';
+var _primaryCats=['plomberie','electricite','bricolage','renovation'];
 
 function showCat(key){
   _catActive=key;
@@ -2992,7 +3022,7 @@ function showCat(key){
 function initCatSection(){
   var tabsEl=document.getElementById('cat-tabs');
   if(!tabsEl) return;
-  tabsEl.innerHTML=Object.keys(_catData).map(function(key){
+  tabsEl.innerHTML=_primaryCats.map(function(key){
     return '<button class="tab'+(key===_catActive?' active':'')+'" data-cat="'+key+'" onclick="showCat(\''+key+'\')">'
       +_catData[key].label+'</button>';
   }).join('');
