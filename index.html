@@ -206,6 +206,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cat-secondary-items{display:flex;gap:10px;flex-wrap:wrap;}
 .cat-secondary-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border:1.5px solid var(--border);border-radius:100px;background:var(--white);font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all 0.15s;font-family:inherit;}
 .cat-secondary-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.secondary-modal-items{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
 .card{position:relative;aspect-ratio:4/5;border-radius:var(--r-xl);overflow:hidden;cursor:pointer;background:#1a1a2e;transition:transform 0.3s cubic-bezier(.4,0,.2,1),box-shadow 0.3s cubic-bezier(.4,0,.2,1);}
 .card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(0,0,0,0.22);}
 .card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s cubic-bezier(.4,0,.2,1);}
@@ -758,15 +759,22 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       <div class="cat-secondary">
         <div class="cat-secondary-label">Aussi disponibles sur TrouvePro</div>
         <div class="cat-secondary-items">
-          <button class="cat-secondary-btn" onclick="filterByCategory('Ménage/Nettoyage')" aria-label="Voir les services de ménage">🧹 Ménage</button>
-          <button class="cat-secondary-btn" onclick="filterByCategory('Jardinage')" aria-label="Voir les services de jardinage">🌿 Jardin</button>
-          <button class="cat-secondary-btn" onclick="filterByCategory('Déménagement')" aria-label="Voir les services de déménagement">🚚 Déménagement</button>
-          <button class="cat-secondary-btn" onclick="filterByCategory('Transport')" aria-label="Voir les services de transport et location">🚗 Transport &amp; Location</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('menage')" aria-label="Voir les services de ménage">🧹 Ménage</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('jardin')" aria-label="Voir les services de jardinage">🌿 Jardin</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('demenagement')" aria-label="Voir les services de déménagement">🚚 Déménagement</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('transport')" aria-label="Voir les services de transport et location">🚗 Transport &amp; Location</button>
         </div>
       </div>
     </div>
   </section>
-  <div class="stats-bar">
+<div class="modal-overlay" id="secondary-modal" onclick="closeSecondaryModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeSecondaryModal()">✕</button>
+    <h2 id="secondary-modal-title"></h2>
+    <div class="secondary-modal-items" id="secondary-modal-items"></div>
+  </div>
+</div>
+<div class="stats-bar">
     <div><div class="stat-n" id="stat-annonces">0</div><div class="stat-l">Annonces publiées</div></div>
     <div><div class="stat-n">0€</div><div class="stat-l">Pour poster</div></div>
     <div><div class="stat-n">100%</div><div class="stat-l">Paiement sécurisé</div></div>
@@ -2908,6 +2916,29 @@ function filterByCategory(cat){
   showPage('browse');
 }
 
+var _secondaryData={
+  menage:{label:'🧹 Ménage — Que cherchez-vous ?',
+    items:['Ménage à domicile','Nettoyage de fin de bail','Nettoyage de bureaux','Repassage & linge']},
+  jardin:{label:'🌿 Jardin — Que cherchez-vous ?',
+    items:['Tonte de pelouse','Élagage & taille','Entretien régulier','Aménagement paysager']},
+  demenagement:{label:'🚚 Déménagement — Que cherchez-vous ?',
+    items:['Déménagement complet','Transport d\'objets lourds','Garde-meuble','Aide au chargement']},
+  transport:{label:'🚗 Transport & Location — Que cherchez-vous ?',
+    items:['Location de véhicule','Transport de marchandises','Livraison','Course chauffeur']}
+};
+function openSecondaryModal(key){
+  var d=_secondaryData[key]; if(!d) return;
+  document.getElementById('secondary-modal-title').textContent=d.label;
+  document.getElementById('secondary-modal-items').innerHTML=d.items.map(function(item){
+    return '<button class="cat-secondary-btn" onclick="filterByCategory(\''+item.replace(/'/g,"\\'")+'\')">'
+      +item+'</button>';
+  }).join('');
+  document.getElementById('secondary-modal').classList.add('show');
+}
+function closeSecondaryModal(){
+  document.getElementById('secondary-modal').classList.remove('show');
+}
+
 /* ── Categories with photo cards ── */
 var _catData={
   bricolage:{label:'🔨 Bricolage',items:[
@@ -2958,7 +2989,7 @@ var _catData={
     {title:'Débouchage',sub:'Canalisations & WC',emoji:'🌊',
      img:'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1',cat:'Plomberie'},
     {title:'Chauffe-eau',sub:'Installation & dépannage',emoji:'🔥',
-     img:'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc',cat:'Plomberie'}
+     img:'https://images.pexels.com/photos/34887522/pexels-photo-34887522.jpeg',cat:'Plomberie'}
   ]},
   electricite:{label:'⚡ Électricité',items:[
     {title:'Installation électrique',sub:'Neuf & rénovation',emoji:'🔌',
@@ -3261,7 +3292,9 @@ function renderMilestonePaymentButtons(milestone, isClientOwner) {
   return html;
 }
 
-
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') closeSecondaryModal();
+});
 </script>
 </body>
 </html>
