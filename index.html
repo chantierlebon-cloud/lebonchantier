@@ -507,6 +507,35 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 .ville-option{padding:11px 14px;font-size:14px;color:#111827;cursor:pointer;transition:background 0.12s;}
 .ville-option:hover,.ville-option.focused{background:#FFF7ED;color:#C5340A;}
 .ville-option:not(:last-child){border-bottom:1px solid #F3F4F6;}
+
+/* ── Mega Menu ── */
+.mega-menu{position:fixed;left:0;right:0;top:68px;background:#fff;border-bottom:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.05);z-index:200;opacity:0;transform:translateY(-6px);transition:opacity 0.2s ease,transform 0.2s ease;pointer-events:none;}
+.mega-menu.open{opacity:1;transform:translateY(0);pointer-events:auto;}
+.mega-inner{max-width:1200px;margin:0 auto;padding:48px 64px;display:grid;grid-template-columns:repeat(4,1fr);gap:48px;}
+.mega-col-heading{font-size:12px;color:#6B7280;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px;line-height:1.4;}
+.mega-col-items{}
+.mega-item{display:block;width:100%;text-align:left;font-size:15px;color:#111827;line-height:36px;height:36px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;transition:color 0.15s;white-space:nowrap;}
+.mega-item:hover{color:var(--accent);}
+.mega-footer{max-width:1200px;margin:0 auto;padding:20px 64px 32px;border-top:1px solid #E5E7EB;text-align:center;}
+.mega-footer a{font-size:14px;color:var(--accent);cursor:pointer;font-weight:500;text-decoration:none;}
+.mega-footer a:hover{text-decoration:underline;}
+.mega-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:199;}
+.mega-overlay.open{display:block;}
+.mega-close{display:none;}
+@media(max-width:768px){
+  .mega-menu{position:fixed;top:0;right:-100%;bottom:0;left:auto;width:85%;border-bottom:none;border-left:1px solid #E5E7EB;box-shadow:-4px 0 24px rgba(0,0,0,0.12);transform:none;opacity:1;transition:right 0.25s ease;overflow-y:auto;pointer-events:none;}
+  .mega-menu.open{right:0;pointer-events:auto;}
+  .mega-inner{grid-template-columns:1fr;gap:0;padding:64px 24px 24px;}
+  .mega-col{border-bottom:1px solid #F3F4F6;}
+  .mega-col-heading{cursor:pointer;padding:16px 0;margin:0;display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+  .mega-col-heading::after{content:'▾';font-size:14px;transition:transform 0.2s;margin-left:8px;}
+  .mega-col.open>.mega-col-heading::after{transform:rotate(180deg);}
+  .mega-col-items{display:none;padding-bottom:12px;}
+  .mega-col.open>.mega-col-items{display:block;}
+  .mega-item{height:40px;line-height:40px;padding:0 8px;}
+  .mega-footer{padding:24px 24px 32px;}
+  .mega-close{display:flex;position:absolute;top:14px;right:14px;width:36px;height:36px;align-items:center;justify-content:center;font-size:22px;cursor:pointer;background:none;border:none;color:#111827;font-family:inherit;line-height:1;}
+}
 </style>
 <link rel="stylesheet" href="/styles/global.css">
 </head>
@@ -660,11 +689,22 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 <nav class="nav">
   <div class="logo" onclick="showPage('home')">Trouve<span>Pro</span></div>
   <div class="nav-right" id="nav-right">
+    <button class="nav-link mega-toggle" id="mega-toggle-btn" onclick="toggleMegaMenu(event)">Catégories <span id="mega-arrow">▾</span></button>
     <button class="nav-link" onclick="showPage('browse')">Annonces</button>
     <button class="nav-link" onclick="openModal()">Connexion</button>
     <button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>
   </div>
 </nav>
+
+<!-- MEGA MENU -->
+<div id="mega-menu" class="mega-menu">
+  <button class="mega-close" onclick="closeMegaMenu()" aria-label="Fermer le menu">✕</button>
+  <div class="mega-inner" id="mega-inner"></div>
+  <div class="mega-footer">
+    <a onclick="showPage('browse');closeMegaMenu()">Voir toutes les catégories →</a>
+  </div>
+</div>
+<div id="mega-overlay" class="mega-overlay" onclick="closeMegaMenu()"></div>
 
 <!-- HOME -->
 <div id="home" class="page active">
@@ -1172,10 +1212,10 @@ function updateNav(loggedIn){
   const nav=document.getElementById('nav-right');
   if(loggedIn){
     const initial=currentUser.email?currentUser.email[0].toUpperCase():'U';
-    nav.innerHTML=`<button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="showPage('dashboard')">Mon espace<span id="nav-candidatures-badge" class="notif-badge" style="display:none">0</span></button><div class="user-avatar" onclick="showPage('dashboard')">${initial}</div><button class="logout-btn" onclick="logout()">Déconnexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
+    nav.innerHTML=`<button class="nav-link mega-toggle" id="mega-toggle-btn" onclick="toggleMegaMenu(event)">Catégories <span id="mega-arrow">▾</span></button><button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="showPage('dashboard')">Mon espace<span id="nav-candidatures-badge" class="notif-badge" style="display:none">0</span></button><div class="user-avatar" onclick="showPage('dashboard')">${initial}</div><button class="logout-btn" onclick="logout()">Déconnexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
     updateCandidaturesBadge();
   }else{
-    nav.innerHTML=`<button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="openModal()">Connexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
+    nav.innerHTML=`<button class="nav-link mega-toggle" id="mega-toggle-btn" onclick="toggleMegaMenu(event)">Catégories <span id="mega-arrow">▾</span></button><button class="nav-link" onclick="showPage('browse')">Annonces</button><button class="nav-link" onclick="openModal()">Connexion</button><button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>`;
   }
 }
 
@@ -2916,6 +2956,97 @@ function filterByCategory(cat){
   showPage('browse');
 }
 
+/* ── Mega Menu data & logic ── */
+var _megaMenuData=[
+  {heading:'Rénovation & Maçonnerie',items:[
+    {label:'Peinture intérieure',cat:'Rénovation'},
+    {label:'Pose de carrelage',cat:'Rénovation'},
+    {label:'Pose de parquet',cat:'Rénovation'},
+    {label:'Rénovation salle de bain',cat:'Rénovation'},
+    {label:'Rénovation cuisine',cat:'Rénovation cuisine'},
+    {label:'Isolation',cat:'Rénovation'},
+    {label:'Cloisons / Placo',cat:'Rénovation'},
+    {label:'Faux plafond',cat:'Rénovation'}
+  ]},
+  {heading:'Électricité & Plomberie',items:[
+    {label:'Installation électrique',cat:'Électricité'},
+    {label:'Dépannage électrique',cat:'Électricité'},
+    {label:'Tableau électrique',cat:'Électricité'},
+    {label:'Éclairage / LED',cat:'Électricité'},
+    {label:'Plomberie générale',cat:'Plomberie'},
+    {label:'Réparation de fuite',cat:'Plomberie'},
+    {label:'Débouchage',cat:'Plomberie'},
+    {label:'Chauffe-eau',cat:'Plomberie'},
+    {label:'Climatisation',cat:'Électricité'}
+  ]},
+  {heading:'Bricolage & Petits travaux',items:[
+    {label:'Montage meubles',cat:'Bricolage'},
+    {label:'Pose d\'étagères',cat:'Bricolage'},
+    {label:'Installation TV',cat:'Bricolage'},
+    {label:'Fixation murale',cat:'Bricolage'},
+    {label:'Réparation murs',cat:'Bricolage'},
+    {label:'Petits travaux divers',cat:'Bricolage'}
+  ]},
+  {heading:'Autres services',items:[
+    {label:'Ménage',cat:'Ménage/Nettoyage'},
+    {label:'Jardinage',cat:'Jardinage'},
+    {label:'Déménagement',cat:'Déménagement'},
+    {label:'Transport',cat:'Transport & Location'}
+  ]}
+];
+
+var _megaOpen=false;
+
+function _buildMegaMenu(){
+  var inner=document.getElementById('mega-inner');
+  if(!inner||inner.dataset.built) return;
+  inner.dataset.built='1';
+  inner.innerHTML=_megaMenuData.map(function(col){
+    var items=col.items.map(function(it){
+      return '<button class="mega-item" onclick="filterByCategory(\''+it.cat.replace(/'/g,"\\'")+'\')">'
+        +it.label+'</button>';
+    }).join('');
+    return '<div class="mega-col">'
+      +'<div class="mega-col-heading" onclick="_toggleAccordion(this)">'+col.heading+'</div>'
+      +'<div class="mega-col-items">'+items+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function _toggleAccordion(headingEl){
+  if(window.innerWidth>768) return;
+  var col=headingEl.parentElement;
+  col.classList.toggle('open');
+}
+
+function toggleMegaMenu(e){
+  e.stopPropagation();
+  _buildMegaMenu();
+  if(_megaOpen){closeMegaMenu();}else{openMegaMenu();}
+}
+
+function openMegaMenu(){
+  _megaOpen=true;
+  document.getElementById('mega-menu').classList.add('open');
+  document.getElementById('mega-overlay').classList.add('open');
+  var arrow=document.getElementById('mega-arrow');
+  if(arrow) arrow.textContent='▴';
+}
+
+function closeMegaMenu(){
+  _megaOpen=false;
+  document.getElementById('mega-menu').classList.remove('open');
+  document.getElementById('mega-overlay').classList.remove('open');
+  var arrow=document.getElementById('mega-arrow');
+  if(arrow) arrow.textContent='▾';
+}
+
+document.addEventListener('click',function(e){
+  if(!_megaOpen) return;
+  if(e.target.closest('#mega-toggle-btn,#mega-menu')) return;
+  closeMegaMenu();
+});
+
 var _secondaryData={
   menage:{label:'🧹 Ménage — Que cherchez-vous ?',
     items:['Ménage à domicile','Nettoyage de fin de bail','Nettoyage de bureaux','Repassage & linge']},
@@ -3293,7 +3424,7 @@ function renderMilestonePaymentButtons(milestone, isClientOwner) {
 }
 
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape') closeSecondaryModal();
+  if(e.key==='Escape'){closeSecondaryModal();closeMegaMenu();}
 });
 </script>
 </body>
