@@ -594,6 +594,40 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     font-size: 24px;
   }
 }
+/* ── ARTISAN PUBLIC PAGE ── */
+.ap-container{max-width:720px;margin:0 auto;padding:32px 20px 64px;}
+.ap-header{display:flex;gap:24px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:32px;margin-bottom:24px;}
+.ap-avatar{width:88px;height:88px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:#fff;}
+.ap-avatar img{width:100%;height:100%;object-fit:cover;}
+.ap-header-info{flex:1;min-width:0;}
+.ap-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.ap-badge-verified{background:#ECFDF5;color:#059669;border:1px solid #6EE7B7;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;}
+.ap-name{font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.ap-specialite{display:inline-block;background:var(--accent-light);color:var(--accent);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600;margin-bottom:10px;}
+.ap-meta{display:flex;flex-wrap:wrap;gap:12px;font-size:14px;color:var(--ink2);}
+.ap-body{margin-bottom:8px;}
+.ap-block{background:#fff;border:1px solid var(--border);border-radius:var(--r-md);padding:24px;margin-bottom:16px;}
+.ap-block-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:12px;}
+.ap-block p{color:var(--ink2);line-height:1.6;}
+.ap-review-item{padding:14px 0;border-bottom:1px solid var(--border-light);}
+.ap-review-item:last-child{border-bottom:none;padding-bottom:0;}
+.ap-review-stars{color:#F59E0B;font-size:14px;margin-bottom:4px;}
+.ap-review-author{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.ap-review-comment{font-size:14px;color:var(--ink2);}
+.ap-cta{text-align:center;padding:8px 0 24px;}
+.ap-cta-btn{background:var(--accent);color:#fff;border:none;padding:16px 40px;border-radius:var(--r-md);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.ap-cta-btn:hover{background:var(--accent-hover);transform:translateY(-1px);}
+.ap-not-found{text-align:center;padding:80px 20px;}
+.ap-not-found .empty-icon{font-size:48px;margin-bottom:16px;}
+.ap-not-found p{color:var(--ink2);margin-bottom:20px;}
+.ap-not-found button{background:var(--accent);color:#fff;border:none;padding:12px 28px;border-radius:var(--r-sm);cursor:pointer;font-weight:600;}
+@media(max-width:600px){
+  .ap-header{flex-direction:column;align-items:center;text-align:center;padding:24px 16px;}
+  .ap-meta{justify-content:center;}
+  .ap-badges{justify-content:center;}
+  .ap-name{font-size:22px;}
+  .ap-cta-btn{width:100%;max-width:340px;}
+}
 </style>
 <link rel="stylesheet" href="/styles/global.css">
 </head>
@@ -1162,6 +1196,47 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   </div>
 </div>
 
+<!-- ARTISAN PUBLIC PAGE -->
+<div id="artisan-public" class="page">
+  <div class="ap-container">
+    <div class="ap-header" id="ap-header">
+      <div class="ap-avatar" id="ap-avatar"></div>
+      <div class="ap-header-info">
+        <div class="ap-badges" id="ap-badges"></div>
+        <h1 class="ap-name" id="ap-name"></h1>
+        <div class="ap-specialite" id="ap-specialite"></div>
+        <div class="ap-meta" id="ap-meta"></div>
+      </div>
+    </div>
+    <div class="ap-body" id="ap-body">
+      <div id="ap-about-block" class="ap-block" style="display:none">
+        <h2 class="ap-block-title">À propos</h2>
+        <p id="ap-description"></p>
+      </div>
+      <div id="ap-exp-block" class="ap-block" style="display:none">
+        <h2 class="ap-block-title">Expérience</h2>
+        <p id="ap-experience"></p>
+      </div>
+      <div class="ap-block">
+        <h2 class="ap-block-title">Zone d'intervention</h2>
+        <p id="ap-zone"></p>
+      </div>
+      <div id="ap-reviews-block" class="ap-block" style="display:none">
+        <h2 class="ap-block-title">Avis clients</h2>
+        <div id="ap-reviews-list"></div>
+      </div>
+    </div>
+    <div class="ap-cta" id="ap-cta">
+      <button class="ap-cta-btn" id="ap-contact-btn">Contacter cet artisan →</button>
+    </div>
+    <div id="ap-not-found" style="display:none" class="ap-not-found">
+      <div class="empty-icon">🔍</div>
+      <p>Artisan non trouvé.</p>
+      <button onclick="showPage('home')">Retour à l'accueil</button>
+    </div>
+  </div>
+</div>
+
 <!-- RGPD -->
 <div id="rgpd" class="page">
   <div class="rgpd-page">
@@ -1221,6 +1296,126 @@ async function init(){
       showAnnonceDetail(aid);
     }
   }
+  // URL-based routing: /artisan/[uuid]
+  var artisanMatch=window.location.pathname.match(/^\/artisan\/([a-f0-9-]{36})$/i);
+  if(artisanMatch){
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    var apPage=document.getElementById('artisan-public');
+    if(apPage) apPage.classList.add('active');
+    loadArtisanPublicPage(artisanMatch[1]);
+  }
+}
+
+async function loadArtisanPublicPage(artisanUserId){
+  const [
+    {data:art,error:artErr},
+    {data:reviews},
+    {data:missions}
+  ] = await Promise.all([
+    db.from('artisans').select('*').eq('user_id',artisanUserId).single(),
+    db.from('artisan_reviews').select('*').eq('artisan_id',artisanUserId).order('created_at',{ascending:false}),
+    db.from('missions').select('id').eq('artisan_id',artisanUserId).eq('status','completed')
+  ]);
+
+  if(artErr||!art){
+    document.getElementById('ap-not-found').style.display='block';
+    document.getElementById('ap-header').style.display='none';
+    document.getElementById('ap-body').style.display='none';
+    document.getElementById('ap-cta').style.display='none';
+    return;
+  }
+
+  // Avatar: photo ou initiale
+  const avatarEl=document.getElementById('ap-avatar');
+  if(art.profile_photo_url){
+    avatarEl.innerHTML=`<img src="${escapeHTML(art.profile_photo_url)}" alt="Photo de profil">`;
+  } else {
+    avatarEl.textContent=(art.prenom||art.nom||'A')[0].toUpperCase();
+  }
+
+  // Badge Vérifié
+  if(art.verified){
+    document.getElementById('ap-badges').innerHTML=`<span class="ap-badge-verified">✓ Vérifié</span>`;
+  }
+
+  // Nom affiché: "Eduard V."
+  const displayName=[art.prenom,art.nom_initiale?art.nom_initiale+'.':''].filter(Boolean).join(' ')||art.nom||'Artisan';
+  document.getElementById('ap-name').textContent=displayName;
+
+  // Spécialité
+  document.getElementById('ap-specialite').textContent=art.specialite||'';
+
+  // Meta: zone + missions complétées + rating
+  const completedCount=missions?missions.length:0;
+  const avgRating=reviews&&reviews.length
+    ?(reviews.reduce((s,r)=>s+(r.rating||0),0)/reviews.length).toFixed(1)
+    :null;
+  let metaHTML='';
+  if(art.zone) metaHTML+=`<span>📍 ${escapeHTML(art.zone)}</span>`;
+  if(completedCount>0) metaHTML+=`<span>✅ ${completedCount} mission${completedCount>1?'s':''} complétée${completedCount>1?'s':''}</span>`;
+  if(avgRating) metaHTML+=`<span>⭐ ${avgRating} (${reviews.length} avis)</span>`;
+  document.getElementById('ap-meta').innerHTML=metaHTML;
+
+  // À propos
+  if(art.description){
+    document.getElementById('ap-description').textContent=art.description;
+    document.getElementById('ap-about-block').style.display='block';
+  }
+
+  // Expérience
+  if(art.years_experience){
+    document.getElementById('ap-experience').textContent=art.years_experience+' an'+(art.years_experience>1?'s':'')+" d'expérience";
+    document.getElementById('ap-exp-block').style.display='block';
+  }
+
+  // Zone
+  document.getElementById('ap-zone').textContent=art.zone||'—';
+
+  // Avis clients
+  if(reviews&&reviews.length){
+    const clientIds=[...new Set(reviews.map(r=>r.client_id).filter(Boolean))];
+    let profilesMap={};
+    if(clientIds.length){
+      const {data:profiles}=await db.from('profiles').select('id,prenom,nom').in('id',clientIds);
+      if(profiles) profiles.forEach(p=>profilesMap[p.id]=p);
+    }
+    const reviewsHTML=reviews.map(r=>{
+      const p=profilesMap[r.client_id];
+      const authorName=p?`${escapeHTML(p.prenom||'')} ${p.nom?escapeHTML(p.nom[0])+'.':''}`.trim():'Client';
+      const daysAgo=Math.floor((Date.now()-new Date(r.created_at))/(1000*60*60*24));
+      const timeStr=daysAgo===0?"aujourd'hui":`il y a ${daysAgo} jour${daysAgo>1?'s':''}`;
+      const stars='⭐'.repeat(Math.min(5,Math.round(r.rating||0)));
+      return `<div class="ap-review-item">
+        <div class="ap-review-stars">${stars}</div>
+        <div class="ap-review-author">${authorName} — ${timeStr}</div>
+        ${r.comment?`<div class="ap-review-comment">${escapeHTML(r.comment)}</div>`:''}
+      </div>`;
+    }).join('');
+    document.getElementById('ap-reviews-list').innerHTML=reviewsHTML;
+    document.getElementById('ap-reviews-block').style.display='block';
+  }
+
+  // Bouton "Contacter cet artisan"
+  document.getElementById('ap-contact-btn').onclick=function(){
+    if(!currentUser){
+      openModal();
+      return;
+    }
+    // Zalogi → ouvrir formulaire annonce avec spécialité pré-remplie
+    requireAuth('post');
+    if(art.specialite){
+      setTimeout(function(){
+        const catBtn=[...document.querySelectorAll('.cat-btn')]
+          .find(b=>b.textContent.trim().startsWith(art.specialite));
+        if(catBtn) catBtn.click();
+      },150);
+    }
+    // Toast nice-to-have
+    showToast(`Votre annonce sera envoyée en priorité à ${displayName} 🔨`);
+  };
+
+  // Titre de page
+  document.title=`${displayName} — ${art.specialite||'Artisan'} | TrouvePro`;
 }
 
 async function loadProfile(){
