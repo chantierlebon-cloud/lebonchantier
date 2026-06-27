@@ -538,6 +538,59 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   .mega-footer{padding:24px 24px 32px;}
   .mega-close{display:flex;position:absolute;top:14px;right:14px;width:36px;height:36px;align-items:center;justify-content:center;font-size:22px;cursor:pointer;background:none;border:none;color:#111827;font-family:inherit;line-height:1;}
 }
+/* Artisan CTA */
+.artisan-cta {
+  background: #FFF7F0;
+  padding: 64px 32px;
+  text-align: center;
+}
+.artisan-cta-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.artisan-cta-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+.artisan-cta-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+}
+.artisan-cta-text {
+  font-size: 18px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+.artisan-cta-subtext {
+  font-size: 14px;
+  color: #6B7280;
+  margin-bottom: 28px;
+}
+.artisan-cta-btn {
+  background: var(--primary);
+  color: #fff;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.artisan-cta-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.02);
+}
+@media (max-width: 768px) {
+  .artisan-cta {
+    padding: 48px 20px;
+  }
+  .artisan-cta-title {
+    font-size: 24px;
+  }
+}
 </style>
 <link rel="stylesheet" href="/styles/global.css">
 </head>
@@ -855,6 +908,15 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       </div>
     </div>
   </div>
+  <section class="artisan-cta">
+    <div class="artisan-cta-inner">
+      <div class="artisan-cta-icon">🔨</div>
+      <h2 class="artisan-cta-title">Vous êtes professionnel du bâtiment ?</h2>
+      <p class="artisan-cta-text">Rejoignez TrouvePro et recevez des demandes de clients près de chez vous.</p>
+      <p class="artisan-cta-subtext">Inscription gratuite, sans engagement.</p>
+      <button class="artisan-cta-btn" onclick="openArtisanSignup()">S'inscrire gratuitement →</button>
+    </div>
+  </section>
   <div class="cta-band">
     <h2>Prêt à lancer votre chantier ?</h2>
     <button class="cta-band-btn" onclick="requireAuth('post')">Publier gratuitement →</button>
@@ -1253,6 +1315,12 @@ function selectRole(role){
   selectedRole=role;
   ['client','artisan','both'].forEach(r=>document.getElementById('role-'+r).classList.toggle('selected',r===role));
   document.getElementById('artisan-fields').style.display=(role==='artisan'||role==='both')?'block':'none';
+}
+
+function openArtisanSignup(){
+  openModal();
+  switchAuthTab('register');
+  selectRole('artisan');
 }
 
 async function loginWithGoogle(){
