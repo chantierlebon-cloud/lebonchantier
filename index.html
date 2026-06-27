@@ -540,9 +540,11 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 }
 /* Artisan CTA */
 .artisan-cta {
-  background: #FFF7F0;
+  background: #FFFFFF;
   padding: 64px 32px;
   text-align: center;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
 }
 .artisan-cta-inner {
   max-width: 600px;
@@ -569,8 +571,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   margin-bottom: 28px;
 }
 .artisan-cta-btn {
-  background: var(--primary);
-  color: #fff;
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
   padding: 14px 32px;
   border: none;
   border-radius: 8px;
@@ -578,9 +580,10 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(197, 52, 10, 0.25);
 }
 .artisan-cta-btn:hover {
-  background: var(--primary-hover);
+  background-color: var(--accent-hover) !important;
   transform: scale(1.02);
 }
 @media (max-width: 768px) {
