@@ -1306,9 +1306,15 @@ async function init(){
   }
 }
 
+let _artisanLoadToken=null;
 async function loadArtisanPublicPage(artisanId){
+  if(!artisanId) return;
+  const token=artisanId;
+  _artisanLoadToken=token;
+
   const {data:art,error:artErr} = await db.from('artisans').select('*').eq('id',artisanId).maybeSingle();
 
+  if(_artisanLoadToken!==token) return;
   if(artErr||!art){
     document.getElementById('ap-not-found').style.display='block';
     document.getElementById('ap-header').style.display='none';
@@ -1317,11 +1323,16 @@ async function loadArtisanPublicPage(artisanId){
     return;
   }
 
-  const artisanUserId = art.user_id;
-  const [{data:reviews},{data:missions}] = await Promise.all([
-    db.from('artisan_reviews').select('*').eq('artisan_id',artisanUserId).order('created_at',{ascending:false}),
-    db.from('missions').select('id').eq('artisan_id',artisanUserId).eq('status','completed')
-  ]);
+  const artisanUserId=art.user_id;
+  let reviews=[],missions=[];
+  try{
+    const [{data:r},{data:m}]=await Promise.all([
+      db.from('artisan_reviews').select('*').eq('artisan_id',artisanUserId).order('created_at',{ascending:false}),
+      db.from('missions').select('id').eq('artisan_id',artisanUserId).eq('status','completed')
+    ]);
+    if(_artisanLoadToken!==token) return;
+    reviews=r||[]; missions=m||[];
+  }catch(e){console.warn('artisan reviews/missions:',e);}
 
   // Avatar: photo ou initiale
   const avatarEl=document.getElementById('ap-avatar');
