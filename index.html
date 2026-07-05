@@ -1306,16 +1306,8 @@ async function init(){
   }
 }
 
-async function loadArtisanPublicPage(artisanUserId){
-  const [
-    {data:art,error:artErr},
-    {data:reviews},
-    {data:missions}
-  ] = await Promise.all([
-    db.from('artisans').select('*').eq('user_id',artisanUserId).single(),
-    db.from('artisan_reviews').select('*').eq('artisan_id',artisanUserId).order('created_at',{ascending:false}),
-    db.from('missions').select('id').eq('artisan_id',artisanUserId).eq('status','completed')
-  ]);
+async function loadArtisanPublicPage(artisanId){
+  const {data:art,error:artErr} = await db.from('artisans').select('*').eq('id',artisanId).maybeSingle();
 
   if(artErr||!art){
     document.getElementById('ap-not-found').style.display='block';
@@ -1324,6 +1316,12 @@ async function loadArtisanPublicPage(artisanUserId){
     document.getElementById('ap-cta').style.display='none';
     return;
   }
+
+  const artisanUserId = art.user_id;
+  const [{data:reviews},{data:missions}] = await Promise.all([
+    db.from('artisan_reviews').select('*').eq('artisan_id',artisanUserId).order('created_at',{ascending:false}),
+    db.from('missions').select('id').eq('artisan_id',artisanUserId).eq('status','completed')
+  ]);
 
   // Avatar: photo ou initiale
   const avatarEl=document.getElementById('ap-avatar');
