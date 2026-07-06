@@ -907,17 +907,15 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   </div>
 </div>
 <div class="stats-bar">
-    <div><div class="stat-n" id="stat-annonces">0</div><div class="stat-l">Annonces publiées</div></div>
     <div><div class="stat-n">0€</div><div class="stat-l">Pour poster</div></div>
     <div><div class="stat-n">100%</div><div class="stat-l">Paiement sécurisé</div></div>
-    <div><div class="stat-n" id="stat-artisans">0</div><div class="stat-l">Artisans inscrits</div></div>
   </div>
-  <div class="listings-section">
+  <div class="listings-section" id="home-listings-section" style="display:none">
     <div class="section-top">
       <div class="section-title">Dernières annonces</div>
       <button class="see-all" onclick="showPage('browse')">Voir tout →</button>
     </div>
-    <div class="jobs-grid" id="home-listings"><div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div></div>
+    <div class="jobs-grid" id="home-listings"></div>
   </div>
   <div class="hiw">
     <div class="hiw-inner">
@@ -1605,7 +1603,8 @@ async function loadAnnonces(page='home'){
       return;
     }
     if(page==='browse')document.getElementById('browse-count').textContent=data.length+' chantier'+(data.length>1?'s':'')+' trouvé'+(data.length>1?'s':'');
-    document.getElementById('stat-annonces').textContent=data.length+'+';
+    if(page==='home'){const s=document.getElementById('home-listings-section');if(s)s.style.display='';}
+
     container.innerHTML=data.map(a=>{
       const hasPhoto=a.photos&&a.photos.length>0;
       const photoTop=hasPhoto?`<div class="job-card-photo"><img src="${a.photos[0]}" alt="photo" loading="lazy"></div>`:'';
@@ -2953,8 +2952,6 @@ async function loadStats(){
   try{
     const{count:ca}=await db.from('annonces').select('*',{count:'exact',head:true});
     const{count:cb}=await db.from('artisans').select('*',{count:'exact',head:true});
-    if(ca!==null)document.getElementById('stat-annonces').textContent=ca+'+';
-    if(cb!==null)document.getElementById('stat-artisans').textContent=cb+'+';
   }catch(e){}
 }
 
