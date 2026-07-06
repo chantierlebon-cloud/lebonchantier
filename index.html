@@ -763,6 +763,19 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <option>🌿 Jardinier</option>
           <option>🚚 Déménagement</option>
           <option>🚗 Transport / Livraison</option>
+          <option>Coiffeur / Coiffeuse</option>
+          <option>Barbier</option>
+          <option>Manucure / Nail artist</option>
+          <option>Pédicure</option>
+          <option>Esthéticienne</option>
+          <option>Maquilleur / Maquilleuse</option>
+          <option>Extensions de cils</option>
+          <option>Épilation</option>
+          <option>Massage / Bien-être</option>
+          <option>Traducteur / Traductrice</option>
+          <option>Aide administrative / démarches</option>
+          <option>Comptabilité / Aide comptable</option>
+          <option>Rédaction de CV / lettres</option>
           <option>Autre</option>
         </select>
         <label class="f-label">Zone d'intervention</label>
@@ -909,6 +922,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <button class="cat-secondary-btn" onclick="openSecondaryModal('jardin')" aria-label="Voir les services de jardinage">🌿 Jardin</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('demenagement')" aria-label="Voir les services de déménagement">🚚 Déménagement</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('transport')" aria-label="Voir les services de transport et location">🚗 Transport &amp; Location</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('beaute')" aria-label="Voir les services de beauté">💅 Beauté &amp; Bien-être</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('administratif')" aria-label="Voir les services administratifs">📋 Administratif &amp; Documents</button>
         </div>
       </div>
     </div>
@@ -3343,7 +3358,11 @@ var _secondaryData={
   demenagement:{label:'🚚 Déménagement — Que cherchez-vous ?',
     items:['Déménagement complet','Transport d\'objets lourds','Garde-meuble','Aide au chargement']},
   transport:{label:'🚗 Transport & Location — Que cherchez-vous ?',
-    items:['Location de véhicule','Transport de marchandises','Livraison','Course chauffeur']}
+    items:['Location de véhicule','Transport de marchandises','Livraison','Course chauffeur']},
+  beaute:{label:'💅 Beauté & Bien-être — Que cherchez-vous ?',
+    items:['Coiffure à domicile','Barbier','Manucure / Nail art','Pédicure','Massage & bien-être','Épilation','Maquillage']},
+  administratif:{label:'📋 Administratif & Documents — Que cherchez-vous ?',
+    items:['Aide aux démarches','Traduction de documents','Rédaction de CV','Aide comptable','Déclarations fiscales']}
 };
 function openSecondaryModal(key){
   var d=_secondaryData[key]; if(!d) return;
@@ -3461,7 +3480,6 @@ function showCat(key){
       +'<div class="card-fallback">'+item.emoji+'</div>'
       +'<div class="card-overlay"></div>'
       +'<div class="card-title">'
-      +'<span class="card-title-emoji">'+item.emoji+'</span>'
       +'<span class="card-title-text">'+item.title+'</span>'
       +'<span class="card-title-sub">'+item.sub+'</span>'
       +'</div>'
