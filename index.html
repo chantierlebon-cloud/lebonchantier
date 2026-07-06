@@ -945,7 +945,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <button class="cat-secondary-btn" onclick="openSecondaryModal('cours')" aria-label="Voir les cours et soutien">📖 Cours &amp; Soutien</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('garde')" aria-label="Voir les services de garde">👶 Garde &amp; Aide à la personne</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('cuisine')" aria-label="Voir les services de cuisine">🍽️ Cuisine &amp; Traiteur</button>
-          <button class="cat-secondary-btn" onclick="openSecondaryModal('construction')" aria-label="Voir les services de construction">🏗️ Construction &amp; Gros œuvre</button>
+
           <button class="cat-secondary-btn" onclick="openSecondaryModal('exterieur')" aria-label="Voir les services extérieurs">🏡 Extérieur &amp; Énergie</button>
         </div>
       </div>
@@ -3446,6 +3446,16 @@ function closeSecondaryModal(){
 
 /* ── Categories with photo cards ── */
 var _catData={
+  construction:{label:'🏗️ Construction',items:[
+    {title:'Construction de maison',sub:'Neuf & gros œuvre',emoji:'🏗️',
+     img:'https://images.unsplash.com/photo-1503387762-592deb58ef4e',cat:'Construction'},
+    {title:'Toiture & Charpente',sub:'Couverture & structure',emoji:'🏠',
+     img:'https://images.unsplash.com/photo-1632759145351-1d592919f522',cat:'Construction'},
+    {title:'Terrasse & Extérieur',sub:'Aménagement extérieur',emoji:'🪵',
+     img:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',cat:'Extérieur'},
+    {title:'Façade & Bardage',sub:'ITE & ravalement',emoji:'🧱',
+     img:'https://images.unsplash.com/photo-1541888946425-d81bb19240f5',cat:'Extérieur'}
+  ]},
   bricolage:{label:'🔨 Bricolage',items:[
     {title:'Petits travaux',sub:'Réparation rapide',emoji:'🔧',
      img:'https://images.pexels.com/photos/7484798/pexels-photo-7484798.jpeg',cat:'Bricolage'},
@@ -3528,8 +3538,8 @@ var _catData={
   ]}
 };
 
-var _catActive='plomberie';
-var _primaryCats=['plomberie','electricite','bricolage','renovation'];
+var _catActive='construction';
+var _primaryCats=['construction','plomberie','electricite','bricolage','renovation'];
 
 function showCat(key){
   _catActive=key;
