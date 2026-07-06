@@ -776,6 +776,16 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <option>📋 Aide administrative / démarches</option>
           <option>🧮 Comptabilité / Aide comptable</option>
           <option>📄 Rédaction de CV / lettres</option>
+          <option>🇫🇷 Cours de français</option>
+          <option>📚 Soutien scolaire</option>
+          <option>🗣️ Cours de langues</option>
+          <option>🎵 Cours de musique</option>
+          <option>👶 Garde d'enfants / Baby-sitting</option>
+          <option>🧓 Aide aux personnes âgées</option>
+          <option>🤝 Aide à domicile</option>
+          <option>🍽️ Traiteur / Plats à emporter</option>
+          <option>🎂 Gâteaux & pâtisserie</option>
+          <option>👨‍🍳 Cuisine à domicile</option>
           <option>Autre</option>
         </select>
         <label class="f-label">Zone d'intervention</label>
@@ -924,6 +934,9 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <button class="cat-secondary-btn" onclick="openSecondaryModal('transport')" aria-label="Voir les services de transport et location">🚗 Transport &amp; Location</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('beaute')" aria-label="Voir les services de beauté">💅 Beauté &amp; Bien-être</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('administratif')" aria-label="Voir les services administratifs">📋 Administratif &amp; Documents</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('cours')" aria-label="Voir les cours et soutien">📖 Cours &amp; Soutien</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('garde')" aria-label="Voir les services de garde">👶 Garde &amp; Aide à la personne</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('cuisine')" aria-label="Voir les services de cuisine">🍽️ Cuisine &amp; Traiteur</button>
         </div>
       </div>
     </div>
@@ -3362,7 +3375,13 @@ var _secondaryData={
   beaute:{label:'💅 Beauté & Bien-être — Que cherchez-vous ?',
     items:['Coiffure à domicile','Barbier','Manucure / Nail art','Pédicure','Massage & bien-être','Épilation','Maquillage']},
   administratif:{label:'📋 Administratif & Documents — Que cherchez-vous ?',
-    items:['Aide aux démarches','Traduction de documents','Rédaction de CV','Aide comptable','Déclarations fiscales']}
+    items:['Aide aux démarches','Traduction de documents','Rédaction de CV','Aide comptable','Déclarations fiscales']},
+  cours:{label:'📖 Cours & Soutien — Que cherchez-vous ?',
+    items:['Cours de français','Soutien scolaire','Cours de langues','Cours de musique','Aide aux devoirs']},
+  garde:{label:'👶 Garde & Aide à la personne — Que cherchez-vous ?',
+    items:['Garde d\'enfants','Baby-sitting','Aide aux personnes âgées','Aide à domicile','Accompagnement']},
+  cuisine:{label:'🍽️ Cuisine & Traiteur — Que cherchez-vous ?',
+    items:['Traiteur / Plats à emporter','Gâteaux & pâtisserie','Cuisine à domicile','Cuisine traditionnelle']}
 };
 function openSecondaryModal(key){
   var d=_secondaryData[key]; if(!d) return;
