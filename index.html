@@ -786,6 +786,14 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <option>🍽️ Traiteur / Plats à emporter</option>
           <option>🎂 Gâteaux & pâtisserie</option>
           <option>👨‍🍳 Cuisine à domicile</option>
+          <option>🏗️ Constructeur / Gros œuvre</option>
+          <option>🪚 Charpentier</option>
+          <option>🧱 Façadier / Bardage</option>
+          <option>⛏️ Terrassement</option>
+          <option>🌡️ Installateur pompe à chaleur</option>
+          <option>☀️ Installateur panneaux solaires</option>
+          <option>🌳 Paysagiste</option>
+          <option>🏊 Pisciniste</option>
           <option>Autre</option>
         </select>
         <label class="f-label">Zone d'intervention</label>
@@ -937,6 +945,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <button class="cat-secondary-btn" onclick="openSecondaryModal('cours')" aria-label="Voir les cours et soutien">📖 Cours &amp; Soutien</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('garde')" aria-label="Voir les services de garde">👶 Garde &amp; Aide à la personne</button>
           <button class="cat-secondary-btn" onclick="openSecondaryModal('cuisine')" aria-label="Voir les services de cuisine">🍽️ Cuisine &amp; Traiteur</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('construction')" aria-label="Voir les services de construction">🏗️ Construction &amp; Gros œuvre</button>
+          <button class="cat-secondary-btn" onclick="openSecondaryModal('exterieur')" aria-label="Voir les services extérieurs">🏡 Extérieur &amp; Énergie</button>
         </div>
       </div>
     </div>
@@ -3281,7 +3291,7 @@ var _megaMenuData=[
     {label:'Menuiserie',cat:'Rénovation'},
     {label:'Couvreur / Toiture',cat:'Rénovation'},
     {label:'Rénovation générale',cat:'Rénovation'},
-    {label:'Isolation',cat:'Rénovation'}
+    {label:'Isolation intérieure',cat:'Rénovation'}
   ]},
   {heading:'Électricité & Plomberie',items:[
     {label:'Installation électrique',cat:'Électricité'},
@@ -3323,6 +3333,25 @@ var _megaMenuData=[
     {label:'Traiteur',cat:'Cuisine & Traiteur'},
     {label:'Gâteaux & pâtisserie',cat:'Cuisine & Traiteur'},
     {label:'Cuisine à domicile',cat:'Cuisine & Traiteur'}
+  ]}
+  ,{heading:'Construction & Gros œuvre',items:[
+    {label:'Construction de maison',cat:'Construction'},
+    {label:'Gros œuvre / Fondations',cat:'Construction'},
+    {label:'Extension / Agrandissement',cat:'Construction'},
+    {label:'Charpente',cat:'Construction'},
+    {label:'Toiture / Couverture',cat:'Construction'},
+    {label:'Terrassement',cat:'Construction'}
+  ]}
+  ,{heading:'Extérieur & Énergie',items:[
+    {label:'Bardage / Façade',cat:'Extérieur'},
+    {label:'Ravalement de façade',cat:'Extérieur'},
+    {label:'Isolation extérieure (ITE)',cat:'Extérieur'},
+    {label:'Pompe à chaleur',cat:'Extérieur'},
+    {label:'Panneaux solaires',cat:'Extérieur'},
+    {label:'Terrasse',cat:'Extérieur'},
+    {label:'Clôture & portail',cat:'Extérieur'},
+    {label:'Piscine',cat:'Extérieur'},
+    {label:'Aménagement extérieur',cat:'Extérieur'}
   ]}
 ];
 
@@ -3396,7 +3425,11 @@ var _secondaryData={
   garde:{label:'👶 Garde & Aide à la personne — Que cherchez-vous ?',
     items:['Garde d\'enfants','Baby-sitting','Aide aux personnes âgées','Aide à domicile','Accompagnement']},
   cuisine:{label:'🍽️ Cuisine & Traiteur — Que cherchez-vous ?',
-    items:['Traiteur / Plats à emporter','Gâteaux & pâtisserie','Cuisine à domicile','Cuisine traditionnelle']}
+    items:['Traiteur / Plats à emporter','Gâteaux & pâtisserie','Cuisine à domicile','Cuisine traditionnelle']},
+  construction:{label:'🏗️ Construction & Gros œuvre — Que cherchez-vous ?',
+    items:['Construction de maison','Gros œuvre / Fondations','Extension / Agrandissement','Charpente','Toiture / Couverture','Terrassement']},
+  exterieur:{label:'🏡 Extérieur & Énergie — Que cherchez-vous ?',
+    items:['Bardage / Façade','Ravalement de façade','Isolation extérieure (ITE)','Pompe à chaleur','Panneaux solaires','Terrasse','Clôture & portail','Piscine','Aménagement extérieur']}
 };
 function openSecondaryModal(key){
   var d=_secondaryData[key]; if(!d) return;
