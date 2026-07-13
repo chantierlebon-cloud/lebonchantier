@@ -1693,15 +1693,19 @@ async function showAnnonceDetail(id){
     const {data:verifs}=await db.from('artisan_verifications').select('user_id,verification_status').in('user_id',artisanIds);
     verificationMap=Object.fromEntries((verifs||[]).map(v=>[v.user_id,v.verification_status]));
   }
-  let mission=null, missionStages=[];
+  let mission=null, missionStages=[], missionMilestones=[];
   try{
     const {data:m} = await db.from('missions').select('*').eq('annonce_id',id).maybeSingle();
     mission = m || null;
     if(mission){
-      const {data:stages} = await db.from('mission_stages').select('*').eq('mission_id',mission.id).order('stage_order',{ascending:true});
+      const [{data:stages},{data:mlData}] = await Promise.all([
+        db.from('mission_stages').select('*').eq('mission_id',mission.id).order('stage_order',{ascending:true}),
+        db.from('mission_milestones').select('id,title,amount,status,mission_id,artisan_completed_at,auto_release_at').eq('mission_id',mission.id).order('order_index',{ascending:true})
+      ]);
       missionStages = stages || [];
+      missionMilestones = mlData || [];
     }
-  }catch(_e){ mission=null; missionStages=[]; }
+  }catch(_e){ mission=null; missionStages=[]; missionMilestones=[]; }
 
   const isOwner=currentUser&&a.user_id===currentUser.id;
   const isSelectedArtisan=currentUser&&a.selected_artisan_id===currentUser.id;
@@ -1782,6 +1786,22 @@ async function showAnnonceDetail(id){
         </div>`}
     </div>`:'';
   const missionHtml = renderMissionBox(a, mission, missionStages, {isOwner, isSelectedArtisan});
+  const missionMilestonesHtml = (mission && missionMilestones.length) ? `
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-top:18px">
+      <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px">💳 Paiements sécurisés</div>
+      <div style="font-size:13px;color:var(--ink3);margin-bottom:12px">Étapes de paiement · fonds bloqués jusqu'à validation</div>
+      ${missionMilestones.map(ml=>`
+        <div style="padding:12px 0;border-top:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+            <div>
+              <div style="font-weight:700">${escapeHTML(ml.title||'Étape')}</div>
+              <div style="font-size:12px;color:var(--ink3);margin-top:2px">${formatMoney(ml.amount||0)} · ${missionStatusLabel(ml.status)}</div>
+            </div>
+          </div>
+          <div style="margin-top:8px">${renderMilestonePaymentButtons(ml, isOwner)}</div>
+        </div>
+      `).join('')}
+    </div>` : '';
 
   // Bouton chat — visible pour le client propriétaire (vers artisan sélectionné) et pour l'artisan sélectionné (vers client)
   let chatBtnHtml = '';
@@ -1820,6 +1840,7 @@ async function showAnnonceDetail(id){
     ${repondreHtml}
     ${reponsesHtml}
     ${missionHtml}
+    ${missionMilestonesHtml}
     ${ownerReviewHtml}
     ${reviewSummaryHtml}
   `;
