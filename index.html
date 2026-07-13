@@ -2358,7 +2358,10 @@ function loadProfileContent(){
         <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">${currentUser.email}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><div style="display:inline-block;background:#FFF0EB;color:var(--accent);font-size:12px;font-weight:700;padding:6px 12px;border-radius:100px">${roleLabel}</div>${(roleValue==='artisan'||roleValue==='both')?verificationBadgeHtml(currentProfile?.verification_status||'non_verifie'):''}</div>
       </div>
-      <button class="submit-btn" onclick="openProfileEditor()" style="max-width:220px">Modifier mon profil</button>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:stretch">
+        <button class="submit-btn" onclick="openProfileEditor()" style="max-width:220px">Modifier mon profil</button>
+        ${(roleValue==='artisan'||roleValue==='both')&&currentProfile?.artisan_record?.id?`<a href="/artisan/${currentProfile.artisan_record.id}" target="_blank" class="submit-btn" style="max-width:220px;text-align:center;text-decoration:none">👁 Voir mon profil public</a>`:''}
+      </div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
