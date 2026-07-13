@@ -2012,7 +2012,7 @@ async function createMission(){
   const note=(document.getElementById('mission-note').value||'').trim();
   const count=document.getElementById('mission-stage-count').value||'3';
   if(!annonceId || !artisanId || total<=0){
-    showToast(‘⚠️ Renseignez le montant et le professionnel sélectionné’,’error’);
+    showToast('⚠️ Renseignez le montant et le professionnel sélectionné','error');
     return;
   }
   try{
@@ -2116,7 +2116,7 @@ async function markMissionStagePaid(stageId, annonceId){
     showAnnonceDetail(annonceId);
   }catch(e){
     console.error(e);
-    showToast('❌ Paiement de l’étape impossible','error');
+    showToast('❌ Paiement de l'étape impossible','error');
   }
 }
 
@@ -2146,7 +2146,7 @@ async function flagMissionStageIssue(stageId, annonceId, missionId){
     const {error}=await db.from('mission_stages').update({status:'dispute'}).eq('id',stageId);
     if(error) throw error;
     await db.from('missions').update({status:'dispute'}).eq('id',missionId);
-    showToast('⚠️ Étape placée en litige. L’admin doit trancher.','error');
+    showToast('⚠️ Étape placée en litige. L'admin doit trancher.','error');
     showAnnonceDetail(annonceId);
   }catch(e){
     console.error(e);
