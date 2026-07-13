@@ -713,7 +713,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <button class="modal-close" onclick="closeModal()">✕</button>
     <h2>Bienvenue !</h2>
     <p>Créez un compte ou connectez-vous.</p>
-    <div class="modal-tabs">
+    <div class="modal-tabs" id="modal-tabs">
       <button class="modal-tab active" id="tab-register" onclick="switchAuthTab('register')">Créer un compte</button>
       <button class="modal-tab" id="tab-login" onclick="switchAuthTab('login')">Se connecter</button>
     </div>
@@ -816,8 +816,26 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       <input class="f-input" id="login-email" type="email" placeholder="vous@email.com">
       <label class="f-label">Mot de passe</label>
       <input class="f-input" id="login-password" type="password" placeholder="Votre mot de passe">
+      <div style="text-align:right;margin-top:4px;margin-bottom:8px"><a style="font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline" onclick="showForgotPasswordForm()">Mot de passe oublié ?</a></div>
       <button class="submit-btn" id="btn-login" onclick="login()">Se connecter →</button>
       <div class="auth-switch">Pas encore de compte ? <a onclick="switchAuthTab('register')">Créer un compte</a></div>
+    </div>
+    <div id="forgot-form" style="display:none">
+      <div style="margin-bottom:16px"><a style="font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline" onclick="switchAuthTab('login')">← Retour à la connexion</a></div>
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:8px">Réinitialiser le mot de passe</h3>
+      <p style="font-size:13px;color:var(--ink3);margin-bottom:16px">Entrez votre email pour recevoir un lien de réinitialisation.</p>
+      <label class="f-label">Email</label>
+      <input class="f-input" id="forgot-email" type="email" placeholder="vous@email.com">
+      <button class="submit-btn" id="btn-forgot" onclick="sendPasswordReset()">📧 Envoyer le lien →</button>
+    </div>
+    <div id="reset-password-form" style="display:none">
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:8px">Nouveau mot de passe</h3>
+      <p style="font-size:13px;color:var(--ink3);margin-bottom:16px">Choisissez un nouveau mot de passe sécurisé.</p>
+      <label class="f-label">Nouveau mot de passe</label>
+      <input class="f-input" id="new-password" type="password" placeholder="Minimum 6 caractères">
+      <label class="f-label">Confirmer le mot de passe</label>
+      <input class="f-input" id="confirm-password" type="password" placeholder="Répétez le mot de passe">
+      <button class="submit-btn" id="btn-update-password" onclick="updatePassword()">✅ Mettre à jour →</button>
     </div>
   </div>
 </div>
@@ -1325,6 +1343,11 @@ async function init(){
   if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();subscribeCandidaturesRealtime();}
   db.auth.onAuthStateChange(async(event,session)=>{
     currentAccessToken=session?.access_token||null;
+    if(event==='PASSWORD_RECOVERY'){
+      currentUser=session?.user||null;
+      showResetPasswordForm();
+      return;
+    }
     if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');subscribeCandidaturesRealtime();if(document.getElementById('dashboard')?.classList.contains('active'))loadDashboard();}
     else{currentUser=null;currentProfile=null;updateNav(false);updateDashboardUI();if(_candidaturesRealtimeSub){db.removeChannel(_candidaturesRealtimeSub);_candidaturesRealtimeSub=null;}}
   });
@@ -1562,10 +1585,67 @@ function openModal(){document.getElementById('auth-modal').classList.add('show')
 function closeModal(){document.getElementById('auth-modal').classList.remove('show');}
 
 function switchAuthTab(tab){
+  document.getElementById('modal-tabs').style.display='flex';
   document.getElementById('tab-register').classList.toggle('active',tab==='register');
   document.getElementById('tab-login').classList.toggle('active',tab==='login');
   document.getElementById('register-form').style.display=tab==='register'?'block':'none';
   document.getElementById('login-form').style.display=tab==='login'?'block':'none';
+  document.getElementById('forgot-form').style.display='none';
+  document.getElementById('reset-password-form').style.display='none';
+}
+
+function showForgotPasswordForm(){
+  document.getElementById('modal-tabs').style.display='none';
+  document.getElementById('register-form').style.display='none';
+  document.getElementById('login-form').style.display='none';
+  document.getElementById('forgot-form').style.display='block';
+  document.getElementById('reset-password-form').style.display='none';
+}
+
+function showResetPasswordForm(){
+  openModal();
+  document.getElementById('modal-tabs').style.display='none';
+  document.getElementById('register-form').style.display='none';
+  document.getElementById('login-form').style.display='none';
+  document.getElementById('forgot-form').style.display='none';
+  document.getElementById('reset-password-form').style.display='block';
+}
+
+async function sendPasswordReset(){
+  const email=(document.getElementById('forgot-email')?.value||'').trim();
+  if(!email){showToast('⚠️ Entrez votre email','error');return;}
+  const btn=document.getElementById('btn-forgot');
+  if(btn){btn.disabled=true;btn.textContent='Envoi...';}
+  try{
+    const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:'https://trouvepro.fr/#reset-password'});
+    if(error) throw error;
+    showToast('📧 Un lien de réinitialisation a été envoyé à votre email.','success');
+    switchAuthTab('login');
+  }catch(e){
+    showToast(`❌ ${e.message||'Erreur lors de l\'envoi'}','error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='📧 Envoyer le lien →';}
+  }
+}
+
+async function updatePassword(){
+  const newPwd=(document.getElementById('new-password')?.value||'').trim();
+  const confirmPwd=(document.getElementById('confirm-password')?.value||'').trim();
+  if(!newPwd||newPwd.length<6){showToast('⚠️ Mot de passe trop court (minimum 6 caractères)','error');return;}
+  if(newPwd!==confirmPwd){showToast('⚠️ Les mots de passe ne correspondent pas','error');return;}
+  const btn=document.getElementById('btn-update-password');
+  if(btn){btn.disabled=true;btn.textContent='Mise à jour...';}
+  try{
+    const {error}=await db.auth.updateUser({password:newPwd});
+    if(error) throw error;
+    showToast('✅ Mot de passe mis à jour !','success');
+    closeModal();
+    showPage('home');
+  }catch(e){
+    showToast(`❌ ${e.message||'Erreur de mise à jour'}','error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='✅ Mettre à jour →';}
+  }
 }
 
 function selectRole(role){
