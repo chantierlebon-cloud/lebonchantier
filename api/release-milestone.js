@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
 
     if (milestoneError || !milestone) return res.status(404).json({ error: 'Milestone not found' });
     if (milestone.missions.client_id !== user.id) return res.status(403).json({ error: 'Forbidden' });
-    if (milestone.status !== 'paid_locked') return res.status(400).json({ error: 'Milestone must be paid_locked' });
+    if (!['paid_locked', 'work_done'].includes(milestone.status)) return res.status(400).json({ error: 'Milestone must be paid_locked or work_done' });
 
     const mission = milestone.missions;
 

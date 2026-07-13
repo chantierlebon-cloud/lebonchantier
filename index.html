@@ -1943,6 +1943,7 @@ function missionStatusLabel(status){
   const map={
     awaiting_payment:'À payer',
     paid_locked:'Payée · en attente de validation',
+    work_done:'Travail terminé · validation client en attente',
     released:'Libérée',
     dispute:'Litige',
     completed:'Terminée',
@@ -2603,12 +2604,12 @@ async function loadArtisanDashboard(){
   if(!box) return;
   box.innerHTML=`<div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace artisan...</p></div>`;
   try{
-    const [{data:available},{data:myResponses},{data:missions},{data:myReviews}] = await Promise.all([
+    const [{data:available},{data:myResponses},{data:missions},{data:myReviews},{data:artisanMissions}] = await Promise.all([
       db.from('annonces').select('id,categorie,ville,budget,delai,statut,created_at,user_id,selected_artisan_id').eq('statut','ouvert').neq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50),
       db.from('reponses').select('id,annonce_id,message,created_at,status,annonces(id,categorie,ville,budget,statut)').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
       db.from('annonces').select('id,categorie,ville,budget,delai,statut,created_at,selected_artisan_id').eq('selected_artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
       db.from('reviews').select('*').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
-      db.from('missions').select('id,total_amount,status,mission_type,annonce_id,created_at').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100)
+      db.from('missions').select('id,total_amount,status,mission_type,annonce_id,created_at,mission_milestones(id,title,amount,status,mission_id)').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100)
     ]);
 
     // Mettre à jour le bouton de l'onglet artisan avec le compteur de candidatures
@@ -2655,6 +2656,24 @@ async function loadArtisanDashboard(){
           <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">💬 Mes candidatures${(myResponses||[]).length>0?` <span class="notif-badge" style="background:var(--ink2)">${(myResponses||[]).length}</span>`:''}</div>
           ${(myResponses||[]).length?myResponses.map(r=>`<div style="padding:12px 0;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px"><div style="font-weight:700">${escapeHTML(r.annonces?.categorie||'Travaux')} — ${escapeHTML(r.annonces?.ville||'')}</div><div>${r.status==='accepted' ? '<span class="small-badge badge-accepted">Acceptée</span>' : r.status==='rejected' ? '<span class="small-badge badge-rejected">Refusée</span>' : '<span class="small-badge badge-pending">En attente</span>'}</div></div><div style="font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:8px">${escapeHTML(r.message||'')}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="showAnnonceDetail('${r.annonce_id}')" style="background:none;border:1.5px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600">Voir l'annonce</button></div></div>`).join(''):`<div class="empty-state"><p>Aucune candidature envoyée.</p></div>`}
         </div>
+
+        ${(()=>{
+          const pendingMilestones=(artisanMissions||[]).flatMap(m=>(m.mission_milestones||[]).filter(ml=>ml.status==='paid_locked').map(ml=>({...ml,_mission:m})));
+          if(!pendingMilestones.length) return '';
+          return `<div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:18px">
+            <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px">⏳ Étapes à confirmer</div>
+            <div style="font-size:13px;color:var(--ink3);margin-bottom:12px">Le client a payé ces étapes. Marquez-les terminées pour déclencher la validation.</div>
+            ${pendingMilestones.map(ml=>`<div style="padding:12px 0;border-top:1px solid #fde68a">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+                <div>
+                  <div style="font-weight:700">${escapeHTML(ml.title||'Étape')}</div>
+                  <div style="font-size:12px;color:var(--ink3);margin-top:2px">${formatMoney(ml.amount||0)} · ${missionStatusLabel(ml.status)}</div>
+                </div>
+                <button onclick="artisanCompleteMilestone('${ml.id}')" style="background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700">✅ J'ai terminé cette étape</button>
+              </div>
+            </div>`).join('')}
+          </div>`;
+        })()}
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
           <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">🧰 Mes missions acceptées</div>
@@ -3828,6 +3847,36 @@ async function releaseMilestone(milestoneId) {
   if (typeof showPage === 'function') showPage('dashboard');
 }
 
+async function artisanCompleteMilestone(milestoneId) {
+  try {
+    const autoRelease = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { error } = await db.from('mission_milestones').update({
+      status: 'work_done',
+      artisan_completed_at: new Date().toISOString(),
+      auto_release_at: autoRelease
+    }).eq('id', milestoneId);
+    if (error) throw error;
+    showToast('✅ Travail marqué comme terminé. Le client a 7 jours pour valider.', 'success');
+    if (isArtisanRole()) loadArtisanDashboard();
+  } catch (e) {
+    console.error(e);
+    showToast('❌ Impossible de marquer l\'étape comme terminée', 'error');
+  }
+}
+
+async function flagMilestoneIssue(milestoneId, missionId) {
+  try {
+    const { error } = await db.from('mission_milestones').update({ status: 'dispute' }).eq('id', milestoneId);
+    if (error) throw error;
+    if (missionId) await db.from('missions').update({ status: 'dispute' }).eq('id', missionId);
+    showToast('⚠️ Problème signalé. L\'admin va examiner le litige.', 'error');
+    if (typeof showPage === 'function') showPage('dashboard');
+  } catch (e) {
+    console.error(e);
+    showToast('❌ Impossible de signaler le problème', 'error');
+  }
+}
+
 function renderMilestonePaymentButtons(milestone, isClientOwner) {
   let html = '';
   if (isClientOwner && milestone.status === 'awaiting_payment') {
@@ -3835,6 +3884,22 @@ function renderMilestonePaymentButtons(milestone, isClientOwner) {
   }
   if (isClientOwner && milestone.status === 'paid_locked') {
     html += `<button class="small-btn" onclick="releaseMilestone('${milestone.id}')">✅ Valider et libérer</button>`;
+    html += `<button class="small-btn" style="background:#fff0eb;color:var(--accent);border:1.5px solid #ffd4c7" onclick="flagMilestoneIssue('${milestone.id}','${milestone.mission_id||''}')">⚠️ Signaler un problème</button>`;
+  }
+  if (isClientOwner && milestone.status === 'work_done') {
+    const daysLeft = milestone.auto_release_at
+      ? Math.max(0, Math.ceil((new Date(milestone.auto_release_at) - Date.now()) / (1000*60*60*24)))
+      : 7;
+    html += `<div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px">
+      <span style="font-weight:700">⏳ En attente de votre validation</span><br>
+      L'artisan a terminé le travail. Validez pour libérer le paiement, ou signalez un problème.
+      Validation automatique dans <strong>${daysLeft} jour${daysLeft!==1?'s':''}</strong>.
+    </div>`;
+    html += `<button class="small-btn" onclick="releaseMilestone('${milestone.id}')">✅ Valider et payer</button>`;
+    html += `<button class="small-btn" style="background:#fff0eb;color:var(--accent);border:1.5px solid #ffd4c7" onclick="flagMilestoneIssue('${milestone.id}','${milestone.mission_id||''}')">⚠️ Signaler un problème</button>`;
+  }
+  if (milestone.status === 'dispute') {
+    html += `<span class="meta" style="color:var(--accent);font-weight:700">⚠️ Litige en cours — l'admin va trancher</span>`;
   }
   if (milestone.status === 'released') {
     html += `<span class="meta">✅ Paiement versé</span>`;
