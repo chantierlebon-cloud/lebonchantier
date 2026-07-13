@@ -722,7 +722,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         <div class="f-label">Je suis...</div>
         <div class="role-selector">
           <div class="role-btn selected" id="role-client" onclick="selectRole('client')"><span class="role-icon">🏠</span><span class="role-label">Client</span></div>
-          <div class="role-btn" id="role-artisan" onclick="selectRole('artisan')"><span class="role-icon">🔨</span><span class="role-label">Artisan</span></div>
+          <div class="role-btn" id="role-artisan" onclick="selectRole('artisan')"><span class="role-icon">🔨</span><span class="role-label">Professionnel</span></div>
           <div class="role-btn" id="role-both" onclick="selectRole('both')"><span class="role-icon">⚡</span><span class="role-label">Les deux</span></div>
         </div>
       </div>
@@ -1239,7 +1239,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     </div>
     <div class="dashboard-tabs" id="dashboard-tabs">
       <button class="dash-tab active" data-tab="mes-annonces" onclick="switchDashTab('mes-annonces')">📋 Mes annonces</button>
-      <button class="dash-tab" data-tab="artisan" id="artisan-tab-btn" onclick="switchDashTab('artisan')" style="display:none">🔨 Espace artisan</button>
+      <button class="dash-tab" data-tab="artisan" id="artisan-tab-btn" onclick="switchDashTab('artisan')" style="display:none">🔨 Espace professionnel</button>
       <button class="dash-tab" data-tab="profil" onclick="switchDashTab('profil')">👤 Mon profil</button>
       <button class="dash-tab" data-tab="admin" id="admin-tab-btn" onclick="switchDashTab('admin')" style="display:none">🛡️ Admin</button>
     </div>
@@ -1807,7 +1807,7 @@ async function showAnnonceDetail(id){
       ? `<div class="repondre-box">
           <p style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:10px">🔒 Profil non vérifié</p>
           <p style="font-size:13px;color:var(--ink3);line-height:1.6">Votre profil doit être vérifié avant de pouvoir contacter des clients. Uploadez vos documents dans <strong>Espace Professionnel</strong>.</p>
-          <button onclick="showPage('dashboard');setTimeout(()=>switchDashTab('artisan'),100)" style="margin-top:14px;background:var(--accent);color:#fff;border:none;padding:10px 18px;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:800;cursor:pointer">Espace Artisan →</button>
+          <button onclick="showPage('dashboard');setTimeout(()=>switchDashTab('artisan'),100)" style="margin-top:14px;background:var(--accent);color:#fff;border:none;padding:10px 18px;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:800;cursor:pointer">Espace professionnel →</button>
         </div>`
       : alreadyApplied
         ? `<div class="repondre-box"><p style="font-size:14px;color:var(--green);font-weight:600;text-align:center">✅ Vous avez déjà envoyé une candidature pour cette annonce.</p></div>`
@@ -1839,7 +1839,7 @@ async function showAnnonceDetail(id){
         return `
         <div class="reponse-item" id="reponse-item-${r.id}" data-response-id="${r.id}" data-artisan-id="${r.artisan_id}" data-annonce-id="${id}" data-status="${responseStatus}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-            <div class="reponse-artisan" id="reponse-artisan-name-${r.id}">🔨 ${artisansMap[r.artisan_id]?.id?`<a href="/artisan/${artisansMap[r.artisan_id].id}" style="color:var(--accent);text-decoration:underline;cursor:pointer">${escapeHTML(artisansMap[r.artisan_id]?.nom||'Artisan')}</a>`:escapeHTML(artisansMap[r.artisan_id]?.nom||'Artisan')} — ${escapeHTML(artisansMap[r.artisan_id]?.specialite||'')}</div>
+            <div class="reponse-artisan" id="reponse-artisan-name-${r.id}">🔨 ${artisansMap[r.artisan_id]?.id?`<a href="/artisan/${artisansMap[r.artisan_id].id}" style="color:var(--accent);text-decoration:underline;cursor:pointer">${escapeHTML(artisansMap[r.artisan_id]?.nom||'Professionnel')}</a>`:escapeHTML(artisansMap[r.artisan_id]?.nom||'Professionnel')} — ${escapeHTML(artisansMap[r.artisan_id]?.specialite||'')}</div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="reponse-status-badge-${r.id}">${statusBadge}</span>${verificationBadge}<div class="reponse-date">${timeAgo(r.created_at)}</div></div>
           </div>
           <div class="reponse-msg">${escapeHTML(r.message||'')}</div>
@@ -1894,7 +1894,7 @@ async function showAnnonceDetail(id){
   let chatBtnHtml = '';
   if (currentUser && a.selected_artisan_id) {
     if (isOwner) {
-      const artisanNom = artisansMap[a.selected_artisan_id]?.nom || 'Artisan';
+      const artisanNom = artisansMap[a.selected_artisan_id]?.nom || 'Professionnel';
       chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.selected_artisan_id}','${escapeHTML(artisanNom)}','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Chat avec ${escapeHTML(artisanNom)}</button>`;
     } else if (isSelectedArtisan) {
       chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.user_id}','Client','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Chat avec le client</button>`;
@@ -2205,7 +2205,7 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
   // Envoyer l'email de notification
   let emailEnvoye=false;
   if(emailDest){
-    const artisanNom=currentProfile?.nom||'Un artisan';
+    const artisanNom=currentProfile?.nom||'Un professionnel';
     try{
       await sendEmail(
         emailDest,
@@ -2235,7 +2235,7 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
 async function choisirArtisan(annonceId,artisanId,responseId=null){
   // Lire le nom artisan et les métadonnées annonce depuis le DOM (évite 2 requêtes DB)
   const artisanNameEl=responseId?document.getElementById(`reponse-artisan-name-${responseId}`):null;
-  const artisanNom=artisanNameEl?artisanNameEl.textContent.replace(/^🔨\s*/,'').split(' — ')[0].trim():'Artisan';
+  const artisanNom=artisanNameEl?artisanNameEl.textContent.replace(/^🔨\s*/,'').split(' — ')[0].trim():'Professionnel';
   const detailEl=document.getElementById('detail-content');
   const categorie=detailEl?.dataset?.categorie||'';
   const ville=detailEl?.dataset?.ville||'';
@@ -2459,7 +2459,7 @@ async function deleteAnnonce(id){
 
 function loadProfileContent(){
   const roleValue=currentProfile?.role||'client';
-  const roleLabel=roleValue==='client'?'🏠 Client':roleValue==='artisan'?'🔨 Artisan':roleValue==='admin'?'🛡️ Admin':'⚡ Client & Artisan';
+  const roleLabel=roleValue==='client'?'🏠 Client':roleValue==='artisan'?'🔨 Professionnel':roleValue==='admin'?'🛡️ Admin':'⚡ Client & Professionnel';
   document.getElementById('profile-content').innerHTML=`
     <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px">
       <div>
@@ -2499,7 +2499,7 @@ function loadProfileContent(){
           <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Rôle</label>
           <select id="edit-profile-role" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px">
             <option value="client" ${roleValue==='client'?'selected':''}>Client</option>
-            <option value="artisan" ${roleValue==='artisan'?'selected':''}>Artisan</option>
+            <option value="artisan" ${roleValue==='artisan'?'selected':''}>Professionnel</option>
             <option value="both" ${roleValue==='both'?'selected':''}>Client & Professionnel</option>
           </select>
         </div>
@@ -2710,7 +2710,7 @@ async function submitArtisanVerification(){
 async function loadArtisanDashboard(){
   const box=document.getElementById('artisan-content');
   if(!box) return;
-  box.innerHTML=`<div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace artisan...</p></div>`;
+  box.innerHTML=`<div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace professionnel...</p></div>`;
   try{
     const [{data:available},{data:myResponses},{data:missions},{data:myReviews},{data:artisanMissions}] = await Promise.all([
       db.from('annonces').select('id,categorie,ville,budget,delai,statut,created_at,user_id,selected_artisan_id').eq('statut','ouvert').neq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50),
@@ -2724,7 +2724,7 @@ async function loadArtisanDashboard(){
     const artisanTabBtn=document.getElementById('artisan-tab-btn');
     if(artisanTabBtn){
       const cnt=(myResponses||[]).length;
-      artisanTabBtn.innerHTML=`🔨 Espace artisan${cnt>0?` <span class="notif-badge" style="background:var(--ink2)">${cnt>99?'99+':cnt}</span>`:''}`;
+      artisanTabBtn.innerHTML=`🔨 Espace professionnel${cnt>0?` <span class="notif-badge" style="background:var(--ink2)">${cnt>99?'99+':cnt}</span>`:''}`;
     }
     const respondedIds=new Set((myResponses||[]).map(r=>r.annonce_id));
     const availableFiltered=(available||[]).filter(a=>!respondedIds.has(a.id));
@@ -2912,7 +2912,7 @@ async function loadAdminDashboard(){
           <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
             <button onclick="adminFilterUsers('all')" id="uf-all" style="padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent);color:#fff">Tous</button>
             <button onclick="adminFilterUsers('client')" id="uf-client" style="padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--ink2)">Clients</button>
-            <button onclick="adminFilterUsers('artisan')" id="uf-artisan" style="padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--ink2)">Artisans</button>
+            <button onclick="adminFilterUsers('artisan')" id="uf-artisan" style="padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--ink2)">Professionnels</button>
           </div>
           ${profiles.length?`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px" id="users-table">
             <thead><tr style="border-bottom:2px solid var(--border);text-align:left">
@@ -2998,7 +2998,7 @@ async function loadAdminDashboard(){
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
-          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">🔨 Gestion des artisans <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:400;color:var(--ink3)">(${artisans.length})</span></div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">🔨 Gestion des professionnels <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:400;color:var(--ink3)">(${artisans.length})</span></div>
           <input type="search" placeholder="🔍 Rechercher par nom ou email..." oninput="adminSearchTable(this.value,'#artisans-tbody')"
             style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;font-size:13px;background:var(--bg);margin-bottom:12px;outline:none">
           ${artisans.length?`
