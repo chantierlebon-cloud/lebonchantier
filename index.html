@@ -1339,8 +1339,8 @@ const ADMIN_EMAILS=['sarkissiannar707@gmail.com'];
 
 
 async function init(){
-  const{data:{session}}=await db.auth.getSession();
-  if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();subscribeCandidaturesRealtime();}
+  // onAuthStateChange doit être enregistré AVANT getSession()
+  // pour intercepter l'événement PASSWORD_RECOVERY du hash URL
   db.auth.onAuthStateChange(async(event,session)=>{
     currentAccessToken=session?.access_token||null;
     if(event==='PASSWORD_RECOVERY'){
@@ -1348,9 +1348,16 @@ async function init(){
       showResetPasswordForm();
       return;
     }
+    if(event==='INITIAL_SESSION') return; // géré ci-dessous via getSession
     if(session){currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();closeModal();showToast('✅ Connecté !','success');subscribeCandidaturesRealtime();if(document.getElementById('dashboard')?.classList.contains('active'))loadDashboard();}
     else{currentUser=null;currentProfile=null;updateNav(false);updateDashboardUI();if(_candidaturesRealtimeSub){db.removeChannel(_candidaturesRealtimeSub);_candidaturesRealtimeSub=null;}}
   });
+  const{data:{session}}=await db.auth.getSession();
+  if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();subscribeCandidaturesRealtime();}
+  // Fallback: si Supabase a déjà traité le hash avant l'enregistrement du listener
+  if(window.location.hash.includes('type=recovery')){
+    setTimeout(()=>showResetPasswordForm(),300);
+  }
   setupCategoryFilters();
   loadAnnonces('home');loadStats();
   // URL-based routing: /search?category=...
