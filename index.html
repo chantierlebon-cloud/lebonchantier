@@ -2399,6 +2399,22 @@ function loadProfileContent(){
           <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Zone d'intervention</label>
           <input id="edit-profile-zone" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${((currentProfile?.artisan_record?.zone)||(currentProfile?.zone)||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" placeholder="Ex: Toulouse et alentours">
         </div>
+        ${(roleValue==='artisan'||roleValue==='both')?`
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Photo de profil</label>
+          ${currentProfile?.artisan_record?.profile_photo_url?`<div style="margin-bottom:8px"><img src="${escapeHTML(currentProfile.artisan_record.profile_photo_url)}" alt="Photo actuelle" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border)"></div>`:''}
+          <input id="edit-profile-photo" type="file" accept="image/*" style="width:100%;padding:8px 0;font-size:14px">
+          <div style="font-size:11px;color:var(--ink3);margin-top:4px">Max 5 Mo · JPG, PNG, WebP</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">À propos</label>
+          <textarea id="edit-profile-description" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px;min-height:100px;resize:vertical" placeholder="Décrivez votre expérience, votre façon de travailler...">${escapeHTML(currentProfile?.artisan_record?.description||'')}</textarea>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Années d'expérience</label>
+          <input id="edit-profile-experience" type="number" min="0" max="60" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${currentProfile?.artisan_record?.years_experience||''}" placeholder="Ex: 8">
+        </div>
+        `:''}
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
         <button class="submit-btn" id="save-profile-btn" onclick="saveProfile()" style="max-width:220px">Enregistrer</button>
@@ -2429,6 +2445,10 @@ async function saveProfile(){
   const role=(document.getElementById('edit-profile-role')?.value||'client').trim();
   const specialite=(document.getElementById('edit-profile-specialite')?.value||'').trim();
   const zone=(document.getElementById('edit-profile-zone')?.value||'').trim();
+  const description=(document.getElementById('edit-profile-description')?.value||'').trim();
+  const yearsExpRaw=document.getElementById('edit-profile-experience')?.value||'';
+  const yearsExp=yearsExpRaw!==''?parseInt(yearsExpRaw,10):null;
+  const photoFile=document.getElementById('edit-profile-photo')?.files?.[0]||null;
   const btn=document.getElementById('save-profile-btn');
   if(btn){btn.disabled=true;btn.textContent='Enregistrement...';}
   try{
@@ -2437,7 +2457,20 @@ async function saveProfile(){
     if(error) throw error;
 
     if(role==='artisan' || role==='both'){
-      const artisanPayload={user_id:currentUser.id,nom:nom||currentUser.email,telephone,email:currentUser.email,specialite,zone};
+      let profile_photo_url=undefined;
+      if(photoFile){
+        if(!photoFile.type.startsWith('image/')) throw new Error('Le fichier doit être une image');
+        if(photoFile.size>5*1024*1024) throw new Error('Photo trop lourde (max 5 Mo)');
+        const ext=photoFile.name.split('.').pop().toLowerCase();
+        const path=`profiles/${currentUser.id}.${ext}`;
+        const {error:upErr}=await db.storage.from('artisan-photos').upload(path,photoFile,{upsert:true});
+        if(upErr) throw upErr;
+        const {data:urlData}=db.storage.from('artisan-photos').getPublicUrl(path);
+        profile_photo_url=urlData.publicUrl;
+      }
+      const artisanPayload={user_id:currentUser.id,nom:nom||currentUser.email,telephone,email:currentUser.email,specialite,zone,description};
+      if(yearsExp!==null) artisanPayload.years_experience=yearsExp;
+      if(profile_photo_url!==undefined) artisanPayload.profile_photo_url=profile_photo_url;
       const {error:artisanError}=await db.from('artisans').upsert(artisanPayload,{onConflict:'user_id'});
       if(artisanError) console.warn('artisan upsert warning',artisanError);
     }
