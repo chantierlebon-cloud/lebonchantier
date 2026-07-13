@@ -732,7 +732,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       </button>
       <div class="divider"><span>ou</span></div>
       <label class="f-label">Email</label>
-      <input class="f-input" id="reg-email" type="email" placeholder="vous@email.com" onblur="validateEmailField(this,'reg-email-error')">
+      <input class="f-input" id="reg-email" type="email" autocapitalize="none" spellcheck="false" placeholder="vous@email.com" onblur="validateEmailField(this,'reg-email-error')">
       <div class="f-error-msg" id="reg-email-error">Adresse email invalide</div>
       <label class="f-label">Mot de passe</label>
       <input class="f-input" id="reg-password" type="password" placeholder="Minimum 6 caractères">
@@ -813,7 +813,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       </button>
       <div class="divider"><span>ou</span></div>
       <label class="f-label">Email</label>
-      <input class="f-input" id="login-email" type="email" placeholder="vous@email.com">
+      <input class="f-input" id="login-email" type="email" autocapitalize="none" spellcheck="false" placeholder="vous@email.com">
       <label class="f-label">Mot de passe</label>
       <input class="f-input" id="login-password" type="password" placeholder="Votre mot de passe">
       <div style="text-align:right;margin-top:4px;margin-bottom:8px"><a style="font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline" onclick="showForgotPasswordForm()">Mot de passe oublié ?</a></div>
@@ -825,7 +825,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       <h3 style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:8px">Réinitialiser le mot de passe</h3>
       <p style="font-size:13px;color:var(--ink3);margin-bottom:16px">Entrez votre email pour recevoir un lien de réinitialisation.</p>
       <label class="f-label">Email</label>
-      <input class="f-input" id="forgot-email" type="email" placeholder="vous@email.com">
+      <input class="f-input" id="forgot-email" type="email" autocapitalize="none" spellcheck="false" placeholder="vous@email.com">
       <button class="submit-btn" id="btn-forgot" onclick="sendPasswordReset()">📧 Envoyer le lien →</button>
     </div>
     <div id="reset-password-form" style="display:none">
@@ -1210,7 +1210,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         </div>
         <div class="f-error-msg" id="f-tel-error">Numéro de téléphone français invalide (ex: 06 12 34 56 78)</div>
         <label class="f-label">Email</label>
-        <input class="f-input" id="f-email" type="email" placeholder="vous@email.com" onblur="validateEmailField(this,'f-email-error')">
+        <input class="f-input" id="f-email" type="email" autocapitalize="none" spellcheck="false" placeholder="vous@email.com" onblur="validateEmailField(this,'f-email-error')">
         <div class="f-error-msg" id="f-email-error">Adresse email invalide</div>
         <div class="rgpd-check">
           <input type="checkbox" id="post-rgpd">
@@ -2361,7 +2361,7 @@ async function loadMesAnnonces(){
           </div>
           <div>
             <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Email</label>
-            <input id="edit-email-${a.id}" type="email" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.email||'')}">
+            <input id="edit-email-${a.id}" type="email" autocapitalize="none" spellcheck="false" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${escapeAttr(a.email||'')}">
           </div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
