@@ -869,7 +869,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       <!-- Colonne gauche -->
       <div class="hero-col-left" style="flex:1;min-width:0;">
         <h1 style="font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.15;margin:0 0 18px;color:#0F172A;">
-          Trouvez un artisan de confiance<br><span style="color:#C5340A;font-weight:700;">pour vos travaux.</span>
+          Trouvez un professionnel de confiance<br><span style="color:#C5340A;font-weight:700;">pour vos travaux.</span>
         </h1>
         <p style="font-size:17px;color:#64748B;line-height:1.65;margin:0 0 32px;max-width:480px;">
           Comparez des devis, choisissez sereinement, payez en sécurité.
@@ -898,7 +898,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           </span>
           <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Artisans vérifiés
+            Professionnels vérifiés
           </span>
           <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -924,7 +924,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <div class="trust-bar-inner">
       <div class="trust-item">
         <div class="trust-item-icon"><span class="msym" style="color:var(--accent);font-size:24px;">verified_user</span></div>
-        <div class="trust-item-body"><strong>Artisans vérifiés</strong><span>Profils et qualifications contrôlés par nos équipes.</span></div>
+        <div class="trust-item-body"><strong>Professionnels vérifiés</strong><span>Profils et qualifications contrôlés par nos équipes.</span></div>
       </div>
       <div class="trust-item">
         <div class="trust-item-icon"><span class="msym" style="color:var(--accent);font-size:24px;">payments</span></div>
@@ -943,7 +943,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       <div class="cat-sec-head">
         <div>
           <div class="cat-sec-title">Explorez par catégorie</div>
-          <div class="cat-sec-sub">Des artisans qualifiés pour vos travaux et rénovations.</div>
+          <div class="cat-sec-sub">Des professionnels qualifiés pour vos travaux et rénovations.</div>
         </div>
         <button class="cat-sec-all" onclick="showPage('browse')">Voir tout <span class="msym" style="font-size:16px;font-variation-settings:'FILL' 0">arrow_forward</span></button>
       </div>
@@ -1001,14 +1001,14 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         <div class="hiw-step">
           <div class="hiw-num">02</div>
           <div class="hiw-icon">🤝</div>
-          <h3>Les artisans postulent</h3>
-          <p>Recevez des devis d'artisans locaux vérifiés. Comparez, discutez, choisissez librement.</p>
+          <h3>Les professionnels postulent</h3>
+          <p>Recevez des devis de professionnels locaux vérifiés. Comparez, discutez, choisissez librement.</p>
         </div>
         <div class="hiw-step">
           <div class="hiw-num">03</div>
           <div class="hiw-icon">✅</div>
           <h3>Payez en toute sécurité</h3>
-          <p>Votre paiement est bloqué jusqu'à votre validation. L'artisan est payé quand vous êtes satisfait.</p>
+          <p>Votre paiement est bloqué jusqu'à votre validation. Le professionnel est payé quand vous êtes satisfait.</p>
         </div>
       </div>
     </div>
@@ -1048,7 +1048,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
           <ul>
             <li><a onclick="showPage('browse')">Annonces</a></li>
             <li><a onclick="requireAuth('post')">Publier un chantier</a></li>
-            <li><a onclick="openModal()">Devenir artisan</a></li>
+            <li><a onclick="openModal()">Devenir professionnel</a></li>
             <li><a onclick="showPage('home')">Accueil</a></li>
           </ul>
         </div>
@@ -1218,12 +1218,12 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         </div>
       </div>
       <button class="submit-btn" id="submit-annonce" onclick="submitAnnonce()">Publier mon annonce gratuitement →</button>
-      <div class="form-note">Gratuit · 🔒 Coordonnées visibles uniquement par l'artisan choisi</div>
+      <div class="form-note">Gratuit · 🔒 Coordonnées visibles uniquement par le professionnel choisi</div>
     </div>
     <div class="success-box" id="success-annonce">
       <div class="success-icon">🎉</div>
       <h2>Annonce publiée !</h2>
-      <p>Votre chantier est en ligne. Les artisans vont vous contacter prochainement.</p>
+      <p>Votre chantier est en ligne. Les professionnels vont vous contacter prochainement.</p>
       <br>
       <button class="submit-btn" onclick="showPage('dashboard')" style="margin-top:8px">Mon tableau de bord →</button>
     </div>
@@ -1248,7 +1248,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     </div>
     <div class="dash-panel" id="panel-artisan">
       <div id="artisan-content">
-        <div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace artisan...</p></div>
+        <div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace professionnel...</p></div>
       </div>
     </div>
     <div class="dash-panel" id="panel-profil">
@@ -1295,11 +1295,11 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
       </div>
     </div>
     <div class="ap-cta" id="ap-cta">
-      <button class="ap-cta-btn" id="ap-contact-btn">Contacter cet artisan →</button>
+      <button class="ap-cta-btn" id="ap-contact-btn">Contacter ce professionnel →</button>
     </div>
     <div id="ap-not-found" style="display:none" class="ap-not-found">
       <div class="empty-icon">🔍</div>
-      <p>Artisan non trouvé.</p>
+      <p>Professionnel non trouvé.</p>
       <button onclick="showPage('home')">Retour à l'accueil</button>
     </div>
   </div>
@@ -1313,9 +1313,9 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <h2>1. Responsable du traitement</h2>
     <p>TrouvePro (trouvepro.fr) — Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e1d161f100a171b0c121b1c11103e19131f1712501d1113">[email&#160;protected]</a></p>
     <h2>2. Données collectées</h2>
-    <ul><li>Nom et prénom</li><li>Email</li><li>Téléphone</li><li>Localisation (ville)</li><li>Informations professionnelles (artisans)</li><li>Photos de chantier</li></ul>
+    <ul><li>Nom et prénom</li><li>Email</li><li>Téléphone</li><li>Localisation (ville)</li><li>Informations professionnelles</li><li>Photos de chantier</li></ul>
     <h2>3. Finalités</h2>
-    <ul><li>Mise en relation clients/artisans</li><li>Gestion des comptes</li><li>Notifications email</li><li>Amélioration des services</li></ul>
+    <ul><li>Mise en relation clients/professionnels</li><li>Gestion des comptes</li><li>Notifications email</li><li>Amélioration des services</li></ul>
     <h2>4. Base légale</h2><p>Consentement explicite lors de l'inscription.</p>
     <h2>5. Conservation</h2><p>3 ans à compter de votre dernière activité.</p>
     <h2>6. Vos droits (RGPD)</h2>
@@ -1428,7 +1428,7 @@ async function loadArtisanPublicPage(artisanId){
   }
 
   // Nom affiché: "Eduard V."
-  const displayName=[art.prenom,art.nom_initiale?art.nom_initiale+'.':''].filter(Boolean).join(' ')||art.nom||'Artisan';
+  const displayName=[art.prenom,art.nom_initiale?art.nom_initiale+'.':''].filter(Boolean).join(' ')||art.nom||'Professionnel';
   document.getElementById('ap-name').textContent=displayName;
 
   // Spécialité
@@ -1504,7 +1504,7 @@ async function loadArtisanPublicPage(artisanId){
   };
 
   // Titre de page
-  document.title=`${displayName} — ${art.specialite||'Artisan'} | TrouvePro`;
+  document.title=`${displayName} — ${art.specialite||'Professionnel'} | TrouvePro`;
 }
 
 async function loadProfile(){
@@ -1806,7 +1806,7 @@ async function showAnnonceDetail(id){
     ? !isVerified
       ? `<div class="repondre-box">
           <p style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:10px">🔒 Profil non vérifié</p>
-          <p style="font-size:13px;color:var(--ink3);line-height:1.6">Votre profil doit être vérifié avant de pouvoir contacter des clients. Uploadez vos documents dans <strong>Espace Artisan</strong>.</p>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6">Votre profil doit être vérifié avant de pouvoir contacter des clients. Uploadez vos documents dans <strong>Espace Professionnel</strong>.</p>
           <button onclick="showPage('dashboard');setTimeout(()=>switchDashTab('artisan'),100)" style="margin-top:14px;background:var(--accent);color:#fff;border:none;padding:10px 18px;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:800;cursor:pointer">Espace Artisan →</button>
         </div>`
       : alreadyApplied
@@ -1834,7 +1834,7 @@ async function showAnnonceDetail(id){
             ? '<span class="small-badge badge-rejected">Refusée</span>'
             : '<span class="small-badge badge-pending">En attente</span>';
         const verificationBadge=isVerified
-          ? '<span class="small-badge badge-verified" style="margin-left:8px">Artisan vérifié</span>'
+          ? '<span class="small-badge badge-verified" style="margin-left:8px">Professionnel vérifié</span>'
           : '<span class="small-badge badge-review" style="margin-left:8px">Non vérifié</span>';
         return `
         <div class="reponse-item" id="reponse-item-${r.id}" data-response-id="${r.id}" data-artisan-id="${r.artisan_id}" data-annonce-id="${id}" data-status="${responseStatus}">
@@ -1849,7 +1849,7 @@ async function showAnnonceDetail(id){
             ${responseStatus==='rejected'&&a.statut==='ouvert'?`<button class="submit-btn" onclick="ownerSetResponseStatus('${r.id}','pending')" style="max-width:180px;background:#fff;color:var(--ink);border:1.5px solid var(--border)">↩️ Remettre en attente</button>`:''}
           </div>
         </div>`}).join('')}
-    </div>`:(isOwner?`<div class="repondre-box"><p style="font-size:14px;color:var(--ink3);text-align:center">Aucune candidature pour l'instant. Les artisans vont bientôt postuler !</p></div>`:'');
+    </div>`:(isOwner?`<div class="repondre-box"><p style="font-size:14px;color:var(--ink3);text-align:center">Aucune candidature pour l'instant. Les professionnels vont bientôt postuler !</p></div>`:'');
   let reviews=[];
   try{
     const {data:reviewData}=await db.from('reviews').select('*').eq('annonce_id',id).order('created_at',{ascending:false});
@@ -1864,11 +1864,11 @@ async function showAnnonceDetail(id){
     </div>`:'';
   const ownerReviewHtml=isOwner&&a.statut==='termine'&&a.selected_artisan_id?`
     <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-top:18px">
-      <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">⭐ Avis sur l'artisan sélectionné</div>
+      <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">⭐ Avis sur le professionnel sélectionné</div>
       ${existingOwnerReview?`<div style="font-size:14px;color:var(--ink2)">Vous avez déjà laissé un avis pour ce chantier.</div>`:`
         <div style="display:grid;gap:10px">
           <select id="review-rating" class="f-input"><option value="5">5 étoiles</option><option value="4">4 étoiles</option><option value="3">3 étoiles</option><option value="2">2 étoiles</option><option value="1">1 étoile</option></select>
-          <textarea id="review-comment" class="f-textarea" placeholder="Votre retour sur l'artisan..."></textarea>
+          <textarea id="review-comment" class="f-textarea" placeholder="Votre retour sur le professionnel..."></textarea>
           <button class="submit-btn" onclick="submitReview('${id}','${a.selected_artisan_id}')">Publier l'avis</button>
         </div>`}
     </div>`:'';
@@ -2012,7 +2012,7 @@ async function createMission(){
   const note=(document.getElementById('mission-note').value||'').trim();
   const count=document.getElementById('mission-stage-count').value||'3';
   if(!annonceId || !artisanId || total<=0){
-    showToast('⚠️ Renseignez le montant et l’artisan sélectionné','error');
+    showToast(‘⚠️ Renseignez le montant et le professionnel sélectionné’,’error’);
     return;
   }
   try{
@@ -2252,13 +2252,13 @@ async function choisirArtisan(annonceId,artisanId,responseId=null){
     }else{
       await db.from('reponses').update({status:'accepted'}).eq('annonce_id',annonceId).eq('artisan_id',artisanId);
     }
-    showToast('✅ Artisan accepté !','success');
+    showToast('✅ Professionnel accepté !','success');
     updateCandidaturesBadge();
     showAnnonceDetail(annonceId);
     openChat(annonceId,artisanId,artisanNom,`${categorie} — ${ville}`);
   }catch(e){
     console.error(e);
-    showToast('❌ Impossible de sélectionner cet artisan','error');
+    showToast('❌ Impossible de sélectionner ce professionnel','error');
   }
 }
 
@@ -2500,11 +2500,11 @@ function loadProfileContent(){
           <select id="edit-profile-role" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px">
             <option value="client" ${roleValue==='client'?'selected':''}>Client</option>
             <option value="artisan" ${roleValue==='artisan'?'selected':''}>Artisan</option>
-            <option value="both" ${roleValue==='both'?'selected':''}>Client & Artisan</option>
+            <option value="both" ${roleValue==='both'?'selected':''}>Client & Professionnel</option>
           </select>
         </div>
         <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Spécialité artisan</label>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px">Spécialité</label>
           <input id="edit-profile-specialite" type="text" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);font-size:14px" value="${((currentProfile?.artisan_record?.specialite)||(currentProfile?.specialite)||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" placeholder="Ex: Plombier">
         </div>
         <div>
@@ -2601,7 +2601,7 @@ async function saveProfile(){
 }
 
 function verificationBadgeHtml(status='non_verifie'){
-  if(status==='verifie') return '<span class="small-badge badge-verified">Artisan vérifié</span>';
+  if(status==='verifie') return '<span class="small-badge badge-verified">Professionnel vérifié</span>';
   if(status==='refuse') return '<span class="small-badge badge-refused">Refusé</span>';
   if(status==='complement_requis') return '<span class="small-badge badge-more">Complément requis</span>';
   if(status==='en_revision' || status==='documents_envoyes') return '<span class="small-badge badge-review">En révision</span>';
@@ -2615,7 +2615,7 @@ function renderVerificationSection(){
     <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px">
       <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
         <div>
-          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px">Vérification artisan</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px">Vérification professionnel</div>
           <div style="font-size:13px;color:var(--ink3)">Ajoute tes documents pour être validé par l'admin.</div>
         </div>
         ${verificationBadgeHtml(status)}
@@ -2796,7 +2796,7 @@ async function loadArtisanDashboard(){
     `;
   }catch(e){
     console.error(e);
-    box.innerHTML=`<div class="empty-state"><div class="empty-icon">❌</div><p>Erreur artisan: ${escapeHTML(e.message||'inconnue')}</p></div>`;
+    box.innerHTML=`<div class="empty-state"><div class="empty-icon">❌</div><p>Erreur professionnel: ${escapeHTML(e.message||'inconnue')}</p></div>`;
   }
 }
 
@@ -2825,7 +2825,7 @@ async function adminReviewVerification(userId,status){
     const payload={verification_status:status,reviewed_at:new Date().toISOString(),admin_note:note||null};
     const {error}=await db.from('artisan_verifications').update(payload).eq('user_id',userId);
     if(error) throw error;
-    const labels={verifie:'✅ Artisan validé',complement_requis:'🟡 Complément demandé',refuse:'❌ Dossier refusé'};
+    const labels={verifie:'✅ Professionnel validé',complement_requis:'🟡 Complément demandé',refuse:'❌ Dossier refusé'};
     showToast(labels[status]||'✅ Mis à jour','success');
     loadAdminDashboard();
   }catch(e){
@@ -2899,7 +2899,7 @@ async function loadAdminDashboard(){
           <div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${reponses.length}</div>
         </div>
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
-          <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Vérifications artisan</div>
+          <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-bottom:6px">Vérifications professionnel</div>
           <div style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900">${verifications.length}</div>
         </div>
       </div>
@@ -2929,7 +2929,7 @@ async function loadAdminDashboard(){
                 const roleBadge=isSusp
                   ?'<span class="small-badge badge-rejected">Suspendu</span>'
                   :p.role==='artisan'||p.role==='both'
-                    ?'<span class="small-badge badge-review">Artisan</span>'
+                    ?'<span class="small-badge badge-review">Professionnel</span>'
                     :'<span class="small-badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe">Client</span>';
                 return `<tr class="user-row" data-role="${escapeHTML(p.role||'client')}" data-search="${escapeHTML((p.nom||'')+' '+(p.email||'')).toLowerCase()}" style="border-bottom:1px solid var(--border)">
                   <td style="padding:10px 12px;font-weight:600">${escapeHTML(p.nom||'—')}</td>
@@ -2971,7 +2971,7 @@ async function loadAdminDashboard(){
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
-          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">🛡️ Vérifications artisan</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:800;margin-bottom:12px">🛡️ Vérifications professionnel</div>
           ${verifications.length?verifications.map(v=>`
             <div style="padding:12px 0;border-top:1px solid var(--border)">
               <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
@@ -2994,7 +2994,7 @@ async function loadAdminDashboard(){
                 <button onclick="adminReviewVerification('${v.user_id}','complement_requis')" style="background:#fffbeb;border:1.5px solid #fde68a;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:#92400e">🟡 Complément</button>
                 <button onclick="adminReviewVerification('${v.user_id}','refuse')" style="background:#fff0eb;border:1.5px solid #ffd4c7;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;color:var(--accent)">❌ Refuser</button>
               </div>
-            </div>`).join(''):`<div class="empty-state"><p>Aucune vérification artisan</p></div>`}
+            </div>`).join(''):`<div class="empty-state"><p>Aucune vérification professionnel</p></div>`}
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
@@ -3048,7 +3048,7 @@ async function loadAdminDashboard(){
                 }).join('')}
               </tbody>
             </table>
-          </div>`:`<div class="empty-state"><p>Aucun artisan inscrit</p></div>`}
+          </div>`:`<div class="empty-state"><p>Aucun professionnel inscrit</p></div>`}
         </div>
 
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
@@ -3951,7 +3951,7 @@ async function releaseMilestone(milestoneId) {
     showToast(`❌ ${result.error}`, 'error');
     return;
   }
-  showToast('✅ Paiement libéré à l\'artisan', 'success');
+  showToast('✅ Paiement libéré au professionnel', 'success');
   if (typeof showPage === 'function') showPage('dashboard');
 }
 
@@ -4000,7 +4000,7 @@ function renderMilestonePaymentButtons(milestone, isClientOwner) {
       : 7;
     html += `<div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px">
       <span style="font-weight:700">⏳ En attente de votre validation</span><br>
-      L'artisan a terminé le travail. Validez pour libérer le paiement, ou signalez un problème.
+      Le professionnel a terminé le travail. Validez pour libérer le paiement, ou signalez un problème.
       Validation automatique dans <strong>${daysLeft} jour${daysLeft!==1?'s':''}</strong>.
     </div>`;
     html += `<button class="small-btn" onclick="releaseMilestone('${milestone.id}')">✅ Valider et payer</button>`;
