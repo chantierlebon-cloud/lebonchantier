@@ -1694,7 +1694,7 @@ async function register(){
   const{data,error}=await db.auth.signUp({email,password});
   if(error){showToast('❌ '+error.message,'error');btn.disabled=false;btn.textContent='Créer mon compte →';return;}
   if(data.user){
-    await db.from('profiles').insert([{id:data.user.id,role:selectedRole,nom,telephone:tel}]);
+    await db.from('profiles').insert([{id:data.user.id,role:selectedRole,nom,telephone:tel,email}]);
     if(selectedRole==='artisan'||selectedRole==='both'){
       const specialite=document.getElementById('reg-specialite').value;
       const zone=document.getElementById('reg-zone').value;
