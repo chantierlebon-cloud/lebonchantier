@@ -1,0 +1,25 @@
+pipeline:
+  id: pipeline_chantierlebon_cloud_lebonchantier_build_6a8c
+  name: pipeline_chantierlebon_cloud_lebonchantier_build_6a8c
+  stages:
+    - id: build
+      name: Build
+      clone:
+        enabled: true
+      cache:
+        enabled: true
+      runtime: cloud
+      platform:
+        os: linux
+        arch: amd64
+      steps:
+        - name: Install Dependencies
+          id: install
+          run:
+            shell: bash
+            script: |-
+              node --version
+              npm --version
+              npm ci --prefer-offline || npm install
+  tags:
+    onboarding: "true"
