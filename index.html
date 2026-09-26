@@ -1691,16 +1691,13 @@ async function register(){
   if(password.length<6){showToast('⚠️ Mot de passe trop court','error');return;}
   const btn=document.getElementById('btn-register');
   btn.disabled=true;btn.textContent='Création...';
-  const{data,error}=await db.auth.signUp({email,password});
+  const{error}=await db.auth.signUp({email,password,options:{
+    emailRedirectTo:window.location.origin+'/',
+    data:{nom,telephone:tel,role:selectedRole,
+      specialite:document.getElementById('reg-specialite').value,
+      zone:document.getElementById('reg-zone').value}
+  }});
   if(error){showToast('❌ '+error.message,'error');btn.disabled=false;btn.textContent='Créer mon compte →';return;}
-  if(data.user){
-    await db.from('profiles').insert([{id:data.user.id,role:selectedRole,nom,telephone:tel,email}]);
-    if(selectedRole==='artisan'||selectedRole==='both'){
-      const specialite=document.getElementById('reg-specialite').value;
-      const zone=document.getElementById('reg-zone').value;
-      await db.from('artisans').insert([{nom,specialite,zone,telephone:tel,email,user_id:data.user.id}]);
-    }
-  }
   showToast('✅ Compte créé ! Vérifiez votre email.','success');
   closeModal();btn.disabled=false;btn.textContent='Créer mon compte →';
 }
@@ -2928,6 +2925,8 @@ async function loadAdminDashboard(){
                 const isSusp=p.role==='suspendu';
                 const roleBadge=isSusp
                   ?'<span class="small-badge badge-rejected">Suspendu</span>'
+                  :p.role==='admin'
+                    ?'<span class="small-badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe">Admin</span>'
                   :p.role==='artisan'||p.role==='both'
                     ?'<span class="small-badge badge-review">Professionnel</span>'
                     :'<span class="small-badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe">Client</span>';
