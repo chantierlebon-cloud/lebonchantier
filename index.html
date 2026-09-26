@@ -645,6 +645,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     </div>
     <button class="chat-close" onclick="closeChat()">✕</button>
   </div>
+  <div id="chat-status" role="status" aria-live="polite"></div>
+  <button type="button" onclick="missionChat.older()">Messages précédents</button>
   <div class="chat-messages" id="chat-messages">
     <div class="chat-empty"><div class="chat-empty-icon">💬</div>Aucun message pour l'instant.</div>
   </div>
@@ -1342,6 +1344,7 @@ async function init(){
   // onAuthStateChange doit être enregistré AVANT getSession()
   // pour intercepter l'événement PASSWORD_RECOVERY du hash URL
   db.auth.onAuthStateChange(async(event,session)=>{
+    if(currentUser?.id!==session?.user?.id)closeChat();
     currentAccessToken=session?.access_token||null;
     if(event==='PASSWORD_RECOVERY'){
       currentUser=session?.user||null;
@@ -1892,9 +1895,9 @@ async function showAnnonceDetail(id){
   if (currentUser && a.selected_artisan_id) {
     if (isOwner) {
       const artisanNom = artisansMap[a.selected_artisan_id]?.nom || 'Professionnel';
-      chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.selected_artisan_id}','${escapeHTML(artisanNom)}','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Chat avec ${escapeHTML(artisanNom)}</button>`;
+      chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.selected_artisan_id}',this.textContent)">💬 Chat avec ${escapeHTML(artisanNom)}</button>`;
     } else if (isSelectedArtisan) {
-      chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.user_id}','Client','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Chat avec le client</button>`;
+      chatBtnHtml = `<button class="chat-open-btn" onclick="openChat('${a.id}','${a.user_id}',this.textContent)">💬 Chat avec le client</button>`;
     }
   }
 
@@ -1915,7 +1918,7 @@ async function showAnnonceDetail(id){
     ${chatBtnHtml?`<div style="margin-bottom:20px">${chatBtnHtml}</div>`:''}
     ${photosHtml}
     <div style="font-size:15px;color:var(--ink2);line-height:1.8;margin-bottom:24px">${a.description||''}</div>
-    ${currentUser&&!isOwner&&a.statut!=='termine'?`<div style="margin-bottom:22px"><button class="submit-btn" style="max-width:220px" onclick="contactAnnonceOwner('${a.id}','${a.user_id}','${escapeHTML(a.categorie||'')} — ${escapeHTML(a.ville||'')}')">💬 Contacter</button></div>`:''}
+    ${currentUser&&!isOwner&&a.statut!=='termine'?`<div style="margin-bottom:22px"><button class="submit-btn" style="max-width:220px" onclick="contactAnnonceOwner('${a.id}','${a.user_id}')">💬 Contacter</button></div>`:''}
     ${isOwner?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px">
       <button onclick="showPage('dashboard');setTimeout(()=>openAnnonceEditor('${a.id}'),150)" style="background:#fff;border:1.5px solid var(--border);padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700">✏️ Modifier</button>
       ${a.statut!=='termine'?`<button onclick="terminerAnnonce('${a.id}')" style="background:#fff7e8;border:1.5px solid #ffe1a6;padding:10px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;color:#9a6700">✅ Terminer</button>`:''}
@@ -3280,70 +3283,112 @@ function resetField(input, errorId){
 }
 
 /* ── CHAT ── */
-let chatState = { annonceId:null, receiverId:null, receiverName:null, sub:null, paymentFunded:false };
-
-function contactAnnonceOwner(annonceId, ownerId, annonceTitle) {
-  if (!currentUser) { openModal(); return; }
-  if (ownerId === currentUser.id) { showToast('Vous êtes l\'auteur de cette annonce', 'error'); return; }
-  openChat(annonceId, ownerId, 'Client', annonceTitle);
-}
-
-async function openChat(annonceId, receiverId, receiverName, annonceTitle) {
-  if (!currentUser) { openModal(); return; }
-  chatState.annonceId = annonceId;
-  chatState.receiverId = receiverId;
-  chatState.receiverName = receiverName;
-  chatState.paymentFunded = false;
-
-  // Check if a funded mission exists for this annonce (unlocks contact-info sharing)
-  try {
-    const { data: mission } = await db.from('missions')
-      .select('id,status')
-      .eq('annonce_id', annonceId)
-      .maybeSingle();
-    chatState.paymentFunded = mission?.status === 'in_progress' || mission?.status === 'completed';
-  } catch(_) {}
-
-  const initial = (receiverName||'?')[0].toUpperCase();
-  document.getElementById('chat-avatar').textContent = initial;
-  document.getElementById('chat-header-name').textContent = receiverName || 'Chat';
-  document.getElementById('chat-header-sub').textContent = annonceTitle ? `Chantier : ${annonceTitle}` : '';
-  document.getElementById('chat-panel').classList.add('open');
-  document.getElementById('chat-overlay').classList.add('show');
-  document.getElementById('chat-input').value = '';
-  document.getElementById('chat-blocked-msg').classList.remove('show');
-  loadChatMessages();
-  subscribeChatMessages();
-}
-
-function closeChat() {
-  document.getElementById('chat-panel').classList.remove('open');
-  document.getElementById('chat-overlay').classList.remove('show');
-  if (chatState.sub) { chatState.sub.unsubscribe(); chatState.sub = null; }
-}
-
-async function loadChatMessages() {
-  const container = document.getElementById('chat-messages');
-  container.innerHTML = '<div class="chat-empty"><div class="chat-empty-icon">⏳</div>Chargement...</div>';
-  try {
-    const { data } = await db.from('messages')
-      .select('*')
-      .eq('annonce_id', chatState.annonceId)
-      .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${chatState.receiverId}),and(sender_id.eq.${chatState.receiverId},receiver_id.eq.${currentUser.id})`)
-      .order('created_at', { ascending: true });
-    renderChatMessages(data || []);
-    // Marquer les messages reçus comme lus
-    if ((data||[]).length) {
-      db.from('messages').update({ is_read: true })
-        .eq('annonce_id', chatState.annonceId)
-        .eq('receiver_id', currentUser.id)
-        .eq('is_read', false)
-        .then(() => {});
-    }
-  } catch(e) {
-    container.innerHTML = '<div class="chat-empty">Erreur de chargement.</div>';
+// CHAT_CORE_BEGIN
+class MissionChat {
+  constructor(db, render, status) { this.db=db; this.render=render; this.status=status; this.generation=0; this.rows=new Map(); }
+  close() {
+    this.generation++; clearInterval(this.timer); this.timer=null;
+    if(this.channel) this.db.removeChannel(this.channel); this.channel=null;
+    this.mission=null; this.rows=new Map(); this.pending=null; this.sending=false; this.loading=false; this.dirty=false;
+  }
+  async open(annonce, other) {
+    this.close(); const g=this.generation;
+    const {data,error}=await this.db.rpc('trouvepro_chat_context',{target_annonce:annonce,other_user:other});
+    if(g!==this.generation) return null;
+    if(error||data?.length!==1) throw new Error('Conversation indisponible : une mission avec cet interlocuteur est nécessaire.');
+    this.mission=data[0].mission_id; this.context=data[0];
+    await this.db.realtime.setAuth(); if(g!==this.generation) return null;
+    this.channel=this.db.channel('trouvepro-chat:'+this.mission,{config:{private:true}})
+      .on('broadcast',{event:'changed'},()=>{if(g===this.generation) this.refresh();})
+      .subscribe(status=>{if(g!==this.generation)return;
+        this.status(status==='SUBSCRIBED'?'En direct':'Reconnexion…');
+        if(status==='SUBSCRIBED') this.refresh();
+      });
+    this.timer=setInterval(()=>{if(g===this.generation)this.refresh();},15000);
+    await this.refresh(); return g===this.generation?this.context:null;
+  }
+  async page(time=null,id=null) {
+    const result=await this.db.rpc('trouvepro_chat_history',{target_mission:this.mission,before_time:time,before_id:id});
+    if(result.error) throw result.error; return result.data||[];
+  }
+  display() { this.render([...this.rows.values()].sort((a,b)=>a.created_at.localeCompare(b.created_at)||a.id.localeCompare(b.id))); }
+  async refresh() {
+    if(!this.mission)return;
+    if(this.loading){this.dirty=true;return;}
+    this.loading=true; const g=this.generation;
+    try {
+      do {
+        this.dirty=false; const known=new Set(this.rows.keys()); let page=await this.page();
+        if(g!==this.generation)return;
+        // Rattrape aussi les messages arrivés pendant une déconnexion de plus de 50 messages.
+        for(;;){
+          const overlap=page.some(x=>known.has(x.id));
+          page.forEach(x=>this.rows.set(x.id,x));
+          if(!known.size||overlap||page.length<50)break;
+          const last=page[page.length-1];page=await this.page(last.created_at,last.id);
+          if(g!==this.generation)return;
+        }
+        this.display();
+      } while(this.dirty&&g===this.generation);
+    } catch(e) {
+      if(g===this.generation){if(e.code==='42501'){this.rows.clear();this.display();this.close();}this.status('Historique indisponible. Réessayez.');}
+    } finally { if(g===this.generation)this.loading=false; }
+  }
+  async older() {
+    const g=this.generation;
+    const rows=[...this.rows.values()].sort((a,b)=>a.created_at.localeCompare(b.created_at)||a.id.localeCompare(b.id));
+    if(!rows.length)return;
+    try { const page=await this.page(rows[0].created_at,rows[0].id);if(g!==this.generation)return;
+      page.forEach(x=>this.rows.set(x.id,x));this.display();if(page.length<50)this.status('Début de la conversation');
+    } catch(e){if(g===this.generation){if(e.code==='42501'){this.rows.clear();this.display();this.close();}this.status('Impossible de charger les anciens messages.');}}
+  }
+  async send(content) {
+    content=content.trim();if(!this.mission||!content||content.length>10000||this.sending)return false;
+    const g=this.generation;this.sending=true;
+    if(!this.pending||this.pending.content!==content)this.pending={content,nonce:crypto.randomUUID()};
+    try {
+      const {error}=await this.db.rpc('trouvepro_chat_send',{target_mission:this.mission,message_content:content,nonce:this.pending.nonce});
+      if(error)throw error;if(g!==this.generation)return false;
+      this.pending=null;await this.refresh();return true;
+    } catch(e){if(g===this.generation)this.status('Message non envoyé. Votre texte est conservé.');return false;}
+    finally{if(g===this.generation)this.sending=false;}
   }
 }
+// CHAT_CORE_END
+let chatState = { paymentFunded:false };
+const missionChat=new MissionChat(db,renderChatMessages,text=>{
+  const el=document.getElementById('chat-status');if(el)el.textContent=text;
+});
+function contactAnnonceOwner(annonceId,ownerId) { return openChat(annonceId,ownerId); }
+async function openChat(annonceId,receiverId,receiverName='Conversation',annonceTitle='') {
+  if(!currentUser){openModal();return;}
+  closeChat();
+  document.getElementById('chat-avatar').textContent=(receiverName||'?')[0].toUpperCase();
+  document.getElementById('chat-header-name').textContent=receiverName;
+  document.getElementById('chat-header-sub').textContent=annonceTitle;
+  document.getElementById('chat-panel').classList.add('open');
+  document.getElementById('chat-overlay').classList.add('show');
+  document.getElementById('chat-input').value='';
+  document.getElementById('chat-send-btn').disabled=true;
+  document.getElementById('chat-blocked-msg').classList.remove('show');
+  document.getElementById('chat-messages').textContent='Chargement…';
+  const generation=missionChat.generation+1;
+  try {
+    const context=await missionChat.open(annonceId,receiverId);
+    if(!context)return;
+    document.getElementById('chat-header-sub').textContent='Mission '+context.mission_id.slice(0,8);
+    chatState.paymentFunded=['in_progress','completed'].includes(context.status);
+    document.getElementById('chat-send-btn').disabled=false;
+  } catch(e){if(generation===missionChat.generation)document.getElementById('chat-messages').textContent=e.message;}
+}
+function closeChat(){
+  missionChat.close();chatState.paymentFunded=false;
+  document.getElementById('chat-panel').classList.remove('open');
+  document.getElementById('chat-overlay').classList.remove('show');
+  document.getElementById('chat-messages').textContent='';
+  document.getElementById('chat-status').textContent='';
+}
+function loadChatMessages(){return missionChat.refresh();}
 
 function renderChatMessages(messages) {
   const container = document.getElementById('chat-messages');
@@ -3354,7 +3399,7 @@ function renderChatMessages(messages) {
   let lastDate = null;
   container.innerHTML = messages.map(m => {
     const isMine = m.sender_id === currentUser.id;
-    const d = new Date(m.created_at);
+    const d = new Date(/[zZ]|[+-]\d\d:\d\d$/.test(m.created_at)?m.created_at:m.created_at+'Z');
     const dateStr = d.toLocaleDateString('fr-FR', { day:'numeric', month:'long' });
     let sep = '';
     if (dateStr !== lastDate) { sep = `<div class="chat-day-sep">${dateStr}</div>`; lastDate = dateStr; }
@@ -3378,42 +3423,19 @@ function containsPhone(text) {
 }
 
 async function sendChatMessage() {
-  if (!currentUser || !chatState.annonceId || !chatState.receiverId) return;
-  const input = document.getElementById('chat-input');
-  const content = (input.value || '').trim();
-  if (!content) return;
-
-  if (!chatState.paymentFunded && containsPhone(content)) {
-    document.getElementById('chat-blocked-msg').classList.add('show');
-    return;
+  if(!currentUser||!missionChat.mission)return;
+  const input=document.getElementById('chat-input'),content=input.value.trim();
+  if(!content)return;
+  if(content.length>10000){showToast('Message trop long (10 000 caractères maximum)','error');return;}
+  if(!chatState.paymentFunded&&containsPhone(content)){
+    document.getElementById('chat-blocked-msg').classList.add('show');return;
   }
   document.getElementById('chat-blocked-msg').classList.remove('show');
-
-  const btn = document.getElementById('chat-send-btn');
-  btn.disabled = true;
-  input.value = '';
-  autoResizeChatInput(input);
-
-  const { error } = await db.from('messages').insert([{
-    annonce_id: chatState.annonceId,
-    sender_id: currentUser.id,
-    receiver_id: chatState.receiverId,
-    content,
-    is_read: false
-  }]);
-  btn.disabled = false;
-  if (error) { showToast('❌ Message non envoyé', 'error'); return; }
-  loadChatMessages();
-}
-
-function subscribeChatMessages() {
-  if (chatState.sub) chatState.sub.unsubscribe();
-  chatState.sub = db.channel(`chat-${chatState.annonceId}-${currentUser.id}`)
-    .on('postgres_changes', {
-      event: 'INSERT', schema: 'public', table: 'messages',
-      filter: `annonce_id=eq.${chatState.annonceId}`
-    }, () => loadChatMessages())
-    .subscribe();
+  const btn=document.getElementById('chat-send-btn'),g=missionChat.generation;btn.disabled=true;
+  const sent=await missionChat.send(content);
+  if(g!==missionChat.generation)return;
+  if(sent&&input.value.trim()===content){input.value='';autoResizeChatInput(input);}
+  btn.disabled=false;
 }
 
 function chatKeydown(e) {
