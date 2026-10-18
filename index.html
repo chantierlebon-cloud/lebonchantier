@@ -2883,6 +2883,30 @@ function switchDashTab(tab){
 }
 
 
+const _adminDocuments=new Map();
+function adminOpenVerificationDoc(userId,kind){
+  if(!isAdmin())return;
+  const record=_adminDocuments.get(userId);
+  const allowed={identity:'identity_doc_url',business:'business_doc_url',qualification:'qualification_doc_url',insurance:'insurance_doc_url'};
+  const raw=record&&record[allowed[kind]];
+  if(!raw){showToast('Document introuvable','error');return;}
+  try{
+    const value=String(raw);
+    if(value.startsWith('data:')){
+      const match=value.match(/^data:([^;,]+)?(;base64)?,([\\s\\S]*)$/);
+      if(!match)throw Error('Format non reconnu');
+      const mime=match[1]||'application/octet-stream';
+      const binary=match[2]?atob(match[3].replace(/\\s/g,'')):decodeURIComponent(match[3]);
+      const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
+      const url=URL.createObjectURL(new Blob([bytes],{type:mime}));
+      const win=window.open(url,'_blank','noopener,noreferrer');
+      if(!win){const link=document.createElement('a');link.href=url;link.download='document-'+kind+(mime==='application/pdf'?'.pdf':'');document.body.appendChild(link);link.click();link.remove();}
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }else if(/^https:\/\//i.test(value)){
+      window.open(value,'_blank','noopener,noreferrer');
+    }else{throw Error('Format du document non pris en charge');}
+  }catch(e){console.error('Ouverture du document',e);showToast('Impossible d’ouvrir le document','error');}
+}
 let _adminLoadPromise=null;
 let _adminLastLoadedAt=0;
 async function loadAdminDashboard(force=false){
@@ -2916,6 +2940,8 @@ async function loadAdminDashboard(force=false){
     const annonces=annoncesRes.data||[];
     const reponses=reponsesRes.data||[];
     const verifications=verificationsRes.data||[];
+    _adminDocuments.clear();
+    verifications.forEach(v=>_adminDocuments.set(v.user_id,v));
     const artisans=artisansRes.data||[];
 
     // Maps utilitaires pour le panel artisans
@@ -3026,10 +3052,10 @@ async function loadAdminDashboard(force=false){
                 <div>${verificationBadgeHtml(v.verification_status||'non_verifie')}</div>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-                ${v.identity_doc_url?`<a href="${escapeHTML(v.identity_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Pièce ID</a>`:''}
-                ${v.business_doc_url?`<a href="${escapeHTML(v.business_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Kbis/RNE</a>`:''}
-                ${v.qualification_doc_url?`<a href="${escapeHTML(v.qualification_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Qualification</a>`:''}
-                ${v.insurance_doc_url?`<a href="${escapeHTML(v.insurance_doc_url)}" target="_blank" class="small-badge badge-review" style="text-decoration:none">📄 Assurance</a>`:''}
+                ${v.identity_doc_url?`<button type="button" onclick="adminOpenVerificationDoc('${v.user_id}','identity')" class="small-badge badge-review" style="cursor:pointer;border:0">📄 Pièce ID</button>`:''}
+                ${v.business_doc_url?`<button type="button" onclick="adminOpenVerificationDoc('${v.user_id}','business')" class="small-badge badge-review" style="cursor:pointer;border:0">📄 Kbis/RNE</button>`:''}
+                ${v.qualification_doc_url?`<button type="button" onclick="adminOpenVerificationDoc('${v.user_id}','qualification')" class="small-badge badge-review" style="cursor:pointer;border:0">📄 Qualification</button>`:''}
+                ${v.insurance_doc_url?`<button type="button" onclick="adminOpenVerificationDoc('${v.user_id}','insurance')" class="small-badge badge-review" style="cursor:pointer;border:0">📄 Assurance</button>`:''}
               </div>
               <textarea id="admin-note-${v.user_id}" placeholder="Note admin (optionnelle)..." rows="2"
                 style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);resize:vertical;margin-bottom:8px">${escapeHTML(v.admin_note||'')}</textarea>
