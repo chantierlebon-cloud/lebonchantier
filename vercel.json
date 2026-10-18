@@ -27,7 +27,7 @@
   "rewrites": [
     {
       "source": "/annonces-locales/:category/:city",
-      "destination": "/api/local-seo"
+      "destination": "/api/local-seo?category=:category&city=:city"
     },
     {
       "source": "/((?!api/).*)",
