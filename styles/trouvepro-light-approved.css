@@ -265,3 +265,17 @@ body{background:#F4F5F3;color:#202C35}
 #home .hero-search-bar .hsearch-btn:hover{background:#a82b09!important}
 #home .hero-search-bar .hsearch-btn:active{transform:translateY(1px)!important}
 }
+
+/* Consistent soft-rounded corners throughout desktop search, matching signup CTA */
+@media(min-width:981px){
+#home .hero-search-bar{border-radius:16px!important;overflow:visible!important}
+#home .hero-search-bar .hsearch-input{border-radius:12px!important}
+#home .hero-search-bar .hsearch-cat{border-radius:12px!important;border-right:1px solid #e5e8e6!important}
+#home .hero-search-bar .hsearch-ville{border-radius:12px!important}
+#home .hero-search-bar .hsearch-btn{border-radius:12px!important}
+#home .hero-search-bar .ville-dropdown{border-radius:12px!important;overflow:hidden!important}
+#home .artisan-cta-btn{border-radius:12px!important}
+#home .categories .tabs button{border-radius:12px!important}
+#home .categories .cat-secondary-btn{border-radius:12px!important}
+#home .categories .cards .card{border-radius:14px!important}
+}
