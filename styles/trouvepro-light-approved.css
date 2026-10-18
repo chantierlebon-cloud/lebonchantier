@@ -212,3 +212,19 @@ body{background:#F4F5F3;color:#202C35}
 #home .artisan-cta-inner{background:#233039!important;border-radius:13px!important;max-width:1330px!important;padding:28px 20px!important}
 #home footer{background:#202c34!important}
 }
+
+/* Accessibility: keep text readable against the pale photographic hero and white sections. */
+@media(min-width:981px){
+#home .hero-home::before{background:linear-gradient(90deg,rgba(247,247,244,.99) 0%,rgba(247,247,244,.97) 28%,rgba(247,247,244,.86) 43%,rgba(247,247,244,.25) 66%,rgba(247,247,244,.02) 100%),url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=85&auto=format') center 48%/cover no-repeat!important}
+#home .hero-col-left h1{color:#17242d!important;text-shadow:none!important}
+#home .hero-col-left h1 span{color:#b82f0b!important}
+#home .hero-col-left p{color:#2e3d47!important;opacity:1!important;text-shadow:none!important}
+#home .hero-col-left::before{color:#a82b0a!important;opacity:1!important}
+#home .hero-trust-row span{color:#25333d!important;opacity:1!important;text-shadow:none!important}
+#home .categories .cat-sec-title,#home .section-title,#home .hiw h2{color:#202c35!important}
+#home .categories .cat-sec-sub,#home .hiw-subtitle{color:#53616a!important}
+#home .categories .tabs button{color:#34444e!important}
+#home .categories .tabs button.active{color:#b72d09!important}
+#home .artisan-cta-inner{background:#233039!important}
+#home .artisan-cta-title,#home .artisan-cta-text,#home .artisan-cta-subtext{color:#fff!important;opacity:1!important;text-shadow:none!important}
+}
