@@ -2322,7 +2322,7 @@ async function ownerSetResponseStatus(responseId,status){
 
 async function loadDashboard(){
   if(!currentUser){openModal();return;}
-  await loadProfile();
+  if(!currentProfile)await loadProfile();
   updateDashboardUI();
   loadMesAnnonces();
   loadProfileContent();
@@ -2659,22 +2659,22 @@ function renderVerificationSection(){
         <div class="doc-box">
           <label>Pièce d'identité</label>
           <input id="verif-identity-file" type="file" accept=".pdf,image/*" style="width:100%">
-          ${v.identity_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+          ${`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
         </div>
         <div class="doc-box">
           <label>Kbis / RNE</label>
           <input id="verif-business-file" type="file" accept=".pdf,image/*" style="width:100%">
-          ${v.business_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+          ${`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
         </div>
         <div class="doc-box">
           <label>Qualification / diplôme</label>
           <input id="verif-qualification-file" type="file" accept=".pdf,image/*" style="width:100%">
-          ${v.qualification_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+          ${`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
         </div>
         <div class="doc-box">
           <label>Assurance / carte pro</label>
           <input id="verif-insurance-file" type="file" accept=".pdf,image/*" style="width:100%">
-          ${v.insurance_doc_url?`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
+          ${`<div class="doc-link" style="margin-top:8px">Déjà ajouté</div>`:''}
         </div>
       </div>
 
@@ -2884,28 +2884,30 @@ function switchDashTab(tab){
 
 
 const _adminDocuments=new Map();
-function adminOpenVerificationDoc(userId,kind){
+async function adminOpenVerificationDoc(userId,kind){
   if(!isAdmin())return;
-  const record=_adminDocuments.get(userId);
   const allowed={identity:'identity_doc_url',business:'business_doc_url',qualification:'qualification_doc_url',insurance:'insurance_doc_url'};
-  const raw=record&&record[allowed[kind]];
-  if(!raw){showToast('Document introuvable','error');return;}
+  const field=allowed[kind];if(!field)return;
   try{
-    const value=String(raw);
-    if(value.startsWith('data:')){
-      const match=value.match(/^data:([^;,]+)?(;base64)?,([\\s\\S]*)$/);
-      if(!match)throw Error('Format non reconnu');
-      const mime=match[1]||'application/octet-stream';
-      const binary=match[2]?atob(match[3].replace(/\\s/g,'')):decodeURIComponent(match[3]);
-      const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
-      const url=URL.createObjectURL(new Blob([bytes],{type:mime}));
-      const win=window.open(url,'_blank','noopener,noreferrer');
-      if(!win){const link=document.createElement('a');link.href=url;link.download='document-'+kind+(mime==='application/pdf'?'.pdf':'');document.body.appendChild(link);link.click();link.remove();}
-      setTimeout(()=>URL.revokeObjectURL(url),60000);
-    }else if(/^https:\/\//i.test(value)){
-      window.open(value,'_blank','noopener,noreferrer');
-    }else{throw Error('Format du document non pris en charge');}
-  }catch(e){console.error('Ouverture du document',e);showToast('Impossible d’ouvrir le document','error');}
+    const {data,error}=await db.from('artisan_verifications').select(field).eq('user_id',userId).maybeSingle();
+    if(error)throw error;
+    const value=String(data?.[field]||'');
+    if(!value)throw Error('Document introuvable');
+    if(/^https:\/\//i.test(value)){window.open(value,'_blank','noopener,noreferrer');return;}
+    const match=value.match(/^data:([^;,]+)?(;base64)?,([\s\S]*)$/);
+    if(!match||!match[2])throw Error('Format non pris en charge');
+    const mime=match[1]||'application/octet-stream';
+    const base64=match[3].replace(/\s/g,'');
+    const binary=atob(base64);
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+    const url=URL.createObjectURL(new Blob([bytes],{type:mime}));
+    const link=document.createElement('a');
+    link.href=url;link.download='verification-'+kind+(mime==='application/pdf'?'.pdf':mime.startsWith('image/jpeg')?'.jpg':mime.startsWith('image/png')?'.png':'');
+    document.body.appendChild(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
+    showToast('📄 Document téléchargé','success');
+  }catch(e){console.error('Ouverture du document',e);showToast('Impossible d’ouvrir le document : '+(e.message||'erreur'),'error');}
 }
 let _adminLoadPromise=null;
 let _adminLastLoadedAt=0;
@@ -2927,7 +2929,7 @@ async function loadAdminDashboard(force=false){
       db.from('profiles').select('id,nom,email,telephone,role,created_at').order('created_at',{ascending:false}).limit(500).then(r=>r).catch(()=>({data:[]})),
       db.from('annonces').select('id,categorie,ville,budget,statut,created_at,user_id').order('created_at',{ascending:false}).limit(100),
       db.from('reponses').select('id,annonce_id,artisan_id,message,created_at,status').order('created_at',{ascending:false}).limit(500),
-      db.from('artisan_verifications').select('*').order('updated_at',{ascending:false}).limit(100),
+      db.from('artisan_verifications').select('user_id,company_name,siren,verification_status,updated_at,admin_note').order('updated_at',{ascending:false}).limit(100),
       db.from('artisans').select('id,user_id,nom,specialite,max_candidatures,payout_status').order('created_at',{ascending:false}).limit(200)
     ]);
 
