@@ -1348,6 +1348,9 @@ const ADMIN_EMAILS=['sarkissiannar707@gmail.com'];
 
 
 async function init(){
+  // Public content does not need to wait for the authentication round trip.
+  setupCategoryFilters();
+  loadAnnonces('home');
   // onAuthStateChange doit être enregistré AVANT getSession()
   // pour intercepter l'événement PASSWORD_RECOVERY du hash URL
   db.auth.onAuthStateChange(async(event,session)=>{
@@ -1368,8 +1371,6 @@ async function init(){
   if(window.location.hash.includes('type=recovery')){
     setTimeout(()=>showResetPasswordForm(),300);
   }
-  setupCategoryFilters();
-  loadAnnonces('home');loadStats();
   // URL-based routing: /search?category=...
   if(window.location.pathname==='/search'){
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
