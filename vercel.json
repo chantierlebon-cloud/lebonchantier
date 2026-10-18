@@ -26,6 +26,10 @@
   ],
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
       "source": "/annonces-locales/:category/:city",
       "destination": "/api/local-seo?category=:category&city=:city"
     },
