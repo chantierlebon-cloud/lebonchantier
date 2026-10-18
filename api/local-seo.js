@@ -9,10 +9,11 @@ const knownCities=['Paris','Lyon','Marseille','Toulouse','Bordeaux','Lille','Nan
 module.exports=async(req,res)=>{
  res.setHeader('Content-Type','text/html; charset=utf-8');
  res.setHeader('Cache-Control','public, s-maxage=300, stale-while-revalidate=600');
- const path=(req.url||'').split('?')[0].split('/').filter(Boolean);
- const cat=knownCats.find(x=>slug(x)===path[1]);
- const city=knownCities.find(x=>slug(x)===path[2]);
- if(path.length!==3||path[0]!=='annonces-locales'||!cat||!city){res.statusCode=404;return res.end('<!doctype html><html lang="fr"><meta charset="utf-8"><title>Page introuvable</title><meta name="robots" content="noindex"><body><h1>Page introuvable</h1><a href="/">TrouvePro</a></body></html>')}
+ const catSlug=String(req.query?.category||'');
+ const citySlug=String(req.query?.city||'');
+ const cat=knownCats.find(x=>slug(x)===catSlug);
+ const city=knownCities.find(x=>slug(x)===citySlug);
+ if(!cat||!city){res.statusCode=404;return res.end('<!doctype html><html lang="fr"><meta charset="utf-8"><title>Page introuvable</title><meta name="robots" content="noindex"><body><h1>Page introuvable</h1><a href="/">TrouvePro</a></body></html>')}
  let items=[],error=false;
  try{
   const u=new URL(SUPABASE+'/rest/v1/annonces_publiques');
