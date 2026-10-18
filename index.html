@@ -670,6 +670,11 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 @media(max-width:1050px){#home .categories-inner.tp-categories-with-founders{grid-template-columns:1fr}#home .tp-founders-viewport{height:auto;max-height:230px}#home .tp-founders-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));animation:none}#home .tp-founder-duplicate{display:none!important}}
 @media(max-width:580px){#home .tp-founders-grid{grid-template-columns:1fr}#home .tp-founders-viewport{max-height:none;mask-image:none;-webkit-mask-image:none}}
 @media(prefers-reduced-motion:reduce){#home .tp-founders-grid{animation:none}#home .tp-founders-viewport{overflow-y:auto}#home .tp-founder-duplicate{display:none!important}}
+
+/* Founders in hero, aligned to the right of search content */
+@media(min-width:1101px){#home .hero-home .hero-wrap{position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr) 280px!important;align-items:center!important;gap:26px!important}#home .hero-home .hero-col-left{min-width:0!important;width:100%!important;max-width:820px!important}#home .hero-home .hero-col-right{display:none!important}#home .hero-home .hero-search-bar{max-width:740px!important}#home .hero-home .tp-founders{grid-column:2;grid-row:1;align-self:center;background:rgba(255,255,255,.93);border-radius:18px;padding:16px;box-shadow:0 10px 34px rgba(17,32,43,.16);backdrop-filter:blur(10px)}#home .hero-home .tp-founders-head h2{font-size:14px!important}#home .hero-home .tp-founders-viewport{height:330px}}
+@media(max-width:1100px){#home .hero-home .tp-founders{margin:12px 0 0;background:rgba(255,255,255,.95);padding:14px;border-radius:16px;box-shadow:0 4px 18px #0002}#home .hero-home .tp-founders-viewport{height:auto;max-height:none;mask-image:none;-webkit-mask-image:none}#home .hero-home .tp-founders-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));animation:none}#home .hero-home .tp-founder-duplicate{display:none!important}}
+@media(max-width:580px){#home .hero-home .tp-founders-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -4079,13 +4084,8 @@ document.addEventListener('keydown',function(e){
    if(!founders.length)return;
    const founderCards=founders.map(a=>'<a class="tp-founder-card" href="/artisan/'+encodeURIComponent(a.id)+'"><span class="tp-founder-badge">✦ Membre fondateur</span><div class="tp-founder-name">'+esc((()=>{const first=String(a.prenom||'').trim();const last=String(a.nom||'').trim();if(first)return first+(last?' '+last.charAt(0).toUpperCase()+'.':a.nom_initiale?' '+String(a.nom_initiale).charAt(0).toUpperCase()+'.':'');const parts=last.split(/\s+/).filter(Boolean);return parts.length>1?parts[0]+' '+parts[parts.length-1].charAt(0).toUpperCase()+'.':parts[0]||'Professionnel'})())+'</div><div class="tp-founder-job">'+esc(a.specialite)+'</div><span class="tp-founder-zone">📍 '+esc(a.zone)+'</span></a>').join('');
    grid.innerHTML=founderCards+founderCards.replace(/class="tp-founder-card"/g,'class="tp-founder-card tp-founder-duplicate"').replace(/href="[^"]*"/g,'href="#" tabindex="-1" aria-hidden="true"');
-   const categories=document.querySelector('#home .categories-inner');
-   if(categories&&!categories.classList.contains('tp-categories-with-founders')){
-    const main=document.createElement('div');main.className='tp-categories-main';
-    while(categories.firstChild)main.appendChild(categories.firstChild);
-    categories.appendChild(main);categories.appendChild(section);
-    categories.classList.add('tp-categories-with-founders');
-   }
+   const hero=document.querySelector('#home .hero-home .hero-wrap');
+   if(hero&&section.parentElement!==hero)hero.appendChild(section);
    section.hidden=false;
   }catch(e){console.warn('Founders block unavailable',e)}
  }
