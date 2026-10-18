@@ -139,3 +139,29 @@ body{background:#F4F5F3;color:#202C35}
 #home .hero-search-bar .hsearch-btn{color:#fff!important;font-weight:700!important}
 #home .hiw{scroll-margin-top:85px!important}
 }
+
+/* Desktop: extend the existing hero photo under the navigation and behind the
+   first category section only. All following sections retain their backgrounds.
+   One shared image URL; no extra image requests or application changes. */
+@media(min-width:981px){
+  #home{position:relative;isolation:isolate;background:#f4f5f3!important}
+  #home::before{
+    content:"";position:absolute;z-index:-1;left:0;right:0;top:0;
+    height:calc(540px + 470px);
+    background:linear-gradient(90deg,rgba(20,27,32,.89) 0%,rgba(20,27,32,.76) 27%,rgba(20,27,32,.30) 62%,rgba(20,27,32,.08) 100%),
+      url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=2000&q=90&auto=format') center top/cover no-repeat;
+    pointer-events:none;
+  }
+  #home .hero-home{background:transparent!important;isolation:auto!important}
+  #home .hero-home::before{display:none!important}
+  #home .categories{position:relative;background:transparent!important;color:#fff!important;padding-bottom:26px!important}
+  #home .categories .cat-sec-title{color:#fff!important}
+  #home .categories .cat-sec-sub{color:rgba(255,255,255,.82)!important}
+  #home .categories .tabs{border-bottom-color:rgba(255,255,255,.23)!important}
+  #home .categories .tabs button{color:#f2f5f6!important}
+  #home .categories .tabs button.active{color:#ff693a!important}
+  #home .categories .cat-sec-all{color:#ff693a!important}
+  #home .categories .cat-secondary-label{color:#fff!important}
+  #home .categories .cat-secondary-btn{color:#273139!important}
+  #home .listings-section,#home .hiw,#home .artisan-cta,#home footer{position:relative}
+}
