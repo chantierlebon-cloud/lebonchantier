@@ -631,6 +631,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 </style>
 <link rel="stylesheet" href="styles/trouvepro-matte-refresh.css">
 <link rel="stylesheet" href="/styles/global.css">
+<link rel="stylesheet" href="/styles/trouvepro-light-approved.css">
 </head>
 <body>
 <div class="toast" id="toast"></div>
@@ -849,6 +850,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   <div class="nav-right" id="nav-right">
     <button class="nav-link mega-toggle" id="mega-toggle-btn" onclick="toggleMegaMenu(event)">Catégories <span id="mega-arrow">▾</span></button>
     <button class="nav-link" onclick="showPage('browse')">Annonces</button>
+    <button class="nav-link nav-how" onclick="showPage('home');setTimeout(()=>document.querySelector('#home .hiw')?.scrollIntoView({behavior:'smooth',block:'start'}),80)">Comment ça marche</button>
     <button class="nav-link" onclick="openModal()">Connexion</button>
     <button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>
   </div>
@@ -867,58 +869,25 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 <!-- HOME -->
 <div id="home" class="page active">
   <div class="hero hero-home">
-    <div class="hero-wrap" style="max-width:1200px;margin:0 auto;padding:72px 40px;display:flex;align-items:center;gap:64px;">
-
-      <!-- Colonne gauche -->
-      <div class="hero-col-left" style="flex:1;min-width:0;">
-        <h1 style="font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.15;margin:0 0 18px;color:#0F172A;">
-          Trouvez un professionnel de confiance<br><span style="color:#C5340A;font-weight:700;">près de chez vous.</span>
-        </h1>
-        <p style="font-size:17px;color:#64748B;line-height:1.65;margin:0 0 32px;max-width:480px;">
-          Comparez les profils, choisissez sereinement et payez en toute sécurité.
-        </p>
-
-        <!-- Barre de recherche -->
-        <div class="hero-search-bar" style="display:flex;flex-direction:column;background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,0.07);gap:10px;margin-bottom:20px;">
-          <input type="text" id="home-search-categorie" class="hsearch-input hsearch-cat" placeholder="🔧  Quel type de travaux ?"
-            style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#FAFAFA;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A';this.style.background='#fff'" onblur="this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA'">
+    <div class="hero-wrap">
+      <div class="hero-col-left">
+        <h1>Trouvez un professionnel<br>de confiance<br><span>près de chez vous.</span></h1>
+        <p>Comparez les profils, lisez les avis et contactez directement des professionnels qualifiés partout en France.</p>
+        <div class="hero-search-bar">
+          <input type="text" id="home-search-categorie" class="hsearch-input hsearch-cat" placeholder="🔧  Quel type de travaux ?" aria-label="Type de travaux">
           <div class="ville-ac-wrap block">
-            <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="📍  Votre ville" autocomplete="off"
-              style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#FAFAFA;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A';this.style.background='#fff'" onblur="this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA'">
+            <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="📍  Votre ville" autocomplete="off" aria-label="Votre ville">
             <div class="ville-dropdown" id="dd-home-search-ville"></div>
           </div>
-          <button class="hsearch-btn" onclick="applySearchFromHome()"
-            style="width:100%;height:52px;background:#C5340A;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;transition:background 0.2s ease;margin-top:2px;" onmouseover="this.style.background='#A62C08'" onmouseout="this.style.background='#C5340A'">
-            Chercher →
-          </button>
+          <button class="hsearch-btn" onclick="applySearchFromHome()">⌕ &nbsp; Rechercher</button>
         </div>
-
-        <!-- Trust hints -->
-        <div class="hero-trust-row" style="display:flex;gap:20px;flex-wrap:wrap;">
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            100% gratuit
-          </span>
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Professionnels vérifiés
-          </span>
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Paiement sécurisé
-          </span>
+        <div class="hero-trust-row">
+          <span>✓ &nbsp; 100% gratuit</span>
+          <span>✦ &nbsp; Professionnels vérifiés</span>
+          <span>♢ &nbsp; Paiement sécurisé</span>
         </div>
       </div>
-
-      <!-- Colonne droite : image -->
-      <div class="hero-col-right" style="flex:0 0 460px;max-width:460px;">
-        <div class="hero-img-wrap" style="border-radius:20px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 24px 64px rgba(0,0,0,0.14);">
-          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&h=700&fit=crop&q=85&auto=format"
-            alt="Service à domicile"
-            style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-      </div>
-
+      <div class="hero-col-right" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -1018,7 +987,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   </div>
   <section class="artisan-cta">
     <div class="artisan-cta-inner">
-      <div class="artisan-cta-icon">🔨</div>
+      <div class="artisan-cta-icon" aria-hidden="true">🔨</div>
       <h2 class="artisan-cta-title">Vous êtes professionnel du bâtiment ?</h2>
       <p class="artisan-cta-text">Rejoignez TrouvePro et recevez des demandes de clients près de chez vous.</p>
       <p class="artisan-cta-subtext">Inscription gratuite, sans engagement.</p>
@@ -1718,14 +1687,9 @@ async function login(){
 
 async function logout(){await db.auth.signOut();showPage('home');showToast('👋 Déconnecté','');}
 
-async function sendEmail(to,subject,html){
-  try{await db.functions.invoke('send-email',{body:{to,subject,html}});}
-  catch(e){console.log('Email:',e);}
-}
-
 async function loadAnnonces(page='home'){
   try{
-    let query=db.from('annonces').select('*').order('created_at',{ascending:false});
+    let query=db.from('annonces_publiques').select('*').order('created_at',{ascending:false});
     if(page==='browse'){
       const categorie=(browseFilters.categorie||'').trim();
       const ville=(browseFilters.ville||'').trim();
@@ -1770,7 +1734,21 @@ async function loadAnnonces(page='home'){
 async function showAnnonceDetail(id){
   const alreadyOnDetail=document.getElementById('annonce-detail').classList.contains('active');
   if(!alreadyOnDetail) showPage('annonce-detail');
-  const{data:a}=await db.from('annonces').select('*').eq('id',id).single();
+  // Les coordonnées restent sur la table privée, protégée par RLS.
+  let a=null;
+  if(currentUser){
+    const own=await db.from('annonces').select('*').eq('id',id).maybeSingle();
+    if(own.error){showToast('❌ Impossible de charger cette annonce','error');return;}
+    a=own.data;
+  }
+  if(!a){
+    const publicResult=await db.from('annonces_publiques').select('*').eq('id',id).maybeSingle();
+    a=publicResult.data;
+  }
+  if(!a){
+    document.getElementById('detail-content').textContent='Annonce indisponible ou accès non autorisé.';
+    return;
+  }
   const{data:reponses}=await db.from('reponses').select('*').eq('annonce_id',id).order('created_at',{ascending:false});
   const artisanIds=(reponses||[]).map(r=>r.artisan_id).filter(Boolean);
   let artisansMap={};
@@ -1819,7 +1797,7 @@ async function showAnnonceDetail(id){
               <h3>💬 Envoyer ma candidature</h3>
               <div style="font-size:12px;color:var(--ink3);margin-bottom:10px">📊 Quota : <strong>${maxQ} candidature${maxQ>1?'s':''} gratuite${maxQ>1?'s':''}</strong> au total</div>
               <textarea class="f-textarea" id="reponse-msg" placeholder="Présentez-vous et décrivez votre approche..."></textarea>
-              <button class="submit-btn" id="btn-envoyer-reponse" onclick="envoyerReponse('${id}','${a.email||''}','${a.categorie||''}','${a.ville||''}','${a.user_id||''}')">Envoyer ma candidature →</button>
+              <button class="submit-btn" id="btn-envoyer-reponse" onclick="envoyerReponse('${id}')">Envoyer ma candidature →</button>
             </div>`;
           })()
     :'';
@@ -2155,7 +2133,7 @@ async function flagMissionStageIssue(stageId, annonceId, missionId){
   }
 }
 
-async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUserId){
+async function envoyerReponse(annonceId){
   if(!currentUser){openModal();return;}
   if(currentProfile?.verification_status!=='verifie'){
     showToast('🔒 Votre profil doit être vérifié avant de postuler','error');
@@ -2186,9 +2164,9 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
   }
 
   if(btn) btn.textContent='Envoi en cours...';
-  const{error}=await db.from('reponses').insert([{
+  const{data:createdResponse,error}=await db.from('reponses').insert([{
     annonce_id:annonceId,artisan_id:currentUser.id,message:msg,status:'pending'
-  }]);
+  }]).select('id').single();
 
   if(error){
     showToast('❌ Erreur lors de l\'envoi : '+error.message,'error');
@@ -2196,34 +2174,13 @@ async function envoyerReponse(annonceId, clientEmail, categorie, ville, clientUs
     return;
   }
 
-  // Récupérer l'email du client : priorité à a.email, sinon chercher dans profiles
-  let emailDest=clientEmail||'';
-  if(!emailDest && clientUserId){
-    const{data:profile}=await db.from('profiles').select('email').eq('id',clientUserId).maybeSingle();
-    emailDest=profile?.email||'';
-  }
-
-  // Envoyer l'email de notification
   let emailEnvoye=false;
-  if(emailDest){
-    const artisanNom=currentProfile?.nom||'Un professionnel';
-    try{
-      await sendEmail(
-        emailDest,
-        '🔔 Un professionnel a répondu à votre annonce — TrouvePro',
-        `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
-          <h2 style="color:#C5340A">Bonne nouvelle !</h2>
-          <p><strong>${artisanNom}</strong> a envoyé une candidature pour votre chantier <strong>${escapeHTML(categorie)} à ${escapeHTML(ville)}</strong>.</p>
-          <div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0">${escapeHTML(msg)}</div>
-          <a href="https://trouvepro.fr" style="display:inline-block;background:#C5340A;color:#fff;padding:12px 24px;border-radius:14px;text-decoration:none;font-weight:600">Voir la candidature →</a>
-          <p style="color:#999;font-size:12px;margin-top:24px">TrouvePro.fr — Des professionnels fiables près de chez vous.</p>
-        </div>`
-      );
-      emailEnvoye=true;
-    }catch(e){
-      console.warn('Email non envoyé:',e);
-    }
-  }
+  try{
+    const {data,error:notificationError}=await db.functions.invoke('send-email',{
+      body:{response_id:createdResponse.id}
+    });
+    emailEnvoye=!notificationError&&data?.notified===true;
+  }catch{ /* La candidature reste creee ; ne pas exposer les erreurs fournisseur. */ }
 
   // Toast AVANT showAnnonceDetail pour qu'il soit visible
   showToast(emailEnvoye ? '✅ Candidature envoyée ! Le client a été notifié.' : '✅ Candidature envoyée !','success');
@@ -2714,12 +2671,21 @@ async function loadArtisanDashboard(){
   box.innerHTML=`<div class="empty-state"><div class="empty-icon">🔨</div><p>Chargement de l'espace professionnel...</p></div>`;
   try{
     const [{data:available},{data:myResponses},{data:missions},{data:myReviews},{data:artisanMissions}] = await Promise.all([
-      db.from('annonces').select('id,categorie,ville,budget,delai,statut,created_at,user_id,selected_artisan_id').eq('statut','ouvert').neq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50),
+      db.from('annonces_publiques').select('id,categorie,ville,budget,delai,statut,created_at,user_id').eq('statut','ouvert').neq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50),
       db.from('reponses').select('id,annonce_id,message,created_at,status,annonces(id,categorie,ville,budget,statut)').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
       db.from('annonces').select('id,categorie,ville,budget,delai,statut,created_at,selected_artisan_id').eq('selected_artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
       db.from('reviews').select('*').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100),
       db.from('missions').select('id,total_amount,status,mission_type,annonce_id,created_at,mission_milestones(id,title,amount,status,mission_id)').eq('artisan_id',currentUser.id).order('created_at',{ascending:false}).limit(100)
     ]);
+
+    // Une candidature ne donne jamais accès aux coordonnées privées.
+    const publicIds=(myResponses||[]).filter(r=>!r.annonces).map(r=>r.annonce_id);
+    if(publicIds.length){
+      const {data:publicAnnonces}=await db.from('annonces_publiques')
+        .select('id,categorie,ville,budget,statut').in('id',publicIds);
+      const byId=new Map((publicAnnonces||[]).map(a=>[a.id,a]));
+      for(const r of myResponses||[]) if(!r.annonces) r.annonces=byId.get(r.annonce_id)||null;
+    }
 
     // Mettre à jour le bouton de l'onglet artisan avec le compteur de candidatures
     const artisanTabBtn=document.getElementById('artisan-tab-btn');
@@ -3168,7 +3134,7 @@ function escapeHTML(str=''){
 
 async function loadStats(){
   try{
-    const{count:ca}=await db.from('annonces').select('*',{count:'exact',head:true});
+    const{count:ca}=await db.from('annonces_publiques').select('*',{count:'exact',head:true});
     const{count:cb}=await db.from('artisans').select('*',{count:'exact',head:true});
   }catch(e){}
 }
@@ -3791,7 +3757,7 @@ async function loadSearchResults(){
   container.innerHTML='<div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement...</p></div>';
   var countEl=document.getElementById('search-count');
   if(countEl) countEl.textContent='';
-  var q=db.from('annonces').select('*').eq('statut','ouvert').order('created_at',{ascending:false}).limit(50);
+  var q=db.from('annonces_publiques').select('*').eq('statut','ouvert').order('created_at',{ascending:false}).limit(50);
   if(cat) q=q.ilike('categorie','%'+cat+'%');
   if(city) q=q.ilike('ville','%'+city+'%');
   const{data,error}=await q;

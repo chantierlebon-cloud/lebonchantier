@@ -1,0 +1,328 @@
+/* TrouvePro 2026 — approved light matte design. UI only; no application logic changes. */
+:root{--bg:#F4F5F3;--surface:#EEF0EE;--white:#fff;--ink:#202C35;--ink2:#56636C;--ink3:#79838B;--border:#E3E6E4;--border-light:#ECEEEC;--accent:#C5340A;--accent-hover:#A72B08;--accent-light:#FFF1EB;--shadow-sm:0 3px 14px rgba(25,34,40,.05);--shadow-md:0 12px 34px rgba(25,34,40,.09)}
+body{background:#F4F5F3;color:#202C35}
+.nav{background:rgba(255,255,255,.96);border-bottom:1px solid #E9EAE8;box-shadow:0 2px 12px rgba(25,34,40,.035)}
+.nav .logo{font-size:20px}
+.nav-link{color:#26343E}
+.nav-btn{background:#C5340A;border-radius:10px}
+#home{background:#F4F5F3}
+#home .hero-home{position:relative;isolation:isolate;overflow:hidden;background:#D8D3CB!important;padding:0!important}
+#home .hero-home::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(250,248,245,.95) 0%,rgba(250,248,245,.88) 33%,rgba(250,248,245,.27) 57%,rgba(26,30,31,.13) 100%),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1800&q=85&auto=format') center 42%/cover no-repeat;z-index:-1}
+#home .hero-wrap{max-width:1340px!important;margin:auto!important;min-height:470px;display:flex!important;align-items:center!important;gap:0!important;padding:58px 38px 72px!important}
+#home .hero-col-left{flex:1!important;max-width:850px!important}
+#home .hero-col-left::before{content:"PLATEFORME DE PROFESSIONNELS LOCAUX";display:block;color:#C5340A;font-size:12px;font-weight:750;letter-spacing:.07em;margin-bottom:13px}
+#home .hero-col-left h1{max-width:640px;font-size:clamp(33px,3.4vw,50px)!important;line-height:1.12!important;letter-spacing:-1.6px;color:#202C35!important;margin-bottom:16px!important}
+#home .hero-col-left h1 span{color:#C5340A!important}
+#home .hero-col-left p{color:#45545E!important;font-size:16px!important;max-width:540px!important;margin-bottom:25px!important}
+#home .hero-col-right{display:none!important}
+#home .hero-search-bar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 170px!important;align-items:center!important;gap:8px!important;background:rgba(255,255,255,.97)!important;border:1px solid rgba(227,230,228,.9)!important;border-radius:13px!important;box-shadow:0 13px 36px rgba(26,34,40,.13)!important;padding:10px!important;margin-bottom:18px!important;max-width:850px!important}
+#home .hero-search-bar .hsearch-input{height:51px!important;background:#F8F9F8!important;border:1px solid #E6E9E7!important;border-radius:9px!important;font-size:13px!important}
+#home .hero-search-bar .ville-ac-wrap{min-width:0;width:100%}
+#home .hero-search-bar .hsearch-btn{width:100%!important;height:51px!important;margin:0!important;background:#C5340A!important;border-radius:9px!important;font-size:12px!important;box-shadow:none!important}
+#home .hero-search-bar .hsearch-btn:hover{background:#A72B08!important}
+#home .hero-trust-row{gap:24px!important}
+#home .hero-trust-row span{color:#31414A!important;font-size:12px!important}
+#home .trust-bar{background:#F4F5F3!important;border-bottom:0!important}
+#home .trust-bar-inner{max-width:1300px!important}
+#home .trust-item-icon{background:#FFF0EA!important}
+#home .categories{background:#F4F5F3!important}
+#home .categories-inner{max-width:1320px!important}
+#home .cat-sec-title,#home .section-title{color:#202C35!important;letter-spacing:-.5px}
+#home .tabs{gap:9px}
+#home .tabs button{border-radius:12px!important}
+#home .cards .card,#home .category-card,#home .pro-card{background:#fff!important;border:1px solid #E7E9E7!important;border-radius:13px!important;box-shadow:0 5px 20px rgba(28,38,45,.055)!important}
+#home .cards .card:hover,#home .category-card:hover,#home .pro-card:hover{box-shadow:0 12px 26px rgba(28,38,45,.1)!important}
+#home .cat-secondary{background:transparent!important}
+#home .cat-secondary-btn{background:#fff!important;border:1px solid #E5E8E5!important;border-radius:10px!important}
+#home .stats-bar{background:#ECEFEC!important}
+#home .listings-section{background:#F4F5F3!important}
+#home .cta-band{background:#232E35!important;border-radius:14px!important}
+#home footer{background:#222D35!important;color:#E8ECEE!important;border-top:none!important}
+#home footer .footer-logo,#home footer h4{color:#fff!important}
+#home footer .footer-brand p,#home footer .footer-col a,#home footer .footer-copy{color:#BBC4C8!important}
+#home footer .footer-col a:hover{color:#FF9D7B!important}
+#home footer .footer-bottom{border-top-color:rgba(255,255,255,.15)!important}
+@media(max-width:980px){#home .hero-wrap{padding:50px 24px 55px!important}#home .hero-home::before{background:linear-gradient(90deg,rgba(250,248,245,.95),rgba(250,248,245,.7) 65%,rgba(250,248,245,.3)),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80&auto=format') center/cover}}
+@media(max-width:720px){.nav{padding:0 14px}#home .hero-wrap{min-height:auto;padding:45px 18px 44px!important}#home .hero-col-left h1{font-size:clamp(29px,8vw,40px)!important;letter-spacing:-1px!important}#home .hero-col-left p{font-size:14px!important}#home .hero-home::before{background:linear-gradient(90deg,rgba(250,248,245,.97),rgba(250,248,245,.88)),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80&auto=format') center/cover}#home .hero-search-bar{display:flex!important;flex-direction:column!important;align-items:stretch!important;padding:10px!important}#home .hero-search-bar .hsearch-btn{height:49px!important}#home .hero-trust-row{gap:12px!important}#home .hero-trust-row span{font-size:11px!important}#home .categories-inner{padding-left:16px!important;padding-right:16px!important}}
+@media(prefers-reduced-motion:reduce){#home *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* Desktop screenshot-matched compact homepage. Mobile deliberately unchanged. */
+@media(min-width:981px){
+#home .hero-home{min-height:360px!important}
+#home .hero-home::before{background:linear-gradient(90deg,rgba(238,233,226,.92) 0%,rgba(238,233,226,.85) 29%,rgba(238,233,226,.20) 53%,rgba(20,23,25,.12) 100%),url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1800&q=85&auto=format') center center/cover no-repeat!important}
+#home .hero-wrap{max-width:1370px!important;min-height:345px!important;padding:24px 28px 28px!important}
+#home .hero-col-left h1{font-size:clamp(30px,2.55vw,39px)!important;max-width:580px!important;line-height:1.05!important;margin-bottom:12px!important}
+#home .hero-col-left p{font-size:14px!important;line-height:1.4!important;margin-bottom:16px!important;max-width:500px!important}
+#home .hero-col-left::before{font-size:11px!important;margin-bottom:10px!important}
+#home .hero-search-bar{max-width:810px!important;grid-template-columns:1.4fr 1fr 178px!important;margin-bottom:12px!important;padding:8px!important}
+#home .hero-search-bar .hsearch-input,#home .hero-search-bar .hsearch-btn{height:45px!important}
+#home .hero-trust-row{display:flex!important;gap:28px!important;flex-wrap:wrap!important}
+#home .hero-trust-row span{font-size:11px!important;font-weight:650!important}
+#home .trust-bar{display:none!important}
+#home .categories{padding-top:16px!important;padding-bottom:14px!important}
+#home .categories-inner{max-width:1370px!important}
+#home .cat-sec-title,#home .section-title{font-size:21px!important}
+#home .cat-sec-sub{display:none!important}
+#home .cat-secondary{padding:8px 0!important}
+#home .cat-secondary-label{display:none!important}
+#home .cat-secondary-items{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:9px!important}
+#home .cat-secondary-btn{min-height:70px!important;display:flex!important;justify-content:center!important;align-items:center!important;box-shadow:0 2px 10px rgba(23,31,35,.035)!important}
+#home .stats-bar{display:none!important}
+#home .listings-section{max-width:1370px!important;margin:0 auto!important;padding:10px 20px 16px!important}
+#home .jobs-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important}
+#home .artisan-cta{background:#243139!important;padding:16px 20px!important}
+#home .artisan-cta-inner{max-width:1320px!important}
+#home .hiw{padding:30px 20px!important}
+#home .cta-band{display:none!important}
+#home footer .footer-inner{max-width:1370px!important}
+}
+
+/* Desktop typography and CTA corrections based on approved reference */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+@media(min-width:981px){
+#home,#home button,#home input,#home footer,.nav,.nav button{font-family:'DM Sans',Arial,sans-serif!important}
+#home .hero-col-left h1{font-family:'DM Sans',Arial,sans-serif!important;font-size:clamp(31px,2.5vw,38px)!important;font-weight:800!important;letter-spacing:-1.25px!important}
+#home .cat-sec-title,#home .section-title{font-family:'DM Sans',Arial,sans-serif!important;font-size:21px!important;font-weight:800!important}
+#home .artisan-cta{padding:0!important;background:#233039!important}
+#home .artisan-cta-inner{min-height:110px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;padding:18px 28px!important;text-align:left!important}
+#home .artisan-cta-icon{font-size:25px!important;margin:0!important}
+#home .artisan-cta-title{font-family:'DM Sans',Arial,sans-serif!important;color:#fff!important;font-size:19px!important;line-height:1.25!important;margin:0!important}
+#home .artisan-cta-text{color:#e0e6e8!important;font-size:12px!important;margin:0!important}
+#home .artisan-cta-subtext{display:none!important}
+#home .artisan-cta-btn{margin:0!important;white-space:nowrap!important;background:#e9440b!important;color:#fff!important}
+#home footer{background:#202c34!important}
+#home footer .footer-inner{padding-top:24px!important;padding-bottom:14px!important}
+#home footer .footer-grid{gap:24px!important}
+#home footer .footer-col h4{font-family:'DM Sans',Arial,sans-serif!important;font-size:12px!important;font-weight:800!important;letter-spacing:0!important}
+#home footer .footer-col a,#home footer .footer-brand p{font-family:'DM Sans',Arial,sans-serif!important;font-size:11px!important;line-height:1.5!important}
+#home footer .footer-logo{font-family:'DM Sans',Arial,sans-serif!important;font-size:23px!important;font-weight:800!important}
+#home footer .footer-bottom{margin-top:20px!important;padding-top:13px!important}
+#home footer .footer-copy{font-size:10px!important}
+}
+
+/* Approved reference: compact dark CTA, clean editorial typography */
+@media(min-width:981px){
+#home .artisan-cta{padding:0 20px 10px!important;background:transparent!important}
+#home .artisan-cta-inner{box-sizing:border-box!important;max-width:1330px!important;min-height:82px!important;margin:auto!important;border-radius:10px!important;padding:14px 28px!important;background:linear-gradient(90deg,rgba(31,43,50,.98),rgba(31,43,50,.90)),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80&auto=format') center/cover!important;display:flex!important;align-items:center!important;justify-content:space-between!important}
+#home .artisan-cta-copy{display:flex!important;align-items:center!important;gap:16px!important;text-align:left!important}
+#home .artisan-cta-icon{width:42px!important;height:42px!important;flex:0 0 42px!important;display:grid!important;place-items:center!important;background:#e9430b!important;color:#fff!important;border-radius:50%!important;font-size:22px!important}
+#home .artisan-cta-title{color:#fff!important;font-size:16px!important;font-weight:800!important;line-height:1.3!important}
+#home .artisan-cta-text{color:#fff!important;opacity:.9!important;font-size:12px!important;margin-top:3px!important}
+#home .artisan-cta-btn{padding:13px 20px!important;font-size:12px!important;font-weight:700!important}
+}
+
+/* Requested: restore original centered professional signup panel with legible white text */
+@media(min-width:981px){
+#home .artisan-cta{background:#233039!important;padding:38px 20px 36px!important}
+#home .artisan-cta-inner{max-width:1100px!important;min-height:auto!important;margin:auto!important;padding:0!important;background:none!important;border-radius:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;text-align:center!important}
+#home .artisan-cta-icon{display:block!important;width:auto!important;height:auto!important;flex:none!important;border-radius:0!important;background:transparent!important;font-size:29px!important;line-height:1.4!important;margin:0 0 4px!important}
+#home .artisan-cta-title{color:#fff!important;font-size:29px!important;font-weight:800!important;line-height:1.2!important;margin:0!important;text-shadow:none!important;opacity:1!important}
+#home .artisan-cta-text{color:#fff!important;font-size:16px!important;line-height:1.5!important;opacity:1!important;margin:0!important;text-shadow:none!important}
+#home .artisan-cta-subtext{display:block!important;color:#fff!important;font-size:14px!important;line-height:1.4!important;opacity:1!important;margin:0 0 12px!important}
+#home .artisan-cta-btn{background:#e53d09!important;color:#fff!important;font-size:16px!important;font-weight:700!important;padding:15px 34px!important;border-radius:10px!important;margin:0!important}
+}
+
+/* Approved full-bleed photographic desktop hero. Keep all existing homepage modules. */
+@media(min-width:981px){
+.nav{min-height:64px!important}
+.nav .nav-right{gap:15px!important}
+.nav .nav-link{font-family:'DM Sans',Arial,sans-serif!important;font-size:13px!important;font-weight:600!important}
+#home .hero-home{min-height:540px!important;background:#273037!important}
+#home .hero-home::before{background:linear-gradient(90deg,rgba(20,27,32,.91) 0%,rgba(20,27,32,.80) 29%,rgba(20,27,32,.27) 62%,rgba(20,27,32,.06) 100%),url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=2000&q=90&auto=format') center center/cover no-repeat!important}
+#home .hero-wrap{max-width:1370px!important;min-height:540px!important;align-items:flex-start!important;padding:100px 30px 95px!important}
+#home .hero-col-left::before{color:#f15a28!important}
+#home .hero-col-left h1{color:#fff!important;font-size:clamp(37px,3.15vw,49px)!important;line-height:1.08!important;max-width:650px!important}
+#home .hero-col-left h1 span{color:#fa4b13!important}
+#home .hero-col-left p{color:#fff!important;max-width:600px!important;font-size:16px!important}
+#home .hero-trust-row span{color:#fff!important;font-size:12px!important}
+#home .hero-search-bar{max-width:890px!important}
+#home .hero-search-bar .hsearch-btn{color:#fff!important;font-weight:700!important}
+#home .hiw{scroll-margin-top:85px!important}
+}
+
+/* Desktop: extend the existing hero photo under the navigation and behind the
+   first category section only. All following sections retain their backgrounds.
+   One shared image URL; no extra image requests or application changes. */
+@media(min-width:981px){
+  #home{position:relative;isolation:isolate;background:#f4f5f3!important}
+  #home::before{
+    content:"";position:absolute;z-index:-1;left:0;right:0;top:0;
+    height:calc(540px + 470px);
+    background:linear-gradient(90deg,rgba(20,27,32,.89) 0%,rgba(20,27,32,.76) 27%,rgba(20,27,32,.30) 62%,rgba(20,27,32,.08) 100%),
+      url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=2000&q=90&auto=format') center top/cover no-repeat;
+    pointer-events:none;
+  }
+  #home .hero-home{background:transparent!important;isolation:auto!important}
+  #home .hero-home::before{display:none!important}
+  #home .categories{position:relative;background:transparent!important;color:#fff!important;padding-bottom:26px!important}
+  #home .categories .cat-sec-title{color:#fff!important}
+  #home .categories .cat-sec-sub{color:rgba(255,255,255,.82)!important}
+  #home .categories .tabs{border-bottom-color:rgba(255,255,255,.23)!important}
+  #home .categories .tabs button{color:#f2f5f6!important}
+  #home .categories .tabs button.active{color:#ff693a!important}
+  #home .categories .cat-sec-all{color:#ff693a!important}
+  #home .categories .cat-secondary-label{color:#fff!important}
+  #home .categories .cat-secondary-btn{color:#273139!important}
+  #home .listings-section,#home .hiw,#home .artisan-cta,#home footer{position:relative}
+}
+
+/* Fix: the page itself owns the continuous photo, not a negative-z pseudo-element.
+   Only hero and category area are transparent; lower modules keep solid backgrounds. */
+@media(min-width:981px){
+#home.page.active{
+  background-color:#f4f5f3!important;
+  background-image:linear-gradient(90deg,rgba(20,27,32,.90) 0%,rgba(20,27,32,.76) 28%,rgba(20,27,32,.33) 62%,rgba(20,27,32,.08) 100%),url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=2000&q=90&auto=format')!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-position:center top,center top!important;
+  background-size:100% 1080px,100% 1080px!important;
+}
+#home::before{display:none!important}
+#home .hero-home{background:transparent!important}
+#home .hero-home::before{display:none!important}
+#home .categories{background:transparent!important}
+#home .categories-inner{background:transparent!important}
+#home .listings-section,#home .hiw{background:#f4f5f3!important}
+}
+
+/* Premium 10/10 design preview — desktop-only, UI-only. Existing JS/data untouched. */
+@media(min-width:981px){
+.nav{background:#fff!important;box-shadow:0 1px 8px rgba(30,39,45,.06)!important}
+#home.page.active{background:#f1f2f0!important;background-image:none!important}
+#home::before{display:none!important}
+#home .hero-home{min-height:480px!important;position:relative!important;isolation:isolate!important;background:#d6d4ce!important}
+#home .hero-home::before{display:block!important;content:"";position:absolute!important;inset:0!important;z-index:-1!important;background:linear-gradient(90deg,rgba(243,242,238,.97) 0%,rgba(243,242,238,.91) 29%,rgba(243,242,238,.44) 48%,rgba(243,242,238,.03) 78%),url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=85&auto=format') center 48%/cover no-repeat!important}
+#home .hero-wrap{min-height:480px!important;max-width:1370px!important;padding:65px 30px 58px!important;align-items:center!important}
+#home .hero-col-left::before{color:#c5340a!important;font-size:11px!important;letter-spacing:.075em!important}
+#home .hero-col-left h1{color:#222d35!important;font-size:clamp(35px,3vw,44px)!important;font-weight:800!important;line-height:1.08!important;max-width:590px!important;letter-spacing:-1.5px!important}
+#home .hero-col-left h1 span{color:#c5340a!important}
+#home .hero-col-left p{color:#45545d!important;font-size:15px!important;max-width:530px!important;line-height:1.48!important}
+#home .hero-search-bar{max-width:875px!important;border-radius:12px!important;box-shadow:0 10px 28px rgba(31,41,47,.12)!important}
+#home .hero-trust-row span{color:#2b3841!important;font-size:12px!important}
+#home .categories{background:#f1f2f0!important;padding:24px 0 20px!important;color:#222d35!important}
+#home .categories .cat-sec-title{color:#222d35!important;font-size:23px!important}
+#home .categories .tabs button{color:#46525b!important}
+#home .categories .tabs button.active{color:#c5340a!important}
+#home .categories .cat-sec-all{color:#c5340a!important}
+#home .categories .cat-secondary-btn{color:#26343e!important}
+#home .categories .cards .card{border-radius:13px!important;overflow:hidden!important;box-shadow:0 5px 16px rgba(26,35,41,.08)!important}
+#home .listings-section{background:#f1f2f0!important}
+#home .hiw{background:#fff!important;padding:38px 20px!important}
+#home .hiw-step{border-radius:13px!important}
+#home .artisan-cta{background:#f1f2f0!important;padding:16px 20px!important}
+#home .artisan-cta-inner{background:#233039!important;border-radius:13px!important;max-width:1330px!important;padding:28px 20px!important}
+#home footer{background:#202c34!important}
+}
+
+/* Accessibility: keep text readable against the pale photographic hero and white sections. */
+@media(min-width:981px){
+#home .hero-home::before{background:linear-gradient(90deg,rgba(247,247,244,.99) 0%,rgba(247,247,244,.97) 28%,rgba(247,247,244,.86) 43%,rgba(247,247,244,.25) 66%,rgba(247,247,244,.02) 100%),url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=85&auto=format') center 48%/cover no-repeat!important}
+#home .hero-col-left h1{color:#17242d!important;text-shadow:none!important}
+#home .hero-col-left h1 span{color:#b82f0b!important}
+#home .hero-col-left p{color:#2e3d47!important;opacity:1!important;text-shadow:none!important}
+#home .hero-col-left::before{color:#a82b0a!important;opacity:1!important}
+#home .hero-trust-row span{color:#25333d!important;opacity:1!important;text-shadow:none!important}
+#home .categories .cat-sec-title,#home .section-title,#home .hiw h2{color:#202c35!important}
+#home .categories .cat-sec-sub,#home .hiw-subtitle{color:#53616a!important}
+#home .categories .tabs button{color:#34444e!important}
+#home .categories .tabs button.active{color:#b72d09!important}
+#home .artisan-cta-inner{background:#233039!important}
+#home .artisan-cta-title,#home .artisan-cta-text,#home .artisan-cta-subtext{color:#fff!important;opacity:1!important;text-shadow:none!important}
+}
+
+/* Premium desktop search: unified input fields, deliberate spacing and focus states.
+   Existing input IDs, autocomplete dropdown and search JS remain unchanged. */
+@media(min-width:981px){
+#home .hero-search-bar{
+ display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) 182px!important;
+ align-items:stretch!important;gap:0!important;padding:7px!important;
+ min-height:69px!important;max-width:910px!important;
+ background:#fff!important;border:1px solid #e2e5e3!important;
+ border-radius:14px!important;box-shadow:0 13px 32px rgba(27,36,42,.13)!important;
+ overflow:visible!important;position:relative!important;z-index:5!important;
+}
+#home .hero-search-bar .hsearch-input{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ height:54px!important;padding:0 17px!important;background:#fff!important;
+ color:#1f2d36!important;border:1px solid transparent!important;
+ border-radius:8px!important;font-family:'DM Sans',Arial,sans-serif!important;
+ font-size:14px!important;font-weight:600!important;letter-spacing:0!important;
+ box-shadow:none!important;outline:none!important;transition:background .16s,border-color .16s,box-shadow .16s!important;
+}
+#home .hero-search-bar .hsearch-input::placeholder{color:#737f87!important;opacity:1!important;font-weight:500!important}
+#home .hero-search-bar .hsearch-input:hover{background:#f6f7f6!important}
+#home .hero-search-bar .hsearch-input:focus{background:#fff!important;border-color:#c5340a!important;box-shadow:0 0 0 3px rgba(197,52,10,.12)!important;outline:none!important}
+#home .hero-search-bar .hsearch-cat{border-right:1px solid #e5e8e6!important;border-radius:8px 0 0 8px!important}
+#home .hero-search-bar .ville-ac-wrap{position:relative!important;min-width:0!important;width:100%!important}
+#home .hero-search-bar .hsearch-ville{border-radius:0 8px 8px 0!important}
+#home .hero-search-bar .ville-dropdown{z-index:100!important;background:#fff!important;border-radius:10px!important;box-shadow:0 14px 34px rgba(20,29,36,.18)!important}
+#home .hero-search-bar .hsearch-btn{
+ box-sizing:border-box!important;height:54px!important;width:100%!important;
+ border-radius:9px!important;background:#c5340a!important;color:#fff!important;
+ font-family:'DM Sans',Arial,sans-serif!important;font-size:14px!important;
+ font-weight:750!important;letter-spacing:0!important;cursor:pointer!important;
+ transition:background .16s,transform .16s!important;
+}
+#home .hero-search-bar .hsearch-btn:hover{background:#a82b09!important}
+#home .hero-search-bar .hsearch-btn:active{transform:translateY(1px)!important}
+}
+
+/* Consistent soft-rounded corners throughout desktop search, matching signup CTA */
+@media(min-width:981px){
+#home .hero-search-bar{border-radius:16px!important;overflow:visible!important}
+#home .hero-search-bar .hsearch-input{border-radius:12px!important}
+#home .hero-search-bar .hsearch-cat{border-radius:12px!important;border-right:1px solid #e5e8e6!important}
+#home .hero-search-bar .hsearch-ville{border-radius:12px!important}
+#home .hero-search-bar .hsearch-btn{border-radius:12px!important}
+#home .hero-search-bar .ville-dropdown{border-radius:12px!important;overflow:hidden!important}
+#home .artisan-cta-btn{border-radius:12px!important}
+#home .categories .tabs button{border-radius:12px!important}
+#home .categories .cat-secondary-btn{border-radius:12px!important}
+#home .categories .cards .card{border-radius:14px!important}
+}
+
+/* TrouvePro premium desktop finishing pass: consistent rhythm, cards and footer.
+   Presentation only: no DOM/JS/data/payment changes. */
+@media(min-width:981px){
+:root{--tp-ink:#202d35;--tp-muted:#52616a;--tp-surface:#f1f2f0;--tp-accent:#c5340a}
+#home .hero-home::before{background:linear-gradient(90deg,rgba(247,247,244,.99) 0%,rgba(247,247,244,.96) 29%,rgba(247,247,244,.82) 43%,rgba(247,247,244,.23) 67%,rgba(247,247,244,.02) 100%),url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=85&auto=format') center 48%/cover no-repeat!important}
+#home .hero-wrap{padding-top:60px!important;padding-bottom:62px!important}
+#home .hero-search-bar{border-radius:16px!important}
+#home .hero-search-bar .hsearch-btn{border-radius:12px!important;box-shadow:none!important}
+#home .hero-trust-row{margin-top:14px!important;gap:22px!important}
+#home .categories{padding:34px 0 36px!important;background:var(--tp-surface)!important}
+#home .categories-inner,#home .listings-section,#home .hiw-inner{max-width:1370px!important;margin-left:auto!important;margin-right:auto!important}
+#home .cat-sec-head,#home .section-top{margin-bottom:19px!important;align-items:center!important}
+#home .cat-sec-title,#home .section-title,#home .hiw h2{font-family:'DM Sans',Arial,sans-serif!important;font-size:23px!important;font-weight:800!important;letter-spacing:-.65px!important;line-height:1.2!important}
+#home .cat-sec-all,#home .see-all{font-size:13px!important;font-weight:750!important;color:var(--tp-accent)!important}
+#home .tabs{display:flex!important;gap:9px!important;border-bottom:1px solid #dce1df!important;padding-bottom:12px!important}
+#home .tabs button{border:1px solid #e0e4e1!important;background:#fff!important;border-radius:12px!important;padding:11px 16px!important;font-weight:700!important;box-shadow:0 2px 7px rgba(28,40,46,.03)!important}
+#home .tabs button.active{background:#fff5f1!important;border-color:#e4a28b!important;color:var(--tp-accent)!important}
+#home .cards{gap:16px!important}
+#home .cards .card{border:1px solid #e4e8e5!important;background:#fff!important;border-radius:15px!important;box-shadow:0 4px 16px rgba(30,43,49,.06)!important;transition:transform .18s,box-shadow .18s!important;overflow:hidden!important}
+#home .cards .card:hover{transform:translateY(-3px)!important;box-shadow:0 12px 26px rgba(30,43,49,.11)!important}
+#home .cat-secondary{background:transparent!important;padding:22px 0 0!important}
+#home .cat-secondary-label{display:block!important;color:#53616a!important;font-size:12px!important;font-weight:700!important;margin-bottom:12px!important}
+#home .cat-secondary-items{display:flex!important;flex-wrap:wrap!important;gap:10px!important}
+#home .cat-secondary-btn{min-height:48px!important;background:#fff!important;border:1px solid #e0e5e2!important;border-radius:13px!important;color:#26353e!important;font-size:13px!important;font-weight:700!important;padding:10px 16px!important;box-shadow:0 2px 9px rgba(28,40,46,.04)!important}
+#home .listings-section{padding:30px 20px 38px!important}
+#home .jobs-grid{gap:14px!important}
+#home .jobs-grid>*,#home .hiw-step{border-radius:15px!important;overflow:hidden!important}
+#home .hiw{background:#fff!important;padding:42px 20px 48px!important;scroll-margin-top:84px!important}
+#home .hiw-subtitle{font-size:14px!important;color:var(--tp-muted)!important;margin-top:8px!important}
+#home .hiw-steps{gap:18px!important;margin-top:26px!important}
+#home .hiw-step{background:#f7f8f6!important;border:1px solid #e6eae7!important;padding:25px!important;box-shadow:0 4px 14px rgba(29,40,46,.04)!important}
+#home .hiw-step h3{font-size:17px!important;font-weight:800!important;color:var(--tp-ink)!important}
+#home .hiw-step p{font-size:13px!important;line-height:1.65!important;color:var(--tp-muted)!important}
+#home .artisan-cta{background:var(--tp-surface)!important;padding:25px 20px!important}
+#home .artisan-cta-inner{background:#233039!important;border-radius:16px!important;padding:34px 20px!important;box-shadow:0 9px 24px rgba(30,42,50,.10)!important}
+#home .artisan-cta-title{color:#fff!important;font-size:27px!important}
+#home .artisan-cta-text,#home .artisan-cta-subtext{color:#fff!important;opacity:1!important}
+#home .artisan-cta-btn{border-radius:12px!important}
+#home footer{background:#202c34!important}
+#home footer .footer-inner{max-width:1370px!important;padding-top:38px!important;padding-bottom:20px!important}
+#home footer .footer-grid{gap:38px!important}
+#home footer .footer-col h4{color:#fff!important;font-size:12px!important;letter-spacing:.02em!important}
+#home footer .footer-col a,#home footer .footer-brand p{color:#d2d9dc!important;font-size:12px!important;line-height:1.75!important}
+#home footer .footer-logo{font-size:25px!important}
+#home footer .footer-bottom{border-top:1px solid rgba(255,255,255,.14)!important}
+}
