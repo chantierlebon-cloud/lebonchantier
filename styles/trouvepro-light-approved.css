@@ -1,0 +1,47 @@
+/* TrouvePro 2026 — approved light matte design. UI only; no application logic changes. */
+:root{--bg:#F4F5F3;--surface:#EEF0EE;--white:#fff;--ink:#202C35;--ink2:#56636C;--ink3:#79838B;--border:#E3E6E4;--border-light:#ECEEEC;--accent:#C5340A;--accent-hover:#A72B08;--accent-light:#FFF1EB;--shadow-sm:0 3px 14px rgba(25,34,40,.05);--shadow-md:0 12px 34px rgba(25,34,40,.09)}
+body{background:#F4F5F3;color:#202C35}
+.nav{background:rgba(255,255,255,.96);border-bottom:1px solid #E9EAE8;box-shadow:0 2px 12px rgba(25,34,40,.035)}
+.nav .logo{font-size:20px}
+.nav-link{color:#26343E}
+.nav-btn{background:#C5340A;border-radius:10px}
+#home{background:#F4F5F3}
+#home .hero-home{position:relative;isolation:isolate;overflow:hidden;background:#D8D3CB!important;padding:0!important}
+#home .hero-home::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(250,248,245,.95) 0%,rgba(250,248,245,.88) 33%,rgba(250,248,245,.27) 57%,rgba(26,30,31,.13) 100%),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1800&q=85&auto=format') center 42%/cover no-repeat;z-index:-1}
+#home .hero-wrap{max-width:1340px!important;margin:auto!important;min-height:470px;display:flex!important;align-items:center!important;gap:0!important;padding:58px 38px 72px!important}
+#home .hero-col-left{flex:1!important;max-width:850px!important}
+#home .hero-col-left::before{content:"PLATEFORME DE PROFESSIONNELS LOCAUX";display:block;color:#C5340A;font-size:12px;font-weight:750;letter-spacing:.07em;margin-bottom:13px}
+#home .hero-col-left h1{max-width:640px;font-size:clamp(33px,3.4vw,50px)!important;line-height:1.12!important;letter-spacing:-1.6px;color:#202C35!important;margin-bottom:16px!important}
+#home .hero-col-left h1 span{color:#C5340A!important}
+#home .hero-col-left p{color:#45545E!important;font-size:16px!important;max-width:540px!important;margin-bottom:25px!important}
+#home .hero-col-right{display:none!important}
+#home .hero-search-bar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 170px!important;align-items:center!important;gap:8px!important;background:rgba(255,255,255,.97)!important;border:1px solid rgba(227,230,228,.9)!important;border-radius:13px!important;box-shadow:0 13px 36px rgba(26,34,40,.13)!important;padding:10px!important;margin-bottom:18px!important;max-width:850px!important}
+#home .hero-search-bar .hsearch-input{height:51px!important;background:#F8F9F8!important;border:1px solid #E6E9E7!important;border-radius:9px!important;font-size:13px!important}
+#home .hero-search-bar .ville-ac-wrap{min-width:0;width:100%}
+#home .hero-search-bar .hsearch-btn{width:100%!important;height:51px!important;margin:0!important;background:#C5340A!important;border-radius:9px!important;font-size:12px!important;box-shadow:none!important}
+#home .hero-search-bar .hsearch-btn:hover{background:#A72B08!important}
+#home .hero-trust-row{gap:24px!important}
+#home .hero-trust-row span{color:#31414A!important;font-size:12px!important}
+#home .trust-bar{background:#F4F5F3!important;border-bottom:0!important}
+#home .trust-bar-inner{max-width:1300px!important}
+#home .trust-item-icon{background:#FFF0EA!important}
+#home .categories{background:#F4F5F3!important}
+#home .categories-inner{max-width:1320px!important}
+#home .cat-sec-title,#home .section-title{color:#202C35!important;letter-spacing:-.5px}
+#home .tabs{gap:9px}
+#home .tabs button{border-radius:12px!important}
+#home .cards .card,#home .category-card,#home .pro-card{background:#fff!important;border:1px solid #E7E9E7!important;border-radius:13px!important;box-shadow:0 5px 20px rgba(28,38,45,.055)!important}
+#home .cards .card:hover,#home .category-card:hover,#home .pro-card:hover{box-shadow:0 12px 26px rgba(28,38,45,.1)!important}
+#home .cat-secondary{background:transparent!important}
+#home .cat-secondary-btn{background:#fff!important;border:1px solid #E5E8E5!important;border-radius:10px!important}
+#home .stats-bar{background:#ECEFEC!important}
+#home .listings-section{background:#F4F5F3!important}
+#home .cta-band{background:#232E35!important;border-radius:14px!important}
+#home footer{background:#222D35!important;color:#E8ECEE!important;border-top:none!important}
+#home footer .footer-logo,#home footer h4{color:#fff!important}
+#home footer .footer-brand p,#home footer .footer-col a,#home footer .footer-copy{color:#BBC4C8!important}
+#home footer .footer-col a:hover{color:#FF9D7B!important}
+#home footer .footer-bottom{border-top-color:rgba(255,255,255,.15)!important}
+@media(max-width:980px){#home .hero-wrap{padding:50px 24px 55px!important}#home .hero-home::before{background:linear-gradient(90deg,rgba(250,248,245,.95),rgba(250,248,245,.7) 65%,rgba(250,248,245,.3)),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80&auto=format') center/cover}}
+@media(max-width:720px){.nav{padding:0 14px}#home .hero-wrap{min-height:auto;padding:45px 18px 44px!important}#home .hero-col-left h1{font-size:clamp(29px,8vw,40px)!important;letter-spacing:-1px!important}#home .hero-col-left p{font-size:14px!important}#home .hero-home::before{background:linear-gradient(90deg,rgba(250,248,245,.97),rgba(250,248,245,.88)),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80&auto=format') center/cover}#home .hero-search-bar{display:flex!important;flex-direction:column!important;align-items:stretch!important;padding:10px!important}#home .hero-search-bar .hsearch-btn{height:49px!important}#home .hero-trust-row{gap:12px!important}#home .hero-trust-row span{font-size:11px!important}#home .categories-inner{padding-left:16px!important;padding-right:16px!important}}
+@media(prefers-reduced-motion:reduce){#home *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
