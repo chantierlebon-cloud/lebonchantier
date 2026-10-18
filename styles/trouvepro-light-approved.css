@@ -7,7 +7,7 @@ body{background:#F4F5F3;color:#202C35}
 .nav-btn{background:#C5340A;border-radius:10px}
 #home{background:#F4F5F3}
 #home .hero-home{position:relative;isolation:isolate;overflow:hidden;background:#D8D3CB!important;padding:0!important}
-#home .hero-home::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(250,248,245,.95) 0%,rgba(250,248,245,.88) 33%,rgba(250,248,245,.27) 57%,rgba(26,30,31,.13) 100%),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1800&q=85&auto=format') center 42%/cover no-repeat;z-index:-1}
+#home .hero-home::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(250,248,245,.95) 0%,rgba(250,248,245,.88) 33%,rgba(250,248,245,.27) 57%,rgba(26,30,31,.13) 100%),url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=72&auto=format') center 42%/cover no-repeat;z-index:-1}
 #home .hero-wrap{max-width:1340px!important;margin:auto!important;min-height:470px;display:flex!important;align-items:center!important;gap:0!important;padding:58px 38px 72px!important}
 #home .hero-col-left{flex:1!important;max-width:850px!important}
 #home .hero-col-left::before{content:"PLATEFORME DE PROFESSIONNELS LOCAUX";display:block;color:#C5340A;font-size:12px;font-weight:750;letter-spacing:.07em;margin-bottom:13px}
