@@ -279,3 +279,50 @@ body{background:#F4F5F3;color:#202C35}
 #home .categories .cat-secondary-btn{border-radius:12px!important}
 #home .categories .cards .card{border-radius:14px!important}
 }
+
+/* TrouvePro premium desktop finishing pass: consistent rhythm, cards and footer.
+   Presentation only: no DOM/JS/data/payment changes. */
+@media(min-width:981px){
+:root{--tp-ink:#202d35;--tp-muted:#52616a;--tp-surface:#f1f2f0;--tp-accent:#c5340a}
+#home .hero-home::before{background:linear-gradient(90deg,rgba(247,247,244,.99) 0%,rgba(247,247,244,.96) 29%,rgba(247,247,244,.82) 43%,rgba(247,247,244,.23) 67%,rgba(247,247,244,.02) 100%),url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=85&auto=format') center 48%/cover no-repeat!important}
+#home .hero-wrap{padding-top:60px!important;padding-bottom:62px!important}
+#home .hero-search-bar{border-radius:16px!important}
+#home .hero-search-bar .hsearch-btn{border-radius:12px!important;box-shadow:none!important}
+#home .hero-trust-row{margin-top:14px!important;gap:22px!important}
+#home .categories{padding:34px 0 36px!important;background:var(--tp-surface)!important}
+#home .categories-inner,#home .listings-section,#home .hiw-inner{max-width:1370px!important;margin-left:auto!important;margin-right:auto!important}
+#home .cat-sec-head,#home .section-top{margin-bottom:19px!important;align-items:center!important}
+#home .cat-sec-title,#home .section-title,#home .hiw h2{font-family:'DM Sans',Arial,sans-serif!important;font-size:23px!important;font-weight:800!important;letter-spacing:-.65px!important;line-height:1.2!important}
+#home .cat-sec-all,#home .see-all{font-size:13px!important;font-weight:750!important;color:var(--tp-accent)!important}
+#home .tabs{display:flex!important;gap:9px!important;border-bottom:1px solid #dce1df!important;padding-bottom:12px!important}
+#home .tabs button{border:1px solid #e0e4e1!important;background:#fff!important;border-radius:12px!important;padding:11px 16px!important;font-weight:700!important;box-shadow:0 2px 7px rgba(28,40,46,.03)!important}
+#home .tabs button.active{background:#fff5f1!important;border-color:#e4a28b!important;color:var(--tp-accent)!important}
+#home .cards{gap:16px!important}
+#home .cards .card{border:1px solid #e4e8e5!important;background:#fff!important;border-radius:15px!important;box-shadow:0 4px 16px rgba(30,43,49,.06)!important;transition:transform .18s,box-shadow .18s!important;overflow:hidden!important}
+#home .cards .card:hover{transform:translateY(-3px)!important;box-shadow:0 12px 26px rgba(30,43,49,.11)!important}
+#home .cat-secondary{background:transparent!important;padding:22px 0 0!important}
+#home .cat-secondary-label{display:block!important;color:#53616a!important;font-size:12px!important;font-weight:700!important;margin-bottom:12px!important}
+#home .cat-secondary-items{display:flex!important;flex-wrap:wrap!important;gap:10px!important}
+#home .cat-secondary-btn{min-height:48px!important;background:#fff!important;border:1px solid #e0e5e2!important;border-radius:13px!important;color:#26353e!important;font-size:13px!important;font-weight:700!important;padding:10px 16px!important;box-shadow:0 2px 9px rgba(28,40,46,.04)!important}
+#home .listings-section{padding:30px 20px 38px!important}
+#home .jobs-grid{gap:14px!important}
+#home .jobs-grid>*,#home .hiw-step{border-radius:15px!important;overflow:hidden!important}
+#home .hiw{background:#fff!important;padding:42px 20px 48px!important;scroll-margin-top:84px!important}
+#home .hiw-subtitle{font-size:14px!important;color:var(--tp-muted)!important;margin-top:8px!important}
+#home .hiw-steps{gap:18px!important;margin-top:26px!important}
+#home .hiw-step{background:#f7f8f6!important;border:1px solid #e6eae7!important;padding:25px!important;box-shadow:0 4px 14px rgba(29,40,46,.04)!important}
+#home .hiw-step h3{font-size:17px!important;font-weight:800!important;color:var(--tp-ink)!important}
+#home .hiw-step p{font-size:13px!important;line-height:1.65!important;color:var(--tp-muted)!important}
+#home .artisan-cta{background:var(--tp-surface)!important;padding:25px 20px!important}
+#home .artisan-cta-inner{background:#233039!important;border-radius:16px!important;padding:34px 20px!important;box-shadow:0 9px 24px rgba(30,42,50,.10)!important}
+#home .artisan-cta-title{color:#fff!important;font-size:27px!important}
+#home .artisan-cta-text,#home .artisan-cta-subtext{color:#fff!important;opacity:1!important}
+#home .artisan-cta-btn{border-radius:12px!important}
+#home footer{background:#202c34!important}
+#home footer .footer-inner{max-width:1370px!important;padding-top:38px!important;padding-bottom:20px!important}
+#home footer .footer-grid{gap:38px!important}
+#home footer .footer-col h4{color:#fff!important;font-size:12px!important;letter-spacing:.02em!important}
+#home footer .footer-col a,#home footer .footer-brand p{color:#d2d9dc!important;font-size:12px!important;line-height:1.75!important}
+#home footer .footer-logo{font-size:25px!important}
+#home footer .footer-bottom{border-top:1px solid rgba(255,255,255,.14)!important}
+}
