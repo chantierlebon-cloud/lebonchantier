@@ -650,20 +650,24 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 @media(max-width:768px){#home .hero-map-link{width:100%;margin:8px 0 0;font-size:14px}}
 </style>
 <style>
-#home .tp-founders{background:#f4f5f3;padding:14px 24px 22px}
+#home .tp-founders{background:#f4f5f3;padding:14px 0 22px;overflow:hidden}
 #home .tp-founders[hidden]{display:none!important}
 #home .tp-founders-inner{max-width:1320px;margin:auto}
-#home .tp-founders-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:11px}
-#home .tp-founders-head h2{font-size:17px!important;line-height:1.25;color:#202c35;margin:0;font-weight:800}
-#home .tp-founders-head a{color:#bc310b;font-weight:750;font-size:12px;white-space:nowrap;text-decoration:none}
-#home .tp-founders-grid{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:3px 1px 9px;scrollbar-width:thin}
-#home .tp-founder-card{display:flex;flex-direction:column;flex:0 0 218px;min-width:0;min-height:106px;padding:13px 14px;border-radius:12px;border:1px solid #e5e7e4;background:#fff;box-shadow:0 2px 9px #2230390a;text-decoration:none;color:#223039;scroll-snap-align:start}
-#home .tp-founder-card:hover{border-color:#e3ae7b;box-shadow:0 4px 14px #22303915}
-#home .tp-founder-badge{color:#a34814;font-size:10px;font-weight:800;margin-bottom:5px;white-space:nowrap}
+#home .tp-founders-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:0 24px 12px}
+#home .tp-founders-head h2{font-size:17px!important;color:#202c35;margin:0;font-weight:800}
+#home .tp-founders-head a{color:#bc310b;font-weight:750;font-size:12px;text-decoration:none}
+#home .tp-founders-viewport{overflow:hidden;mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent)}
+#home .tp-founders-grid{display:flex;gap:12px;width:max-content;animation:tp-founders-scroll 32s linear infinite;will-change:transform}
+#home .tp-founders-grid:hover,#home .tp-founders-grid:focus-within{animation-play-state:paused}
+#home .tp-founder-card{display:flex;flex-direction:column;flex:0 0 220px;width:220px;min-height:104px;padding:13px 14px;border-radius:12px;border:1px solid #e5e7e4;background:#fff;box-shadow:0 2px 9px #2230390a;text-decoration:none;color:#223039}
+#home .tp-founder-card:hover{border-color:#e3ae7b}
+#home .tp-founder-badge{color:#a34814;font-size:10px;font-weight:800;margin-bottom:5px}
 #home .tp-founder-name{font-weight:800;font-size:13px;line-height:1.25;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #home .tp-founder-job{color:#53616a;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #home .tp-founder-zone{margin-top:auto;color:#a34814;font-size:11px;font-weight:750;padding-top:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(max-width:580px){#home .tp-founders{padding:12px 16px 18px}#home .tp-founders-head h2{font-size:15px!important}#home .tp-founder-card{flex-basis:190px;min-height:101px}}
+@keyframes tp-founders-scroll{from{transform:translateX(0)}to{transform:translateX(calc(-50% - 6px))}}
+@media(max-width:580px){#home .tp-founders{padding:12px 0 18px}#home .tp-founders-head{margin:0 16px 10px}#home .tp-founders-head h2{font-size:15px!important}#home .tp-founder-card{flex-basis:195px;width:195px}}
+@media(prefers-reduced-motion:reduce){#home .tp-founders-grid{animation:none}#home .tp-founders-viewport{overflow-x:auto;mask-image:none;-webkit-mask-image:none}}
 </style>
 </head>
 <body>
@@ -978,7 +982,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 <section class="tp-founders" id="tp-founders" hidden>
   <div class="tp-founders-inner">
     <div class="tp-founders-head"><h2>✦ Professionnels à la une</h2><a href="/annuaire">Voir tous →</a></div>
-    <div class="tp-founders-grid" id="tp-founders-grid"></div>
+    <div class="tp-founders-viewport"><div class="tp-founders-grid" id="tp-founders-grid"></div></div>
   </div>
 </section>
 <div class="modal-overlay" id="secondary-modal" onclick="closeSecondaryModal()">
@@ -4062,16 +4066,17 @@ document.addEventListener('keydown',function(e){
 <script>
 (function(){
  const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
- const cutoff=Date.parse('2026-10-19T00:00:00+02:00');
+ const selectedEmails=new Set(['contact.levenementiel@gmail.com','zaruhi.davtyan3572@gmail.com','lorenzoschmitt900@gmail.com','parquetetsol31@gmail.com']);
  async function loadFounders(){
   const section=document.getElementById('tp-founders'),grid=document.getElementById('tp-founders-grid');
   if(!section||!grid||typeof db==='undefined')return;
   try{
    const {data,error}=await db.from('artisans').select('id,user_id,nom,prenom,nom_initiale,specialite,zone,telephone,email,created_at').order('created_at',{ascending:true}).limit(300);
    if(error)throw error;
-   const founders=(data||[]).filter(a=>a.id&&a.user_id&&a.telephone&&a.email&&a.specialite&&a.zone&&a.created_at&&Date.parse(a.created_at)<cutoff).slice(0,6);
+   const founders=(data||[]).filter(a=>a.id&&a.user_id&&a.telephone&&a.email&&selectedEmails.has(String(a.email).trim().toLowerCase())&&a.specialite&&a.zone);
    if(!founders.length)return;
-   grid.innerHTML=founders.map(a=>'<a class="tp-founder-card" href="/artisan/'+encodeURIComponent(a.id)+'"><span class="tp-founder-badge">✦ Membre fondateur</span><div class="tp-founder-name">'+esc(a.nom||[a.prenom,a.nom_initiale?a.nom_initiale+'.':''].filter(Boolean).join(' ')||'Professionnel')+'</div><div class="tp-founder-job">'+esc(a.specialite)+'</div><span class="tp-founder-zone">📍 '+esc(a.zone)+'</span></a>').join('');
+   const founderCards=founders.map(a=>'<a class="tp-founder-card" href="/artisan/'+encodeURIComponent(a.id)+'"><span class="tp-founder-badge">✦ Membre fondateur</span><div class="tp-founder-name">'+esc((()=>{const first=String(a.prenom||'').trim();const last=String(a.nom||'').trim();if(first)return first+(last?' '+last.charAt(0).toUpperCase()+'.':a.nom_initiale?' '+String(a.nom_initiale).charAt(0).toUpperCase()+'.':'');const parts=last.split(/\s+/).filter(Boolean);return parts.length>1?parts[0]+' '+parts[parts.length-1].charAt(0).toUpperCase()+'.':parts[0]||'Professionnel'})())+'</div><div class="tp-founder-job">'+esc(a.specialite)+'</div><span class="tp-founder-zone">📍 '+esc(a.zone)+'</span></a>').join('');
+   grid.innerHTML=founderCards+founderCards.replaceAll('href=', 'tabindex="-1" aria-hidden="true" href=');
    section.hidden=false;
   }catch(e){console.warn('Founders block unavailable',e)}
  }
