@@ -867,58 +867,25 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
 <!-- HOME -->
 <div id="home" class="page active">
   <div class="hero hero-home">
-    <div class="hero-wrap" style="max-width:1200px;margin:0 auto;padding:72px 40px;display:flex;align-items:center;gap:64px;">
-
-      <!-- Colonne gauche -->
-      <div class="hero-col-left" style="flex:1;min-width:0;">
-        <h1 style="font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.15;margin:0 0 18px;color:#0F172A;">
-          Trouvez un professionnel de confiance<br><span style="color:#C5340A;font-weight:700;">près de chez vous.</span>
-        </h1>
-        <p style="font-size:17px;color:#64748B;line-height:1.65;margin:0 0 32px;max-width:480px;">
-          Comparez les profils, choisissez sereinement et payez en toute sécurité.
-        </p>
-
-        <!-- Barre de recherche -->
-        <div class="hero-search-bar" style="display:flex;flex-direction:column;background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,0.07);gap:10px;margin-bottom:20px;">
-          <input type="text" id="home-search-categorie" class="hsearch-input hsearch-cat" placeholder="🔧  Quel type de travaux ?"
-            style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#FAFAFA;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A';this.style.background='#fff'" onblur="this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA'">
+    <div class="hero-wrap">
+      <div class="hero-col-left">
+        <h1>Trouvez un professionnel<br>de confiance<br><span>près de chez vous.</span></h1>
+        <p>Comparez les profils, lisez les avis et contactez directement des professionnels qualifiés partout en France.</p>
+        <div class="hero-search-bar">
+          <input type="text" id="home-search-categorie" class="hsearch-input hsearch-cat" placeholder="🔧  Quel type de travaux ?" aria-label="Type de travaux">
           <div class="ville-ac-wrap block">
-            <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="📍  Votre ville" autocomplete="off"
-              style="width:100%;height:52px;border:1.5px solid #E5E7EB;border-radius:12px;outline:none;padding:0 16px;font-size:15px;background:#FAFAFA;color:#111827;font-family:inherit;transition:border-color 0.2s;" onfocus="this.style.borderColor='#C5340A';this.style.background='#fff'" onblur="this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA'">
+            <input type="text" id="home-search-ville" class="hsearch-input hsearch-ville" placeholder="📍  Votre ville" autocomplete="off" aria-label="Votre ville">
             <div class="ville-dropdown" id="dd-home-search-ville"></div>
           </div>
-          <button class="hsearch-btn" onclick="applySearchFromHome()"
-            style="width:100%;height:52px;background:#C5340A;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Unbounded',sans-serif;letter-spacing:0.3px;transition:background 0.2s ease;margin-top:2px;" onmouseover="this.style.background='#A62C08'" onmouseout="this.style.background='#C5340A'">
-            Chercher →
-          </button>
+          <button class="hsearch-btn" onclick="applySearchFromHome()">⌕ &nbsp; Rechercher</button>
         </div>
-
-        <!-- Trust hints -->
-        <div class="hero-trust-row" style="display:flex;gap:20px;flex-wrap:wrap;">
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            100% gratuit
-          </span>
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Professionnels vérifiés
-          </span>
-          <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748B;font-weight:500;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Paiement sécurisé
-          </span>
+        <div class="hero-trust-row">
+          <span>✓ &nbsp; 100% gratuit</span>
+          <span>✦ &nbsp; Professionnels vérifiés</span>
+          <span>♢ &nbsp; Paiement sécurisé</span>
         </div>
       </div>
-
-      <!-- Colonne droite : image -->
-      <div class="hero-col-right" style="flex:0 0 460px;max-width:460px;">
-        <div class="hero-img-wrap" style="border-radius:20px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 24px 64px rgba(0,0,0,0.14);">
-          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&h=700&fit=crop&q=85&auto=format"
-            alt="Service à domicile"
-            style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-      </div>
-
+      <div class="hero-col-right" aria-hidden="true"></div>
     </div>
   </div>
 
