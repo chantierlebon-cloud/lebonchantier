@@ -26,6 +26,10 @@
   ],
   "rewrites": [
     {
+      "source": "/annuaire",
+      "destination": "/annuaire.html"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
     },
