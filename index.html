@@ -2929,7 +2929,7 @@ async function loadAdminDashboard(force=false){
       db.from('profiles').select('id,nom,email,telephone,role,created_at').order('created_at',{ascending:false}).limit(500).then(r=>r).catch(()=>({data:[]})),
       db.from('annonces').select('id,categorie,ville,budget,statut,created_at,user_id').order('created_at',{ascending:false}).limit(100),
       db.from('reponses').select('id,annonce_id,artisan_id,message,created_at,status').order('created_at',{ascending:false}).limit(500),
-      db.from('artisan_verifications').select('user_id,company_name,siren,verification_status,updated_at,admin_note').order('updated_at',{ascending:false}).limit(100),
+      db.from('artisan_verifications').select('*').order('updated_at',{ascending:false}).limit(100),
       db.from('artisans').select('id,user_id,nom,specialite,max_candidatures,payout_status').order('created_at',{ascending:false}).limit(200)
     ]);
 
