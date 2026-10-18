@@ -183,3 +183,32 @@ body{background:#F4F5F3;color:#202C35}
 #home .categories-inner{background:transparent!important}
 #home .listings-section,#home .hiw{background:#f4f5f3!important}
 }
+
+/* Premium 10/10 design preview — desktop-only, UI-only. Existing JS/data untouched. */
+@media(min-width:981px){
+.nav{background:#fff!important;box-shadow:0 1px 8px rgba(30,39,45,.06)!important}
+#home.page.active{background:#f1f2f0!important;background-image:none!important}
+#home::before{display:none!important}
+#home .hero-home{min-height:480px!important;position:relative!important;isolation:isolate!important;background:#d6d4ce!important}
+#home .hero-home::before{display:block!important;content:"";position:absolute!important;inset:0!important;z-index:-1!important;background:linear-gradient(90deg,rgba(243,242,238,.97) 0%,rgba(243,242,238,.91) 29%,rgba(243,242,238,.44) 48%,rgba(243,242,238,.03) 78%),url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=85&auto=format') center 48%/cover no-repeat!important}
+#home .hero-wrap{min-height:480px!important;max-width:1370px!important;padding:65px 30px 58px!important;align-items:center!important}
+#home .hero-col-left::before{color:#c5340a!important;font-size:11px!important;letter-spacing:.075em!important}
+#home .hero-col-left h1{color:#222d35!important;font-size:clamp(35px,3vw,44px)!important;font-weight:800!important;line-height:1.08!important;max-width:590px!important;letter-spacing:-1.5px!important}
+#home .hero-col-left h1 span{color:#c5340a!important}
+#home .hero-col-left p{color:#45545d!important;font-size:15px!important;max-width:530px!important;line-height:1.48!important}
+#home .hero-search-bar{max-width:875px!important;border-radius:12px!important;box-shadow:0 10px 28px rgba(31,41,47,.12)!important}
+#home .hero-trust-row span{color:#2b3841!important;font-size:12px!important}
+#home .categories{background:#f1f2f0!important;padding:24px 0 20px!important;color:#222d35!important}
+#home .categories .cat-sec-title{color:#222d35!important;font-size:23px!important}
+#home .categories .tabs button{color:#46525b!important}
+#home .categories .tabs button.active{color:#c5340a!important}
+#home .categories .cat-sec-all{color:#c5340a!important}
+#home .categories .cat-secondary-btn{color:#26343e!important}
+#home .categories .cards .card{border-radius:13px!important;overflow:hidden!important;box-shadow:0 5px 16px rgba(26,35,41,.08)!important}
+#home .listings-section{background:#f1f2f0!important}
+#home .hiw{background:#fff!important;padding:38px 20px!important}
+#home .hiw-step{border-radius:13px!important}
+#home .artisan-cta{background:#f1f2f0!important;padding:16px 20px!important}
+#home .artisan-cta-inner{background:#233039!important;border-radius:13px!important;max-width:1330px!important;padding:28px 20px!important}
+#home footer{background:#202c34!important}
+}
