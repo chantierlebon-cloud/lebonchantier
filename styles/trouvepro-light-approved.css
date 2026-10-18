@@ -165,3 +165,21 @@ body{background:#F4F5F3;color:#202C35}
   #home .categories .cat-secondary-btn{color:#273139!important}
   #home .listings-section,#home .hiw,#home .artisan-cta,#home footer{position:relative}
 }
+
+/* Fix: the page itself owns the continuous photo, not a negative-z pseudo-element.
+   Only hero and category area are transparent; lower modules keep solid backgrounds. */
+@media(min-width:981px){
+#home.page.active{
+  background-color:#f4f5f3!important;
+  background-image:linear-gradient(90deg,rgba(20,27,32,.90) 0%,rgba(20,27,32,.76) 28%,rgba(20,27,32,.33) 62%,rgba(20,27,32,.08) 100%),url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=2000&q=90&auto=format')!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-position:center top,center top!important;
+  background-size:100% 1080px,100% 1080px!important;
+}
+#home::before{display:none!important}
+#home .hero-home{background:transparent!important}
+#home .hero-home::before{display:none!important}
+#home .categories{background:transparent!important}
+#home .categories-inner{background:transparent!important}
+#home .listings-section,#home .hiw{background:#f4f5f3!important}
+}
