@@ -1012,7 +1012,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
     <div><div class="stat-n">0€</div><div class="stat-l">Pour poster</div></div>
     <div><div class="stat-n">100%</div><div class="stat-l">Paiement sécurisé</div></div>
   </div>
-  <div class="listings-section" id="home-listings-section" style="display:none">
+  <div class="listings-section" id="home-listings-section">
     <div class="section-top">
       <div class="section-title">Dernières annonces</div>
       <button class="see-all" onclick="showPage('browse')">Voir tout →</button>
@@ -1390,6 +1390,8 @@ async function init(){
   });
   const{data:{session}}=await db.auth.getSession();
   if(session){currentAccessToken=session.access_token;currentUser=session.user;await loadProfile();updateNav(true);updateDashboardUI();subscribeCandidaturesRealtime();}
+  // Retry public listings after the auth session is restored (RLS may depend on it).
+  if(session)loadAnnonces('home');
   // Fallback: si Supabase a déjà traité le hash avant l'enregistrement du listener
   if(window.location.hash.includes('type=recovery')){
     setTimeout(()=>showResetPasswordForm(),300);
@@ -1760,7 +1762,8 @@ async function loadAnnonces(page='home'){
     }else{
       query=query.limit(4);
     }
-    const{data}=await query;
+    const{data,error}=await query;
+    if(error)throw error;
     const container=document.getElementById(page==='home'?'home-listings':'browse-listings');
     if(!data||data.length===0){
       container.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><h3>Aucune annonce trouvée</h3><p>Essayez une autre ville ou une autre catégorie.</p></div>`;
@@ -1788,7 +1791,11 @@ async function loadAnnonces(page='home'){
         </div>
       </div>`;
     }).join('');
-  }catch(e){console.log(e);}
+  }catch(e){
+    console.error('Impossible de charger les annonces',e);
+    const container=document.getElementById(page==='home'?'home-listings':'browse-listings');
+    if(container)container.innerHTML='<div class="empty-state"><h3>Impossible de charger les annonces</h3><p>Veuillez réessayer.</p><button class="small-btn" onclick="loadAnnonces(\''+page+'\')">Réessayer</button></div>';
+  }
 }
 
 
