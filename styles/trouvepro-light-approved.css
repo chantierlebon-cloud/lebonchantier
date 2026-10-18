@@ -121,3 +121,21 @@ body{background:#F4F5F3;color:#202C35}
 #home .artisan-cta-subtext{display:block!important;color:#fff!important;font-size:14px!important;line-height:1.4!important;opacity:1!important;margin:0 0 12px!important}
 #home .artisan-cta-btn{background:#e53d09!important;color:#fff!important;font-size:16px!important;font-weight:700!important;padding:15px 34px!important;border-radius:10px!important;margin:0!important}
 }
+
+/* Approved full-bleed photographic desktop hero. Keep all existing homepage modules. */
+@media(min-width:981px){
+.nav{min-height:64px!important}
+.nav .nav-right{gap:15px!important}
+.nav .nav-link{font-family:'DM Sans',Arial,sans-serif!important;font-size:13px!important;font-weight:600!important}
+#home .hero-home{min-height:540px!important;background:#273037!important}
+#home .hero-home::before{background:linear-gradient(90deg,rgba(20,27,32,.91) 0%,rgba(20,27,32,.80) 29%,rgba(20,27,32,.27) 62%,rgba(20,27,32,.06) 100%),url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=2000&q=90&auto=format') center center/cover no-repeat!important}
+#home .hero-wrap{max-width:1370px!important;min-height:540px!important;align-items:flex-start!important;padding:100px 30px 95px!important}
+#home .hero-col-left::before{color:#f15a28!important}
+#home .hero-col-left h1{color:#fff!important;font-size:clamp(37px,3.15vw,49px)!important;line-height:1.08!important;max-width:650px!important}
+#home .hero-col-left h1 span{color:#fa4b13!important}
+#home .hero-col-left p{color:#fff!important;max-width:600px!important;font-size:16px!important}
+#home .hero-trust-row span{color:#fff!important;font-size:12px!important}
+#home .hero-search-bar{max-width:890px!important}
+#home .hero-search-bar .hsearch-btn{color:#fff!important;font-weight:700!important}
+#home .hiw{scroll-margin-top:85px!important}
+}
