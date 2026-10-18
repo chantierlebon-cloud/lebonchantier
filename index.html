@@ -849,6 +849,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   <div class="nav-right" id="nav-right">
     <button class="nav-link mega-toggle" id="mega-toggle-btn" onclick="toggleMegaMenu(event)">Catégories <span id="mega-arrow">▾</span></button>
     <button class="nav-link" onclick="showPage('browse')">Annonces</button>
+    <button class="nav-link nav-how" onclick="showPage('home');setTimeout(()=>document.querySelector('#home .hiw')?.scrollIntoView({behavior:'smooth',block:'start'}),80)">Comment ça marche</button>
     <button class="nav-link" onclick="openModal()">Connexion</button>
     <button class="nav-btn" onclick="requireAuth('post')">+ Poster</button>
   </div>
