@@ -4060,7 +4060,7 @@ document.addEventListener('keydown',function(e){
    if(error)throw error;
    const founders=(data||[]).filter(a=>a.id&&a.user_id&&a.telephone&&a.email&&selectedEmails.has(String(a.email).trim().toLowerCase())&&a.specialite&&a.zone);
    if(!founders.length)return;
-   const founderCards=founders.map(a=>'<a class="tp-founder-card" href="/artisan/'+encodeURIComponent(a.id)+'"><span class="tp-founder-badge">✦ Membre fondateur</span><div class="tp-founder-name">'+esc(a.nom||[a.prenom,a.nom_initiale?a.nom_initiale+'.':''].filter(Boolean).join(' ')||'Professionnel')+'</div><div class="tp-founder-job">'+esc(a.specialite)+'</div><span class="tp-founder-zone">📍 '+esc(a.zone)+'</span></a>').join('');
+   const founderCards=founders.map(a=>'<a class="tp-founder-card" href="/artisan/'+encodeURIComponent(a.id)+'"><span class="tp-founder-badge">✦ Membre fondateur</span><div class="tp-founder-name">'+esc((()=>{const first=String(a.prenom||'').trim();const last=String(a.nom||'').trim();if(first)return first+(last?' '+last.charAt(0).toUpperCase()+'.':a.nom_initiale?' '+String(a.nom_initiale).charAt(0).toUpperCase()+'.':'');const parts=last.split(/\s+/).filter(Boolean);return parts.length>1?parts[0]+' '+parts[parts.length-1].charAt(0).toUpperCase()+'.':parts[0]||'Professionnel'})())+'</div><div class="tp-founder-job">'+esc(a.specialite)+'</div><span class="tp-founder-zone">📍 '+esc(a.zone)+'</span></a>').join('');
    grid.innerHTML=founderCards+founderCards.replaceAll('href=', 'tabindex="-1" aria-hidden="true" href=');
    section.hidden=false;
   }catch(e){console.warn('Founders block unavailable',e)}
