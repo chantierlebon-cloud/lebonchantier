@@ -2856,9 +2856,14 @@ function switchDashTab(tab){
 }
 
 
-async function loadAdminDashboard(){
+let _adminLoadPromise=null;
+let _adminLastLoadedAt=0;
+async function loadAdminDashboard(force=false){
   const box=document.getElementById('admin-content');
   if(!box)return;
+  if(!force && _adminLoadPromise)return _adminLoadPromise;
+  if(!force && _adminLastLoadedAt && Date.now()-_adminLastLoadedAt<20000 && box.dataset.adminLoaded==='true')return;
+  const run=async()=>{
   box.innerHTML=`<div class="empty-state"><div class="empty-icon">⏳</div><p>Chargement des données admin...</p></div>`;
   try{
     const [
@@ -2892,6 +2897,8 @@ async function loadAdminDashboard(){
     const candidatureCountMap={};
     reponses.forEach(r=>{if(r.artisan_id) candidatureCountMap[r.artisan_id]=(candidatureCountMap[r.artisan_id]||0)+1;});
 
+    box.dataset.adminLoaded='true';
+    _adminLastLoadedAt=Date.now();
     box.innerHTML=`
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px">
         <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:18px">
@@ -3075,8 +3082,12 @@ async function loadAdminDashboard(){
       </div>
     `;
   }catch(e){
+    box.dataset.adminLoaded='false';
     box.innerHTML=`<div class="empty-state"><div class="empty-icon">❌</div><p>Erreur admin: ${escapeHTML(e.message||'inconnue')}</p></div>`;
   }
+  };
+  _adminLoadPromise=run().finally(()=>{_adminLoadPromise=null});
+  return _adminLoadPromise;
 }
 
 async function adminSetAnnonceStatus(annonceId,statut){
