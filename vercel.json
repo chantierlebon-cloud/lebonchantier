@@ -3,18 +3,35 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "lebonchantier.fr" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "lebonchantier.fr"
+        }
+      ],
       "destination": "https://trouvepro.fr/$1",
       "permanent": true
     },
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.lebonchantier.fr" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.lebonchantier.fr"
+        }
+      ],
       "destination": "https://trouvepro.fr/$1",
       "permanent": true
     }
   ],
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/annonces-locales/:category/:city",
+      "destination": "/api/local-seo"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
