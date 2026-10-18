@@ -76,3 +76,26 @@ body{background:#F4F5F3;color:#202C35}
 #home .cta-band{display:none!important}
 #home footer .footer-inner{max-width:1370px!important}
 }
+
+/* Desktop typography and CTA corrections based on approved reference */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+@media(min-width:981px){
+#home,#home button,#home input,#home footer,.nav,.nav button{font-family:'DM Sans',Arial,sans-serif!important}
+#home .hero-col-left h1{font-family:'DM Sans',Arial,sans-serif!important;font-size:clamp(31px,2.5vw,38px)!important;font-weight:800!important;letter-spacing:-1.25px!important}
+#home .cat-sec-title,#home .section-title{font-family:'DM Sans',Arial,sans-serif!important;font-size:21px!important;font-weight:800!important}
+#home .artisan-cta{padding:0!important;background:#233039!important}
+#home .artisan-cta-inner{min-height:110px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;padding:18px 28px!important;text-align:left!important}
+#home .artisan-cta-icon{font-size:25px!important;margin:0!important}
+#home .artisan-cta-title{font-family:'DM Sans',Arial,sans-serif!important;color:#fff!important;font-size:19px!important;line-height:1.25!important;margin:0!important}
+#home .artisan-cta-text{color:#e0e6e8!important;font-size:12px!important;margin:0!important}
+#home .artisan-cta-subtext{display:none!important}
+#home .artisan-cta-btn{margin:0!important;white-space:nowrap!important;background:#e9440b!important;color:#fff!important}
+#home footer{background:#202c34!important}
+#home footer .footer-inner{padding-top:24px!important;padding-bottom:14px!important}
+#home footer .footer-grid{gap:24px!important}
+#home footer .footer-col h4{font-family:'DM Sans',Arial,sans-serif!important;font-size:12px!important;font-weight:800!important;letter-spacing:0!important}
+#home footer .footer-col a,#home footer .footer-brand p{font-family:'DM Sans',Arial,sans-serif!important;font-size:11px!important;line-height:1.5!important}
+#home footer .footer-logo{font-family:'DM Sans',Arial,sans-serif!important;font-size:23px!important;font-weight:800!important}
+#home footer .footer-bottom{margin-top:20px!important;padding-top:13px!important}
+#home footer .footer-copy{font-size:10px!important}
+}
