@@ -639,6 +639,18 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
   .ap-name{font-size:22px;}
   .ap-cta-btn{width:100%;max-width:340px;}
 }
+
+/* Professional storefront: display only genuine profile information */
+.ap-container{max-width:860px;padding:42px 20px 80px}
+.ap-header{border-radius:22px;padding:34px;box-shadow:0 8px 28px rgba(26,39,46,.045)}
+.ap-block{border-radius:18px;padding:28px;box-shadow:0 5px 18px rgba(26,39,46,.025)}
+.ap-name{font-size:30px;letter-spacing:-.6px}
+.ap-cta-btn{border-radius:13px;min-height:54px}
+.ap-services{display:flex;flex-wrap:wrap;gap:10px}
+.ap-service{display:inline-flex;background:#f6f7f6;border:1px solid #e6e9e7;border-radius:12px;padding:10px 14px;font-size:14px;color:#24313a}
+.ap-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ap-gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#f1f2f1}
+@media(max-width:600px){.ap-container{padding:22px 14px 54px}.ap-header{padding:24px 18px}.ap-block{padding:22px 18px}.ap-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <link rel="stylesheet" href="/styles/global.css">
 <link rel="stylesheet" href="/styles/trouvepro-light-approved.css">
@@ -1317,9 +1329,17 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 2
         <h2 class="ap-block-title">Expérience</h2>
         <p id="ap-experience"></p>
       </div>
-      <div class="ap-block">
+      <div id="ap-services-block" class="ap-block" style="display:none">
+        <h2 class="ap-block-title">Prestations proposées</h2>
+        <div id="ap-services" class="ap-services"></div>
+      </div>
+      <div id="ap-zone-block" class="ap-block" style="display:none">
         <h2 class="ap-block-title">Zone d'intervention</h2>
         <p id="ap-zone"></p>
+      </div>
+      <div id="ap-gallery-block" class="ap-block" style="display:none">
+        <h2 class="ap-block-title">Réalisations</h2>
+        <div id="ap-gallery" class="ap-gallery"></div>
       </div>
       <div id="ap-reviews-block" class="ap-block" style="display:none">
         <h2 class="ap-block-title">Avis clients</h2>
@@ -1493,8 +1513,35 @@ async function loadArtisanPublicPage(artisanId){
     document.getElementById('ap-exp-block').style.display='block';
   }
 
-  // Zone
-  document.getElementById('ap-zone').textContent=art.zone||'—';
+  // Reset optional sections on every navigation to avoid stale content.
+  for(const id of ['ap-about-block','ap-exp-block','ap-services-block','ap-zone-block','ap-gallery-block','ap-reviews-block']){
+    document.getElementById(id).style.display='none';
+  }
+  if(art.description) document.getElementById('ap-about-block').style.display='block';
+  if(art.years_experience) document.getElementById('ap-exp-block').style.display='block';
+  document.getElementById('ap-badges').innerHTML=art.verified?'<span class="ap-badge-verified">✓ Vérifié</span>':'';
+
+  // Show services only when entered by the professional; no fabricated specialties.
+  const rawServices=art.services||art.prestations||null;
+  const services=Array.isArray(rawServices)?rawServices:(typeof rawServices==='string'?rawServices.split(/[,;\n]/):[]);
+  const cleanServices=services.filter(x=>typeof x==='string'&&x.trim()).slice(0,15);
+  if(cleanServices.length){
+    document.getElementById('ap-services').innerHTML=cleanServices.map(x=>'<span class="ap-service">'+escapeHTML(x.trim())+'</span>').join('');
+    document.getElementById('ap-services-block').style.display='block';
+  }
+  if(art.zone){
+    document.getElementById('ap-zone').textContent=art.zone;
+    document.getElementById('ap-zone-block').style.display='block';
+  }
+  // Optional gallery from explicit public portfolio fields only.
+  const photos=Array.isArray(art.portfolio_photos)?art.portfolio_photos:(Array.isArray(art.photos_realisations)?art.photos_realisations:[]);
+  const safePhotos=photos.filter(x=>typeof x==='string'&&/^https:\/\//i.test(x)).slice(0,9);
+  if(safePhotos.length){
+    const gallery=document.getElementById('ap-gallery');
+    gallery.replaceChildren();
+    safePhotos.forEach(url=>{const img=document.createElement('img');img.src=url;img.alt='Réalisation du professionnel';img.loading='lazy';gallery.appendChild(img);});
+    document.getElementById('ap-gallery-block').style.display='block';
+  }
 
   // Avis clients
   if(reviews&&reviews.length){
